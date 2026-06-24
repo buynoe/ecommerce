@@ -4,9 +4,10 @@ import { sendEmail, merchantWelcomeEmail } from "@/lib/email";
 import { getPlatformEmail } from "@/lib/platform";
 
 export async function GET(req: NextRequest) {
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "");
   const token = req.nextUrl.searchParams.get("token");
   if (!token) {
-    return NextResponse.redirect(new URL("/login?verified=invalid", req.url));
+    return NextResponse.redirect(`${appUrl}/login?verified=invalid`);
   }
 
   const merchant = await prisma.merchant.findFirst({
@@ -15,11 +16,11 @@ export async function GET(req: NextRequest) {
   });
 
   if (!merchant) {
-    return NextResponse.redirect(new URL("/login?verified=invalid", req.url));
+    return NextResponse.redirect(`${appUrl}/login?verified=invalid`);
   }
 
   if (merchant.emailVerifyExpiry && merchant.emailVerifyExpiry < new Date()) {
-    return NextResponse.redirect(new URL("/login?verified=expired", req.url));
+    return NextResponse.redirect(`${appUrl}/login?verified=expired`);
   }
 
   await prisma.merchant.update({
@@ -31,7 +32,6 @@ export async function GET(req: NextRequest) {
   try {
     const { smtp, emailSignup } = await getPlatformEmail();
     if (emailSignup) {
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3002";
       await sendEmail(
         { to: merchant.email, subject: "Welcome to Buynoe — your store is live!", html: merchantWelcomeEmail(merchant.name, merchant.store?.name ?? "your store", `${appUrl}/dashboard`) },
         smtp
@@ -41,5 +41,5 @@ export async function GET(req: NextRequest) {
     console.error("[verify-email] Welcome email failed:", e);
   }
 
-  return NextResponse.redirect(new URL("/dashboard?verified=1", req.url));
+  return NextResponse.redirect(`${appUrl}/dashboard?verified=1`);
 }
