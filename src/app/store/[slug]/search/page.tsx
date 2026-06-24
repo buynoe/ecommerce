@@ -1,0 +1,412 @@
+"use client";
+import { use, useEffect, useState, useCallback } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useSearchParams, useRouter } from "next/navigation";
+import { formatCurrency } from "@/lib/utils";
+import { Suspense } from "react";
+import CartBadge from "@/components/storefront/CartBadge";
+
+interface Product {
+  id: string; handle: string; title: string; vendor?: string;
+  images: { url: string }[]; variants: { price: number; compareAtPrice?: number; inventoryItem?: { available: number } }[];
+  collections?: { collection: { id: string; title: string } }[];
+}
+
+interface Collection { id: string; title: string; handle: string }
+
+type SortOption = "relevance" | "price_asc" | "price_desc" | "newest" | "title_asc";
+
+const SORT_LABELS: Record<SortOption, string> = {
+  relevance: "Relevance",
+  price_asc: "Price: Low to High",
+  price_desc: "Price: High to Low",
+  newest: "Newest",
+  title_asc: "Name A–Z",
+};
+
+type Layout = "grid" | "list";
+
+function SearchContent({ slug }: { slug: string }) {
+  const sp = useSearchParams();
+  const router = useRouter();
+  const [query, setQuery] = useState(sp.get("q") || "");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [store, setStore] = useState<any>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [collections, setCollections] = useState<Collection[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [layout, setLayout] = useState<Layout>("grid");
+
+  // Filters
+  const [sort, setSort] = useState<SortOption>("relevance");
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
+  const [inStockOnly, setInStockOnly] = useState(false);
+  const [collectionId, setCollectionId] = useState("");
+  // Tag + vendor filters from URL params
+  const [tagFilter, setTagFilter] = useState(sp.get("tag") || "");
+  const [vendorFilter, setVendorFilter] = useState(sp.get("vendor") || "");
+
+  const loadStore = useCallback(async () => {
+    const r = await fetch(`/api/storefront/storeinfo?slug=${slug}`);
+    const d = await r.json();
+    setStore(d.store);
+    // Load collections for filter
+    if (d.store?.id) {
+      const cr = await fetch(`/api/storefront/products?storeId=${d.store.id}&limit=0`);
+      const cd = await cr.json();
+      setCollections(cd.collections || []);
+    }
+    return d.store;
+  }, [slug]);
+
+  const search = useCallback(async (q: string, s: typeof store, tag?: string, vendor?: string) => {
+    if (!s) return;
+    setLoading(true);
+    const params = new URLSearchParams({ storeId: s.id, limit: "60" });
+    if (q.trim()) params.set("search", q.trim());
+    if (collectionId) params.set("collectionId", collectionId);
+    if (tag) params.set("tag", tag);
+    if (vendor) params.set("vendor", vendor);
+    const r = await fetch(`/api/storefront/products?${params}`);
+    const d = await r.json();
+    setProducts(d.products || []);
+    setLoading(false);
+  }, [collectionId]);
+
+  useEffect(() => {
+    const initialTag = sp.get("tag") || "";
+    const initialVendor = sp.get("vendor") || "";
+    loadStore().then(s => {
+      const q = sp.get("q") || "";
+      setQuery(q);
+      search(q, s, initialTag, initialVendor);
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (store) search(query, store, tagFilter, vendorFilter);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [collectionId, store, tagFilter, vendorFilter]);
+
+  function onSearch(e: React.FormEvent) {
+    e.preventDefault();
+    // Clear tag/vendor filters when doing a fresh text search
+    setTagFilter("");
+    setVendorFilter("");
+    router.push(`/store/${slug}/search?q=${encodeURIComponent(query)}`);
+    if (store) search(query, store);
+  }
+
+  // Client-side filter + sort
+  const filtered = products.filter(p => {
+    const price = p.variants?.[0]?.price || 0;
+    if (priceMin && price < parseFloat(priceMin)) return false;
+    if (priceMax && price > parseFloat(priceMax)) return false;
+    if (inStockOnly) {
+      const inv = p.variants?.[0]?.inventoryItem;
+      if (inv && inv.available <= 0) return false;
+    }
+    return true;
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
+    const pa = a.variants?.[0]?.price || 0;
+    const pb = b.variants?.[0]?.price || 0;
+    if (sort === "price_asc") return pa - pb;
+    if (sort === "price_desc") return pb - pa;
+    if (sort === "title_asc") return a.title.localeCompare(b.title);
+    return 0;
+  });
+
+  const hasActiveFilters = priceMin || priceMax || inStockOnly || collectionId || sort !== "relevance" || tagFilter || vendorFilter;
+
+  function clearFilters() {
+    setPriceMin(""); setPriceMax(""); setInStockOnly(false); setCollectionId(""); setSort("relevance");
+    setTagFilter(""); setVendorFilter("");
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-20">
+        <div className="max-w-7xl mx-auto flex items-center gap-4">
+          <Link href={`/store/${slug}`} className="flex items-center gap-2 text-xl font-bold text-gray-900 shrink-0">
+            {store?.logo && <img src={store.logo} alt={store.name} className="w-7 h-7 rounded-lg object-cover" />}
+            {store?.name || slug}
+          </Link>
+          <form onSubmit={onSearch} className="flex gap-2 flex-1">
+            <input
+              type="search" value={query} onChange={e => setQuery(e.target.value)}
+              placeholder="Search products…" autoFocus
+              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+            />
+            <button type="submit" className="px-5 py-2.5 bg-green-600 text-white rounded-xl text-sm font-semibold hover:bg-green-700">Search</button>
+          </form>
+          <Link href={`/store/${slug}/account`} className="text-gray-600 hover:text-gray-900 shrink-0 text-sm font-medium hidden sm:block">👤</Link>
+          {store?.id && <CartBadge slug={slug} storeId={store.id} />}
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 py-6 flex gap-6">
+        {/* Sidebar Filters — desktop */}
+        <aside className="hidden lg:block w-56 shrink-0 space-y-6">
+          <div className="bg-white rounded-xl border border-gray-200 p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-gray-900 text-sm">Filters</h3>
+              {hasActiveFilters && (
+                <button onClick={clearFilters} className="text-xs text-red-500 hover:underline">Clear all</button>
+              )}
+            </div>
+
+            {/* Collections */}
+            {collections.length > 0 && (
+              <div className="mb-5">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Category</p>
+                <div className="space-y-1">
+                  <button onClick={() => setCollectionId("")}
+                    className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!collectionId ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
+                    All Products
+                  </button>
+                  {collections.map(c => (
+                    <button key={c.id} onClick={() => setCollectionId(c.id)}
+                      className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${collectionId === c.id ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
+                      {c.title}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Price Range */}
+            <div className="mb-5">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Price Range</p>
+              <div className="flex gap-2 items-center">
+                <input type="number" placeholder="Min" value={priceMin} onChange={e => setPriceMin(e.target.value)}
+                  className="w-20 border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:ring-1 focus:ring-green-500 focus:outline-none" />
+                <span className="text-gray-400 text-xs">–</span>
+                <input type="number" placeholder="Max" value={priceMax} onChange={e => setPriceMax(e.target.value)}
+                  className="w-20 border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:ring-1 focus:ring-green-500 focus:outline-none" />
+              </div>
+            </div>
+
+            {/* In stock */}
+            <div className="mb-5">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={inStockOnly} onChange={e => setInStockOnly(e.target.checked)} className="w-4 h-4 text-green-600 rounded" />
+                <span className="text-sm text-gray-700">In Stock Only</span>
+              </label>
+            </div>
+
+            {/* Sort */}
+            <div>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Sort By</p>
+              <select value={sort} onChange={e => setSort(e.target.value as SortOption)}
+                className="w-full border border-gray-200 rounded-lg px-2 py-2 text-sm focus:ring-1 focus:ring-green-500 focus:outline-none">
+                {Object.entries(SORT_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+              </select>
+            </div>
+          </div>
+        </aside>
+
+        {/* Main content */}
+        <div className="flex-1 min-w-0">
+          {/* Mobile filter bar */}
+          <div className="lg:hidden flex items-center gap-2 mb-4 overflow-x-auto pb-1">
+            <button onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium shrink-0 ${hasActiveFilters ? "bg-green-50 border-green-200 text-green-700" : "border-gray-200 text-gray-600"}`}>
+              🎛 Filters {hasActiveFilters && <span className="bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">!</span>}
+            </button>
+            <select value={sort} onChange={e => setSort(e.target.value as SortOption)}
+              className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-green-500 focus:outline-none">
+              {Object.entries(SORT_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+            </select>
+            {hasActiveFilters && <button onClick={clearFilters} className="text-xs text-red-500 shrink-0 hover:underline">Clear</button>}
+          </div>
+
+          {/* Mobile expanded filters */}
+          {showFilters && (
+            <div className="lg:hidden bg-white rounded-xl border border-gray-200 p-4 mb-4 grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-xs font-semibold text-gray-500 mb-2">Min Price (₹)</p>
+                <input type="number" placeholder="0" value={priceMin} onChange={e => setPriceMin(e.target.value)} className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-500 mb-2">Max Price (₹)</p>
+                <input type="number" placeholder="No limit" value={priceMax} onChange={e => setPriceMax(e.target.value)} className="w-full border border-gray-200 rounded px-2 py-1.5 text-sm" />
+              </div>
+              <div className="col-span-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" checked={inStockOnly} onChange={e => setInStockOnly(e.target.checked)} className="w-4 h-4 text-green-600" />
+                  <span className="text-sm text-gray-700">In Stock Only</span>
+                </label>
+              </div>
+              {collections.length > 0 && (
+                <div className="col-span-2">
+                  <p className="text-xs font-semibold text-gray-500 mb-2">Category</p>
+                  <select value={collectionId} onChange={e => setCollectionId(e.target.value)} className="w-full border border-gray-200 rounded px-2 py-2 text-sm">
+                    <option value="">All</option>
+                    {collections.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
+                  </select>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Results header: count + sort + layout toggle */}
+          <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
+            <p className="text-sm text-gray-500">
+              {loading ? "Searching…" : query
+                ? <><span className="font-semibold text-gray-900">{sorted.length}</span> results for &ldquo;{query}&rdquo;</>
+                : <><span className="font-semibold text-gray-900">{sorted.length}</span> products</>}
+            </p>
+            <div className="flex items-center gap-2">
+              {/* Sort (always visible on desktop) */}
+              <div className="hidden lg:flex items-center gap-2">
+                <label className="text-xs text-gray-500 font-medium whitespace-nowrap">Sort by:</label>
+                <select value={sort} onChange={e => setSort(e.target.value as SortOption)}
+                  className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:ring-1 focus:ring-green-500 focus:outline-none">
+                  {Object.entries(SORT_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                </select>
+              </div>
+              {/* Layout toggle */}
+              <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+                <button onClick={() => setLayout("grid")}
+                  className={`px-3 py-1.5 text-sm transition-colors ${layout === "grid" ? "bg-gray-900 text-white" : "text-gray-500 hover:bg-gray-50"}`}
+                  title="Grid view">
+                  ⊞
+                </button>
+                <button onClick={() => setLayout("list")}
+                  className={`px-3 py-1.5 text-sm transition-colors border-l border-gray-200 ${layout === "list" ? "bg-gray-900 text-white" : "text-gray-500 hover:bg-gray-50"}`}
+                  title="List view">
+                  ☰
+                </button>
+              </div>
+            </div>
+          </div>
+          {hasActiveFilters && (
+            <div className="flex gap-2 flex-wrap mb-3">
+              {tagFilter && <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">#{tagFilter} <button onClick={() => setTagFilter("")} className="ml-1">×</button></span>}
+              {vendorFilter && <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">Brand: {vendorFilter} <button onClick={() => setVendorFilter("")} className="ml-1">×</button></span>}
+              {priceMin && <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Min ₹{priceMin} <button onClick={() => setPriceMin("")} className="ml-1">×</button></span>}
+              {priceMax && <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Max ₹{priceMax} <button onClick={() => setPriceMax("")} className="ml-1">×</button></span>}
+              {inStockOnly && <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">In Stock <button onClick={() => setInStockOnly(false)} className="ml-1">×</button></span>}
+              {collectionId && <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">{collections.find(c => c.id === collectionId)?.title} <button onClick={() => setCollectionId("")} className="ml-1">×</button></span>}
+            </div>
+          )}
+
+          {loading && (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <div key={i} className="bg-white rounded-xl border border-gray-200 overflow-hidden animate-pulse">
+                  <div className="aspect-square bg-gray-100" />
+                  <div className="p-3 space-y-2"><div className="h-3 bg-gray-100 rounded w-3/4" /><div className="h-4 bg-gray-100 rounded w-1/2" /></div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!loading && sorted.length === 0 && (
+            <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
+              <div className="text-5xl mb-3">🔍</div>
+              <h2 className="text-xl font-semibold text-gray-700">{query ? `No results for "${query}"` : "No products found"}</h2>
+              <p className="text-gray-400 text-sm mt-1 mb-4">Try different keywords or remove some filters</p>
+              {hasActiveFilters && <button onClick={clearFilters} className="text-green-600 font-medium text-sm hover:underline">Clear all filters</button>}
+            </div>
+          )}
+
+          {!loading && sorted.length > 0 && (
+            layout === "grid" ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {sorted.map(p => {
+                  const img = p.images?.[0]?.url;
+                  const v = p.variants?.[0];
+                  const isOnSale = v?.compareAtPrice && v.compareAtPrice > v.price;
+                  const discount = isOnSale ? Math.round((1 - v!.price / v!.compareAtPrice!) * 100) : 0;
+                  const isOutOfStock = v?.inventoryItem && v.inventoryItem.available <= 0;
+                  return (
+                    <Link key={p.id} href={`/store/${slug}/products/${p.handle}`}
+                      className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group relative">
+                      {isOnSale && (
+                        <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                          {discount}% OFF
+                        </div>
+                      )}
+                      {isOutOfStock && (
+                        <div className="absolute top-2 right-2 z-10 bg-gray-700/80 text-white text-xs font-semibold px-2 py-0.5 rounded-full">
+                          Out of Stock
+                        </div>
+                      )}
+                      <div className="aspect-square bg-gray-50 overflow-hidden">
+                        {img
+                          ? <Image src={img} alt={p.title} width={300} height={300} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
+                          : <div className="w-full h-full flex items-center justify-center text-5xl">🛍️</div>}
+                      </div>
+                      <div className="p-3">
+                        {p.vendor && <p className="text-xs text-gray-400 mb-0.5">{p.vendor}</p>}
+                        <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 leading-snug">{p.title}</h3>
+                        {v && (
+                          <div className="flex items-center gap-2 mt-1.5">
+                            <span className="font-bold text-gray-900 text-base">{formatCurrency(v.price, store?.currency || "INR")}</span>
+                            {isOnSale && <span className="text-xs text-gray-400 line-through">{formatCurrency(v.compareAtPrice!, store?.currency || "INR")}</span>}
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              /* List view */
+              <div className="space-y-3">
+                {sorted.map(p => {
+                  const img = p.images?.[0]?.url;
+                  const v = p.variants?.[0];
+                  const isOnSale = v?.compareAtPrice && v.compareAtPrice > v.price;
+                  const discount = isOnSale ? Math.round((1 - v!.price / v!.compareAtPrice!) * 100) : 0;
+                  const isOutOfStock = v?.inventoryItem && v.inventoryItem.available <= 0;
+                  return (
+                    <Link key={p.id} href={`/store/${slug}/products/${p.handle}`}
+                      className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all flex group">
+                      <div className="w-28 h-28 shrink-0 bg-gray-50 overflow-hidden relative">
+                        {img
+                          ? <Image src={img} alt={p.title} width={112} height={112} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
+                          : <div className="w-full h-full flex items-center justify-center text-3xl">🛍️</div>}
+                        {isOnSale && (
+                          <div className="absolute top-1 left-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                            {discount}% OFF
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 p-4 flex flex-col justify-center">
+                        {p.vendor && <p className="text-xs text-gray-400 mb-0.5">{p.vendor}</p>}
+                        <h3 className="font-semibold text-gray-900 text-sm line-clamp-2 mb-1">{p.title}</h3>
+                        {v && (
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-gray-900">{formatCurrency(v.price, store?.currency || "INR")}</span>
+                            {isOnSale && <span className="text-xs text-gray-400 line-through">{formatCurrency(v.compareAtPrice!, store?.currency || "INR")}</span>}
+                          </div>
+                        )}
+                        {isOutOfStock && <p className="text-xs text-red-500 mt-1">Out of Stock</p>}
+                      </div>
+                      <div className="flex items-center px-4">
+                        <span className="text-gray-300 group-hover:text-gray-600 text-lg transition-colors">→</span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function SearchPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
+  return <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-gray-400">Loading…</div>}><SearchContent slug={slug} /></Suspense>;
+}
