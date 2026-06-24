@@ -43,6 +43,8 @@ jobs:
         run: npm run build
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          # NEXT_PUBLIC_* vars are baked into the JS bundle at build time — must be real values
+          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
           # Server-side vars (read from Azure App Service env at runtime,
           # but needed here so Next.js build does not fail)
           JWT_SECRET: placeholder
