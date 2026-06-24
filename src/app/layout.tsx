@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import RecaptchaProvider from "@/components/RecaptchaProvider";
 
@@ -6,33 +6,27 @@ export const metadata: Metadata = {
   title: "Buynoe — Build Your Online Store",
   description: "India's #1 ecommerce platform for merchants. Start your free trial today.",
   icons: {
-    // Standard browser favicon
     icon: [
       { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
       { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
       { url: "/icon-192.png",   sizes: "192x192", type: "image/png" },
     ],
-    // Apple touch icon (iOS home screen, Safari pinned tab)
-    apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
-    ],
-    // Android / PWA
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
     other: [
       { rel: "manifest",             url: "/site.webmanifest" },
       { rel: "msapplication-config", url: "/browserconfig.xml" },
     ],
   },
   manifest: "/site.webmanifest",
-  themeColor: "#ec1f78",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Buynoe",
-  },
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "Buynoe" },
   other: {
     "msapplication-TileColor": "#ec1f78",
     "msapplication-TileImage": "/icon-192.png",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ec1f78",
 };
 
 export default function RootLayout({
