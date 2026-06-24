@@ -1,10 +1,7 @@
 import { PrismaClient } from "@prisma/client";
-import { PrismaLibSql } from "@prisma/adapter-libsql";
 import bcrypt from "bcryptjs";
-import path from "node:path";
 
-const adapter = new PrismaLibSql({ url: `file:${path.join(process.cwd(), "prisma/dev.db")}` });
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient({ datasourceUrl: process.env.DATABASE_URL });
 
 const slugify = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
