@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
-import { Eye, EyeOff, CheckCircle2, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, AlertCircle } from "lucide-react";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -160,10 +160,6 @@ function LoginContent() {
             </p>
           </form>
 
-          <div className="mt-5 flex items-center gap-2 p-3 bg-gray-50 rounded-lg text-xs text-gray-500">
-            <CheckCircle2 size={13} className="text-green-500 shrink-0" />
-            <span><strong>Demo:</strong> demo@buynoe.com / demo1234</span>
-          </div>
         </div>
 
         <p className="text-center text-sm text-gray-500 mt-6">
