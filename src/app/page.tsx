@@ -623,11 +623,6 @@ export default function LandingPage() {
               <ul className="space-y-2.5 text-sm">
                 <li>support@buynoe.com</li>
                 <li>legal@buynoe.com</li>
-                <li className="pt-1 leading-relaxed text-xs">
-                  Buynoe Technologies Private Limited<br />
-                  Bangalore, Karnataka 560001<br />
-                  India 🇮🇳
-                </li>
               </ul>
             </div>
           </div>
