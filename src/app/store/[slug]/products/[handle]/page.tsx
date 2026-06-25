@@ -297,8 +297,8 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   );
 
   const inStock = (selectedVariant?.inventoryItem?.available ?? 1) > 0;
-  const price = selectedVariant?.price ?? product.variants[0]?.price ?? 0;
-  const compareAtPrice = selectedVariant?.compareAtPrice ?? product.variants[0]?.compareAtPrice;
+  const price = selectedVariant?.price ?? 0;
+  const compareAtPrice = selectedVariant?.compareAtPrice ?? null;
   const discount = compareAtPrice && compareAtPrice > price ? Math.round((1 - price / compareAtPrice) * 100) : 0;
   const tags: string[] = (() => { try { return JSON.parse(product.tags || "[]"); } catch { return []; } })();
   // description may contain HTML from the rich-text editor

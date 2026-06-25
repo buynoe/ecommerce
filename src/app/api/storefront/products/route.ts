@@ -56,6 +56,7 @@ export async function GET(req: NextRequest) {
       include: {
         images: { where: { isFeatured: true }, take: 1 },
         variants: { where: { status: "ACTIVE" }, include: { inventoryItem: { select: { available: true } } }, orderBy: { price: "asc" } },
+        categories: { include: { category: { select: { id: true, name: true } } } },
       },
       orderBy: (orderByMap[sortBy] || { createdAt: "desc" }) as Record<string, string>,
     }),
