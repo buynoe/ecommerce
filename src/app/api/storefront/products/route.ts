@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
     { vendor: { contains: search } },
     { description: { contains: search } },
     { tags: { contains: search } },
+    { material: { contains: search } },
   ];
   if (collectionId) where.collections = { some: { collectionId } };
   if (vendorFilter) where.vendor = { contains: vendorFilter };

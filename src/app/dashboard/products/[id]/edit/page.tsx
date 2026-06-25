@@ -72,6 +72,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     description: product.description || "",
     vendor: product.vendor || "",
     productType: product.productType || "",
+    material: product.material || "",
     status: product.status,
     tags: (() => { try { return JSON.parse(product.tags || "[]").join(", "); } catch { return ""; } })(),
     options: reconstructedOptions,

@@ -38,7 +38,7 @@ interface Asset { id: string; url: string; thumbnailUrl?: string; filename: stri
 interface Props {
   initialData?: {
     id?: string; title?: string; description?: string; vendor?: string;
-    productType?: string; status?: string; tags?: string;
+    productType?: string; material?: string; status?: string; tags?: string;
     options?: ProductOption[];
     variants?: VariantRow[];
     images?: ProductImage[];
@@ -90,6 +90,7 @@ export default function ProductForm({ initialData, mode }: Props) {
     description: initialData?.description || "",
     vendor: initialData?.vendor || "",
     productType: initialData?.productType || "",
+    material: initialData?.material || "",
     status: initialData?.status || "ACTIVE",
     tags: initialData?.tags || "",
   });
@@ -298,10 +299,17 @@ export default function ProductForm({ initialData, mode }: Props) {
                     value={form.productType} onChange={e => setForm(f => ({ ...f, productType: e.target.value }))} placeholder="Clothing, Grocery, Electronics…" />
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Tags <span className="text-xs text-gray-400">(comma separated)</span></label>
-                <input className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
-                  value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))} placeholder="sale, summer, organic" />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Tags <span className="text-xs text-gray-400">(comma separated)</span></label>
+                  <input className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+                    value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))} placeholder="sale, summer, organic" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Material <span className="text-xs text-gray-400">(optional)</span></label>
+                  <input className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+                    value={form.material} onChange={e => setForm(f => ({ ...f, material: e.target.value }))} placeholder="Cotton, Stainless Steel, Leather…" />
+                </div>
               </div>
             </div>
 
