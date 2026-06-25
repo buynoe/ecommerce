@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
         orderBy: { position: "asc" },
       },
       taxProfile: true,
+      collections: { select: { collectionId: true }, take: 3 },
     },
   });
 

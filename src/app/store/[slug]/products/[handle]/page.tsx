@@ -1,5 +1,5 @@
 "use client";
-import { use, useEffect, useState, useMemo, useCallback } from "react";
+import { use, useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import CartBadge from "@/components/storefront/CartBadge";
@@ -27,6 +27,13 @@ interface Product {
   gstIncluded?: boolean;
   variants: Variant[];
   images: ProductImage[];
+  collections?: { collectionId: string }[];
+}
+
+interface RelatedProduct {
+  id: string; handle: string; title: string; vendor?: string;
+  images: { url: string }[];
+  variants: { price: number; compareAtPrice?: number | null; inventoryItem?: { available: number } }[];
 }
 
 // ── Image Zoom Lightbox ───────────────────────────────────────────────────────
@@ -140,6 +147,8 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   const [zoomIndex, setZoomIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [showBreakup, setShowBreakup] = useState(false);
+  const [relatedProducts, setRelatedProducts] = useState<RelatedProduct[]>([]);
+  const carouselRef = useRef<HTMLDivElement>(null);
   // For reviews: check if customer is logged in
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [loggedInCustomer, setLoggedInCustomer] = useState<any>(null);
@@ -166,6 +175,37 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         }
       });
   }, [slug, handle]);
+
+  // Fetch related products once product + store are loaded
+  useEffect(() => {
+    if (!product || !store?.id) return;
+    const collectionId = product.collections?.[0]?.collectionId;
+    const params = new URLSearchParams({ storeId: store.id, limit: "12" });
+    if (collectionId) params.set("collectionId", collectionId);
+    else if (product.vendor) params.set("vendor", product.vendor);
+    fetch(`/api/storefront/products?${params}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (!d?.products) return;
+        // Exclude current product, cap at 10
+        const filtered = (d.products as RelatedProduct[]).filter(p => p.id !== product.id).slice(0, 10);
+        // If collection gave < 6, top up with vendor products
+        if (filtered.length < 6 && collectionId && product.vendor) {
+          const vendorParams = new URLSearchParams({ storeId: store.id, limit: "12", vendor: product.vendor });
+          fetch(`/api/storefront/products?${vendorParams}`)
+            .then(r => r.ok ? r.json() : null)
+            .then(vd => {
+              if (!vd?.products) return;
+              const existing = new Set(filtered.map((p: RelatedProduct) => p.id));
+              existing.add(product.id);
+              const extra = (vd.products as RelatedProduct[]).filter(p => !existing.has(p.id));
+              setRelatedProducts([...filtered, ...extra].slice(0, 10));
+            }).catch(() => {});
+        } else {
+          setRelatedProducts(filtered);
+        }
+      }).catch(() => {});
+  }, [product?.id, store?.id]);
 
   // Check customer login state for reviews
   useEffect(() => {
@@ -580,6 +620,71 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
           </div>
         </div>
       </div>
+
+      {/* ── Related Products ── */}
+      {relatedProducts.length > 0 && (
+        <div className="max-w-7xl mx-auto px-6 py-10 border-t border-gray-100">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-xl font-bold text-gray-900">You May Also Like</h2>
+            <div className="flex gap-2">
+              <button
+                onClick={() => carouselRef.current?.scrollBy({ left: -280, behavior: "smooth" })}
+                className="w-9 h-9 rounded-full border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors shadow-sm">
+                ‹
+              </button>
+              <button
+                onClick={() => carouselRef.current?.scrollBy({ left: 280, behavior: "smooth" })}
+                className="w-9 h-9 rounded-full border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center text-gray-600 hover:text-gray-900 transition-colors shadow-sm">
+                ›
+              </button>
+            </div>
+          </div>
+          <div
+            ref={carouselRef}
+            className="flex gap-4 overflow-x-auto scroll-smooth pb-2 snap-x snap-mandatory scrollbar-none"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+            {relatedProducts.map(p => {
+              const img = p.images?.[0]?.url;
+              const inStock = p.variants?.find(v => (v.inventoryItem?.available ?? 0) > 0);
+              const v = inStock ?? p.variants?.[0];
+              const isOnSale = v?.compareAtPrice && v.compareAtPrice > v.price;
+              const discount = isOnSale ? Math.round((1 - v!.price / v!.compareAtPrice!) * 100) : 0;
+              return (
+                <Link
+                  key={p.id}
+                  href={`/store/${slug}/products/${p.handle}`}
+                  className="shrink-0 w-40 sm:w-48 md:w-52 snap-start bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all group">
+                  <div className="relative aspect-square bg-gray-50 overflow-hidden">
+                    {img
+                      ? <img src={img} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      : <div className="w-full h-full flex items-center justify-center text-4xl">🛍️</div>}
+                    {isOnSale && discount > 0 && (
+                      <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                        -{discount}% OFF
+                      </div>
+                    )}
+                    {!inStock && (
+                      <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+                        <span className="text-xs font-semibold text-gray-500 bg-white/80 px-2 py-1 rounded-full">Out of Stock</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-3">
+                    {p.vendor && <p className="text-xs text-gray-400 mb-0.5 truncate">{p.vendor}</p>}
+                    <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 leading-snug mb-1.5">{p.title}</h3>
+                    {v && (
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="font-bold text-gray-900 text-sm">{formatCurrency(v.price, store?.currency)}</span>
+                        {isOnSale && <span className="text-xs text-gray-400 line-through">{formatCurrency(v.compareAtPrice!, store?.currency)}</span>}
+                      </div>
+                    )}
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* ── Reviews Section ── */}
       {product && store && (
