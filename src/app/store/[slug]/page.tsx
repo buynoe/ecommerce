@@ -10,7 +10,7 @@ import { cloudinaryTransform } from "@/lib/cloudinary-url";
 
 const BASE = "https://ecomm.buynoe.com";
 // Resize collection tiles: 400px wide, 195:370 ratio, fill crop, auto quality/format
-const COLLECTION_TRANSFORMS = "w_400,ar_195:370,c_fill,g_auto,q_auto,f_auto";
+const COLLECTION_TRANSFORMS = "w_400,ar_195:185,c_fill,g_auto,q_auto,f_auto";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -131,7 +131,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
                 <AnimateOnScroll key={c.id} from="bottom" delay={i * 60}>
                   <Link href={`/store/${slug}/collections/${c.handle}`}
                     className="block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow hover:border-green-300 group h-full">
-                    <div className="relative w-full bg-gray-100 overflow-hidden" style={{ aspectRatio: "195/370" }}>
+                    <div className="relative w-full bg-gray-100 overflow-hidden" style={{ aspectRatio: "195/185" }}>
                       {c.imageUrl ? (
                         <img src={cloudinaryTransform(c.imageUrl, COLLECTION_TRANSFORMS)} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
