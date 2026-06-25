@@ -14,6 +14,7 @@ interface OrderItem {
   variant: {
     title: string;
     sku?: string;
+    imageUrl?: string | null;
     product: {
       title: string;
       images: { url: string; alt?: string }[];
@@ -230,16 +231,17 @@ function OrderSuccessContent({ slug }: { slug: string }) {
 
             <div className="divide-y divide-gray-100">
               {order.items.map((item) => {
-                const img = item.variant.product.images?.[0];
+                const imgUrl = item.variant.imageUrl || item.variant.product.images?.[0]?.url || null;
+                const imgAlt = item.variant.product.images?.[0]?.alt || item.variant.product.title;
                 const isVariant = item.variant.title && item.variant.title !== "Default" && item.variant.title !== "";
                 return (
                   <div key={item.id} className="flex gap-5 p-5">
                     {/* Product Image */}
                     <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-100 border border-gray-100 shrink-0 flex items-center justify-center">
-                      {img ? (
+                      {imgUrl ? (
                         <Image
-                          src={img.url}
-                          alt={img.alt || item.variant.product.title}
+                          src={imgUrl}
+                          alt={imgAlt}
                           width={96}
                           height={96}
                           className="w-full h-full object-cover"

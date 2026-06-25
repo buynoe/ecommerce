@@ -198,12 +198,12 @@ function ReturnModal({ order, storeId, onClose, onSuccess }: { order: any; store
           <div>
             <p className="text-xs font-semibold text-gray-700 mb-2">Select Items to Return <span className="text-red-500">*</span></p>
             <div className="space-y-2">
-              {order.items.map((item: { id: string; title: string; variantTitle?: string; quantity: number; price: number; product?: { images?: { url: string }[] } }) => (
+              {order.items.map((item: { id: string; title: string; variantTitle?: string; variantImageUrl?: string | null; quantity: number; price: number; product?: { images?: { url: string }[] } }) => (
                 <label key={item.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${selectedItems[item.id] ? "border-green-500 bg-green-50" : "border-gray-200 hover:border-gray-300"}`}>
                   <input type="checkbox" checked={!!selectedItems[item.id]} onChange={() => toggleItem(item)} className="w-4 h-4 text-green-600 rounded" />
                   <div className="w-12 h-12 bg-gray-100 rounded-lg shrink-0 overflow-hidden flex items-center justify-center">
-                    {item.product?.images?.[0]?.url
-                      ? <img src={item.product.images[0].url} alt="" className="w-full h-full object-cover" />
+                    {(item.variantImageUrl || item.product?.images?.[0]?.url)
+                      ? <img src={item.variantImageUrl || item.product!.images![0].url} alt="" className="w-full h-full object-cover" />
                       : <span className="text-xl">📦</span>}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -567,14 +567,15 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
 
                     {/* Items */}
                     <div className="px-6 py-4 space-y-3">
-                      {order.items?.map((item: { id: string; quantity: number; price: number; title: string; variantTitle?: string; status?: string; cancelReason?: string; variant?: { title: string }; product?: { title: string; images?: { url: string }[] } }) => {
+                      {order.items?.map((item: { id: string; quantity: number; price: number; title: string; variantTitle?: string; variantImageUrl?: string | null; status?: string; cancelReason?: string; variant?: { title: string }; product?: { title: string; images?: { url: string }[] } }) => {
                         const isCancelled = item.status === "CANCELLED";
                         const canCancelItem = CANCELLABLE.includes(order.status) && !isCancelled;
+                        const itemImg = item.variantImageUrl || item.product?.images?.[0]?.url || null;
                         return (
                           <div key={item.id} className={`flex items-center gap-4 rounded-xl p-2 -mx-2 ${isCancelled ? "opacity-50" : ""}`}>
                             <div className="w-14 h-14 bg-gray-50 rounded-xl overflow-hidden shrink-0 border border-gray-100 flex items-center justify-center relative">
-                              {item.product?.images?.[0]?.url
-                                ? <img src={item.product.images[0].url} alt="" className="w-full h-full object-cover" />
+                              {itemImg
+                                ? <img src={itemImg} alt="" className="w-full h-full object-cover" />
                                 : <span className="text-xl">📦</span>}
                               {isCancelled && (
                                 <div className="absolute inset-0 bg-gray-900/50 flex items-center justify-center rounded-xl">
@@ -1082,8 +1083,8 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
             {/* Item preview */}
             <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-3 mb-4 border border-gray-100">
               <div className="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden shrink-0">
-                {cancelItemTarget.item.product?.images?.[0]?.url
-                  ? <img src={cancelItemTarget.item.product.images[0].url} alt="" className="w-full h-full object-cover" />
+                {(cancelItemTarget.item.variantImageUrl || cancelItemTarget.item.product?.images?.[0]?.url)
+                  ? <img src={cancelItemTarget.item.variantImageUrl || cancelItemTarget.item.product!.images![0].url} alt="" className="w-full h-full object-cover" />
                   : <span className="text-xl">📦</span>}
               </div>
               <div className="flex-1 min-w-0">

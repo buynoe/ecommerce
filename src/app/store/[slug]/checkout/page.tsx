@@ -768,9 +768,13 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
             <h2 className="font-bold text-gray-900 mb-4">Order Summary</h2>
 
             <div className="space-y-3 mb-4 max-h-56 overflow-y-auto pr-1">
-              {cart?.items?.map((item: { id: string; quantity: number; variant: { price: number; title: string; product: { title: string } } }) => (
+              {cart?.items?.map((item: { id: string; quantity: number; variant: { price: number; title: string; imageUrl?: string | null; product: { title: string; images?: { url: string }[] } } }) => {
+                const imgUrl = item.variant.imageUrl || item.variant.product.images?.[0]?.url || null;
+                return (
                 <div key={item.id} className="flex items-start gap-3 text-sm">
-                  <div className="w-10 h-10 bg-gray-100 rounded-lg shrink-0 flex items-center justify-center text-lg">📦</div>
+                  <div className="w-10 h-10 bg-gray-100 rounded-lg shrink-0 overflow-hidden flex items-center justify-center text-lg">
+                    {imgUrl ? <img src={imgUrl} alt="" className="w-full h-full object-cover" /> : "📦"}
+                  </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-gray-800 text-xs leading-tight truncate">{item.variant.product?.title}</p>
                     {item.variant.title !== "Default" && <p className="text-xs text-gray-400">{item.variant.title}</p>}
@@ -778,7 +782,8 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
                   </div>
                   <p className="font-semibold text-gray-900 shrink-0 text-sm">{formatCurrency(item.variant.price * item.quantity, store.currency)}</p>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             {/* Coupon */}
