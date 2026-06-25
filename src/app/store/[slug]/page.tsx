@@ -4,6 +4,7 @@ import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import StorefrontBannerSlider from "@/components/storefront/BannerSlider";
 import CartBadge from "@/components/storefront/CartBadge";
+import AnimateOnScroll from "@/components/storefront/AnimateOnScroll";
 
 export default async function StorefrontPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -75,24 +76,28 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
       {store.collections.length > 0 && (
         <section className="py-12 px-6 bg-gray-50">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Shop by Category</h2>
+            <AnimateOnScroll from="bottom">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Shop by Category</h2>
+            </AnimateOnScroll>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {store.collections.map(c => (
-                <Link key={c.id} href={`/store/${slug}/collections/${c.handle}`}
-                  className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow hover:border-green-300 group">
-                  <div className="relative w-full bg-gray-100 overflow-hidden" style={{ aspectRatio: "195/370" }}>
-                    {c.imageUrl ? (
-                      <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                    ) : (
-                      <div className="flex items-center justify-center h-full text-gray-300 group-hover:scale-110 transition-transform duration-300">
-                        <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
-                      </div>
-                    )}
-                  </div>
-                  <div className="p-3 text-center">
-                    <h3 className="font-semibold text-gray-900 text-sm">{c.title}</h3>
-                  </div>
-                </Link>
+              {store.collections.map((c, i) => (
+                <AnimateOnScroll key={c.id} from="bottom" delay={i * 60}>
+                  <Link href={`/store/${slug}/collections/${c.handle}`}
+                    className="block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow hover:border-green-300 group h-full">
+                    <div className="relative w-full bg-gray-100 overflow-hidden" style={{ aspectRatio: "195/370" }}>
+                      {c.imageUrl ? (
+                        <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="flex items-center justify-center h-full text-gray-300 group-hover:scale-110 transition-transform duration-300">
+                          <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-3 text-center">
+                      <h3 className="font-semibold text-gray-900 text-sm">{c.title}</h3>
+                    </div>
+                  </Link>
+                </AnimateOnScroll>
               ))}
             </div>
           </div>
@@ -102,12 +107,14 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
       {/* Products */}
       <section className="py-12 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Latest Products</h2>
-            <Link href={`/store/${slug}/search`} className="text-sm text-green-600 hover:text-green-700 font-semibold border border-green-200 px-4 py-2 rounded-lg hover:bg-green-50 transition-colors">
-              View All →
-            </Link>
-          </div>
+          <AnimateOnScroll from="bottom">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">Latest Products</h2>
+              <Link href={`/store/${slug}/search`} className="text-sm text-green-600 hover:text-green-700 font-semibold border border-green-200 px-4 py-2 rounded-lg hover:bg-green-50 transition-colors">
+                View All →
+              </Link>
+            </div>
+          </AnimateOnScroll>
           {store.products.length === 0 ? (
             <div className="text-center py-20 text-gray-400">
               <div className="text-5xl mb-4">🏪</div>
@@ -116,7 +123,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
-              {store.products.map(product => {
+              {store.products.map((product, i) => {
                 const cheapestInStock = product.variants.find(v => (v.inventoryItem?.available ?? 0) > 0);
                 const displayVariant = cheapestInStock ?? product.variants[0];
                 const price = displayVariant?.price || 0;
@@ -125,41 +132,46 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
                 const img = product.images[0]?.url;
                 const discount = compareAt && compareAt > price ? Math.round((1 - price / compareAt) * 100) : 0;
                 return (
-                  <Link key={product.id} href={`/store/${slug}/products/${product.handle}`}
-                    className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow relative">
-                    {discount > 0 && (
-                      <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{discount}% OFF</div>
-                    )}
-                    <div className="aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
-                      {img
-                        ? <img src={img} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                        : <span className="text-5xl">📦</span>}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-2">{product.title}</h3>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-gray-900">{formatCurrency(price, store.currency)}</span>
-                        {compareAt && compareAt > price && <span className="text-xs text-gray-400 line-through">{formatCurrency(compareAt, store.currency)}</span>}
+                  <AnimateOnScroll key={product.id} from="bottom" delay={i * 50}>
+                    <Link href={`/store/${slug}/products/${product.handle}`}
+                      className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-shadow relative block h-full">
+                      {discount > 0 && (
+                        <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{discount}% OFF</div>
+                      )}
+                      <div className="aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
+                        {img
+                          ? <img src={img} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                          : <span className="text-5xl">📦</span>}
                       </div>
-                      {isOutOfStock && <p className="text-xs text-red-500 mt-1">Out of stock</p>}
-                    </div>
-                  </Link>
+                      <div className="p-4">
+                        <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-2">{product.title}</h3>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-gray-900">{formatCurrency(price, store.currency)}</span>
+                          {compareAt && compareAt > price && <span className="text-xs text-gray-400 line-through">{formatCurrency(compareAt, store.currency)}</span>}
+                        </div>
+                        {isOutOfStock && <p className="text-xs text-red-500 mt-1">Out of stock</p>}
+                      </div>
+                    </Link>
+                  </AnimateOnScroll>
                 );
               })}
             </div>
           )}
           {store.products.length > 0 && (
-            <div className="text-center mt-10">
-              <Link href={`/store/${slug}/search`}
-                className="inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-gray-800 transition-colors text-sm">
-                View All Products →
-              </Link>
-            </div>
+            <AnimateOnScroll from="fade" delay={200}>
+              <div className="text-center mt-10">
+                <Link href={`/store/${slug}/search`}
+                  className="inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-3.5 rounded-xl font-semibold hover:bg-gray-800 transition-colors text-sm">
+                  View All Products →
+                </Link>
+              </div>
+            </AnimateOnScroll>
           )}
         </div>
       </section>
 
       {/* Footer */}
+      <AnimateOnScroll from="fade">
       <footer className="bg-gray-900 text-gray-400 py-12 px-6 mt-10">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -200,6 +212,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
           </div>
         </div>
       </footer>
+      </AnimateOnScroll>
     </div>
   );
 }
