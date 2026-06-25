@@ -543,11 +543,18 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
 
   // ── Derived ───────────────────────────────────────────────────────────────
 
-  const subtotal = cart?.items?.reduce((s: number, i: { quantity: number; variant: { price: number } }) => s + i.quantity * i.variant.price, 0) || 0;
+  type CheckoutCartItem = { quantity: number; variant: { price: number; product?: { gstRate?: number; gstIncluded?: boolean } } };
+  const subtotal = cart?.items?.reduce((s: number, i: CheckoutCartItem) => s + i.quantity * i.variant.price, 0) || 0;
   const selectedShipping = store?.shippingMethods?.find((m: { id: string }) => m.id === shippingMethodId);
   const shippingCost = selectedShipping?.price ?? 60;
-  const taxAmount = Math.round(subtotal * 0.18);
-  const total = subtotal + shippingCost + taxAmount - couponDiscount;
+  // GST is included in product prices — extract it for display only, don't add to total
+  const taxAmount = cart?.items?.reduce((s: number, i: CheckoutCartItem) => {
+    const rate = i.variant.product?.gstRate ?? 18;
+    const included = i.variant.product?.gstIncluded ?? true;
+    const linePrice = i.variant.price * i.quantity;
+    return s + (included ? linePrice * rate / (100 + rate) : linePrice * rate / 100);
+  }, 0) || 0;
+  const total = subtotal + shippingCost - couponDiscount;
 
   // ── Loaders ───────────────────────────────────────────────────────────────
 
@@ -802,18 +809,31 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
 
             {/* Price breakdown */}
             <div className="space-y-2 text-sm border-t border-gray-100 pt-4">
-              <div className="flex justify-between text-gray-600"><span>Subtotal</span><span>{formatCurrency(subtotal, store.currency)}</span></div>
+              <div className="flex justify-between text-gray-600">
+                <span>Base Price (excl. GST)</span>
+                <span>{formatCurrency(Math.round((subtotal - taxAmount) * 100) / 100, store.currency)}</span>
+              </div>
+              <div className="flex justify-between text-gray-600">
+                <span className="flex items-center gap-1.5">
+                  GST
+                  <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-1.5 py-0.5 rounded-full font-medium">Incl. in price</span>
+                </span>
+                <span>{formatCurrency(Math.round(taxAmount * 100) / 100, store.currency)}</span>
+              </div>
+              <div className="flex justify-between text-gray-700 font-medium">
+                <span>Subtotal (incl. GST)</span><span>{formatCurrency(subtotal, store.currency)}</span>
+              </div>
               <div className="flex justify-between text-gray-600">
                 <span>Shipping</span>
                 <span>{shippingCost === 0 ? <span className="text-green-600 font-medium">FREE</span> : formatCurrency(shippingCost, store.currency)}</span>
               </div>
-              <div className="flex justify-between text-gray-600"><span>GST (18%)</span><span>{formatCurrency(taxAmount, store.currency)}</span></div>
               {couponDiscount > 0 && (
                 <div className="flex justify-between text-green-600 font-medium"><span>Coupon Discount</span><span>−{formatCurrency(couponDiscount, store.currency)}</span></div>
               )}
               <div className="flex justify-between font-bold text-gray-900 text-base pt-3 border-t border-gray-200">
                 <span>Total</span><span>{formatCurrency(total, store.currency)}</span>
               </div>
+              <p className="text-xs text-gray-400 text-center pt-1">All prices include GST. No additional tax is charged.</p>
             </div>
 
             <button

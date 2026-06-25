@@ -50,7 +50,15 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
     loadCart(store.id);
   }
 
-  const subtotal = cart?.items?.reduce((s: number, i: { quantity: number; variant: { price: number } }) => s + i.quantity * i.variant.price, 0) || 0;
+  type CartItem = { id: string; quantity: number; variant: { id: string; price: number; title: string; options: Record<string, string>; imageUrl?: string | null; product: { title: string; handle: string; gstRate?: number; gstIncluded?: boolean; images: { url: string }[] } } };
+  const subtotal = cart?.items?.reduce((s: number, i: CartItem) => s + i.quantity * i.variant.price, 0) || 0;
+  const totalGst = cart?.items?.reduce((s: number, i: CartItem) => {
+    const rate = i.variant.product.gstRate ?? 18;
+    const included = i.variant.product.gstIncluded ?? true;
+    const linePrice = i.variant.price * i.quantity;
+    return s + (included ? linePrice * rate / (100 + rate) : linePrice * rate / 100);
+  }, 0) || 0;
+  const baseTotal = subtotal - totalGst;
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-gray-400">Loading cart…</div></div>;
 
@@ -81,7 +89,7 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
         ) : (
           <div className="grid lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-3">
-              {cart.items.map((item: { id: string; quantity: number; variant: { id: string; price: number; title: string; options: Record<string, string>; imageUrl?: string | null; product: { title: string; handle: string; images: { url: string }[] } } }) => {
+              {cart.items.map((item: CartItem) => {
                 const imgSrc = item.variant.imageUrl || item.variant.product.images?.[0]?.url || null;
                 return (
                 <div key={item.id} className="bg-white rounded-xl border border-gray-200 p-4 flex gap-4">
@@ -111,10 +119,16 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
             <div className="bg-white rounded-xl border border-gray-200 p-5 h-fit">
               <h2 className="font-semibold text-gray-900 mb-4">Order Summary</h2>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between text-gray-600"><span>Subtotal</span><span>{formatCurrency(subtotal, store?.currency)}</span></div>
-                <div className="flex justify-between text-gray-600"><span>Shipping</span><span className="text-green-600">Calculated at checkout</span></div>
-                <div className="flex justify-between text-gray-600"><span>Tax (GST)</span><span>Calculated at checkout</span></div>
-                <div className="flex justify-between font-bold text-gray-900 pt-2 border-t border-gray-100"><span>Estimated Total</span><span>{formatCurrency(subtotal, store?.currency)}</span></div>
+                <div className="flex justify-between text-gray-600"><span>Base Price (excl. GST)</span><span>{formatCurrency(Math.round(baseTotal * 100) / 100, store?.currency)}</span></div>
+                <div className="flex justify-between text-gray-600">
+                  <span className="flex items-center gap-1.5">
+                    GST
+                    <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-1.5 py-0.5 rounded-full">Incl. in price</span>
+                  </span>
+                  <span>{formatCurrency(Math.round(totalGst * 100) / 100, store?.currency)}</span>
+                </div>
+                <div className="flex justify-between font-bold text-gray-900 pt-2 border-t border-gray-100"><span>Subtotal (incl. GST)</span><span>{formatCurrency(subtotal, store?.currency)}</span></div>
+                <div className="flex justify-between text-gray-500 text-xs"><span>Shipping</span><span className="text-green-600">Calculated at checkout</span></div>
               </div>
               <Link href={`/store/${slug}/checkout`} className="block w-full mt-5 bg-green-600 text-white py-3 rounded-xl font-semibold text-center hover:bg-green-700 transition-colors">
                 Proceed to Checkout →

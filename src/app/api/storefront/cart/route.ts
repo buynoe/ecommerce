@@ -12,7 +12,7 @@ async function getOrCreateCart(storeId: string, sessionId: string) {
         include: {
           variant: {
             include: {
-              product: { select: { id: true, title: true, handle: true, storeId: true, images: { where: { isFeatured: true }, take: 1 } } },
+              product: { select: { id: true, title: true, handle: true, storeId: true, gstRate: true, gstIncluded: true, images: { where: { isFeatured: true }, take: 1 } } },
               inventoryItem: { select: { available: true } },
             },
           },
@@ -26,7 +26,7 @@ async function getOrCreateCart(storeId: string, sessionId: string) {
       include: {
         items: {
           where: { savedForLater: false },
-          include: { variant: { include: { product: { select: { id: true, title: true, handle: true, storeId: true, images: { where: { isFeatured: true }, take: 1 } } }, inventoryItem: { select: { available: true } } } } },
+          include: { variant: { include: { product: { select: { id: true, title: true, handle: true, storeId: true, gstRate: true, gstIncluded: true, images: { where: { isFeatured: true }, take: 1 } } }, inventoryItem: { select: { available: true } } } } },
         },
       },
     });
