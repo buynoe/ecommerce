@@ -163,8 +163,8 @@ function SearchContent({ slug }: { slug: string }) {
     setSort("relevance"); setTagFilter(""); setBrandFilter(""); setCategoryFilter(""); setMaterialFilter("");
   }
 
-  // ── Shared sidebar filter content ──
-  function FilterPanel({ mobile = false }: { mobile?: boolean }) {
+  // ── Shared sidebar filter content — called as a function, not a component ──
+  function renderFilters(mobile = false) {
     return (
       <>
         {/* Collections — always shown */}
@@ -328,7 +328,7 @@ function SearchContent({ slug }: { slug: string }) {
                 <button onClick={clearFilters} className="text-xs text-red-500 hover:underline">Clear all</button>
               )}
             </div>
-            <FilterPanel />
+            {renderFilters()}
           </div>
         </aside>
 
@@ -350,7 +350,7 @@ function SearchContent({ slug }: { slug: string }) {
           {/* Mobile expanded filters */}
           {showFilters && (
             <div className="lg:hidden bg-white rounded-xl border border-gray-200 p-4 mb-4 grid grid-cols-2 gap-4">
-              <FilterPanel mobile />
+              {renderFilters(true)}
             </div>
           )}
 
