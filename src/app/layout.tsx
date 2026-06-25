@@ -2,9 +2,35 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import RecaptchaProvider from "@/components/RecaptchaProvider";
 
+const BASE = "https://ecomm.buynoe.com";
+
 export const metadata: Metadata = {
-  title: "Buynoe — Build Your Online Store",
-  description: "India's #1 ecommerce platform for merchants. Start your free trial today.",
+  metadataBase: new URL(BASE),
+  title: {
+    default: "Buynoe — Build Your Online Store",
+    template: "%s | Buynoe",
+  },
+  description: "Launch your online store in minutes with Buynoe — India's ecommerce platform for merchants. Manage products, orders, payments, inventory and customers from one powerful dashboard.",
+  keywords: ["online store builder", "ecommerce platform india", "sell online", "buynoe", "create online store", "merchant dashboard", "shopify alternative india"],
+  authors: [{ name: "Buynoe", url: BASE }],
+  creator: "Buynoe",
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: BASE,
+    siteName: "Buynoe",
+    title: "Buynoe — Build Your Online Store",
+    description: "Launch your online store in minutes. Manage products, orders, payments and more.",
+    images: [{ url: `${BASE}/og-image.png`, width: 1200, height: 630, alt: "Buynoe — Build Your Online Store" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Buynoe — Build Your Online Store",
+    description: "Launch your online store in minutes. Manage products, orders, payments and more.",
+    images: [`${BASE}/og-image.png`],
+  },
+  alternates: { canonical: BASE },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   icons: {
     icon: [
       { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },

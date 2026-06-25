@@ -2,6 +2,9 @@
 import { useEffect, useRef, useState } from "react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import Image from "next/image";
+import { cloudinaryTransform } from "@/lib/cloudinary";
+
+const COLLECTION_TRANSFORMS = "w_600,h_300,c_fill,g_auto,q_auto,f_auto";
 
 interface Collection { id: string; title: string; handle: string; type: string; status: string; imageUrl?: string | null; _count: { products: number } }
 
@@ -90,7 +93,7 @@ export default function CollectionsPage() {
                 <p className="text-xs font-medium text-gray-600 mb-1.5">Collection Image <span className="text-gray-400 font-normal">(optional)</span></p>
                 {form.imageUrl ? (
                   <div className="relative w-full h-32 rounded-lg overflow-hidden border border-gray-200 group">
-                    <Image src={form.imageUrl} alt="Collection" fill className="object-cover" unoptimized />
+                    <Image src={cloudinaryTransform(form.imageUrl, COLLECTION_TRANSFORMS)} alt="Collection" fill className="object-cover" unoptimized />
                     <button
                       type="button"
                       onClick={() => setForm(f => ({ ...f, imageUrl: "" }))}
@@ -123,7 +126,7 @@ export default function CollectionsPage() {
               {/* Image area */}
               <div className="relative w-full h-32 bg-gray-50 group">
                 {c.imageUrl ? (
-                  <Image src={c.imageUrl} alt={c.title} fill className="object-cover" unoptimized />
+                  <Image src={cloudinaryTransform(c.imageUrl, COLLECTION_TRANSFORMS)} alt={c.title} fill className="object-cover" unoptimized />
                 ) : (
                   <div className="flex items-center justify-center h-full text-gray-300">
                     <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>

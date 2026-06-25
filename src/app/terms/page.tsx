@@ -1,6 +1,11 @@
 import Link from "next/link";
 
-export const metadata = { title: "Terms of Service | Buynoe" };
+export const metadata = {
+  title: "Terms of Service | Buynoe",
+  description: "Read the Buynoe Terms of Service — the rules and guidelines for using our ecommerce platform.",
+  robots: { index: true, follow: true },
+  alternates: { canonical: "https://ecomm.buynoe.com/terms" },
+};
 
 const SECTIONS = [
   {

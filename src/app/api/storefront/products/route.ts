@@ -6,7 +6,8 @@ export async function GET(req: NextRequest) {
   const storeId = searchParams.get("storeId");
   if (!storeId) return NextResponse.json({ error: "storeId required" }, { status: 400 });
 
-  const collectionId = searchParams.get("collectionId") || undefined;
+  const collectionHandle = searchParams.get("collectionHandle") || undefined;
+  let collectionId = searchParams.get("collectionId") || undefined;
   const search = searchParams.get("search") || undefined;
   const vendorFilter = searchParams.get("vendor") || undefined;
   const tagFilter = searchParams.get("tag") || undefined;
@@ -25,6 +26,17 @@ export async function GET(req: NextRequest) {
       orderBy: { title: "asc" },
     });
     return NextResponse.json({ products: [], total: 0, page: 1, pages: 0, collections });
+  }
+
+  // Resolve collectionHandle → collectionId if needed
+  if (!collectionId && collectionHandle) {
+    const col = await prisma.collection.findUnique({
+      where: { storeId_handle: { storeId, handle: collectionHandle } },
+      select: { id: true },
+    });
+    collectionId = col?.id;
+    // If handle provided but collection not found, return empty
+    if (!collectionId) return NextResponse.json({ products: [], total: 0, page: 1, pages: 0, collections: [] });
   }
 
   const where: Record<string, unknown> = { storeId, status: "ACTIVE" };

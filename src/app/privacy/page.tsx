@@ -1,6 +1,11 @@
 import Link from "next/link";
 
-export const metadata = { title: "Privacy Policy | Buynoe" };
+export const metadata = {
+  title: "Privacy Policy | Buynoe",
+  description: "Read the Buynoe Privacy Policy to understand how we collect, use, and protect your personal data.",
+  robots: { index: true, follow: true },
+  alternates: { canonical: "https://ecomm.buynoe.com/privacy" },
+};
 
 const SECTIONS = [
   {

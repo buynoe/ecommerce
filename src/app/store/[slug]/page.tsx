@@ -5,6 +5,45 @@ import Link from "next/link";
 import StorefrontBannerSlider from "@/components/storefront/BannerSlider";
 import CartBadge from "@/components/storefront/CartBadge";
 import AnimateOnScroll from "@/components/storefront/AnimateOnScroll";
+import { Metadata } from "next";
+import { cloudinaryTransform } from "@/lib/cloudinary";
+
+const BASE = "https://ecomm.buynoe.com";
+// Resize collection tiles: 400px wide, 195:370 ratio, fill crop, auto quality/format
+const COLLECTION_TRANSFORMS = "w_400,ar_195:370,c_fill,g_auto,q_auto,f_auto";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const store = await prisma.store.findUnique({
+    where: { slug },
+    select: { name: true, description: true, logo: true, metaTitle: true, metaDesc: true },
+  });
+  if (!store) return { title: "Store Not Found" };
+
+  const title = store.metaTitle || `${store.name} — Official Store`;
+  const description = store.metaDesc || store.description || `Shop at ${store.name} — Browse our latest products, exclusive deals and fast delivery.`;
+  const url = `${BASE}/store/${slug}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      ...(store.logo && { images: [{ url: store.logo, alt: store.name }] }),
+    },
+    twitter: {
+      card: store.logo ? "summary_large_image" : "summary",
+      title,
+      description,
+      ...(store.logo && { images: [store.logo] }),
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 export default async function StorefrontPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -86,7 +125,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
                     className="block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow hover:border-green-300 group h-full">
                     <div className="relative w-full bg-gray-100 overflow-hidden" style={{ aspectRatio: "195/370" }}>
                       {c.imageUrl ? (
-                        <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <img src={cloudinaryTransform(c.imageUrl, COLLECTION_TRANSFORMS)} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="flex items-center justify-center h-full text-gray-300 group-hover:scale-110 transition-transform duration-300">
                           <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
