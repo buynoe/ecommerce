@@ -149,13 +149,15 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
         if (!d) return;
         setProduct(d.product);
         setStore(d.store);
-        // Prefer first variant's image, fall back to first product image
-        const firstVariant = d.product.variants[0];
-        setFeatImg(firstVariant?.imageUrl || d.product.images[0]?.url || null);
-        // Pre-select first variant's options
-        if (firstVariant) {
+        // Default to cheapest in-stock variant (matches what product listing shows)
+        const cheapestInStock = d.product.variants.find(
+          (v: { inventoryItem?: { available: number } }) => (v.inventoryItem?.available ?? 0) > 0
+        );
+        const defaultVariant = cheapestInStock || d.product.variants[0];
+        setFeatImg(defaultVariant?.imageUrl || d.product.images[0]?.url || null);
+        if (defaultVariant) {
           try {
-            const opts: Record<string, string> = JSON.parse(firstVariant.options || "{}");
+            const opts: Record<string, string> = JSON.parse(defaultVariant.options || "{}");
             if (Object.keys(opts).length > 0) setSelectedOptions(opts);
           } catch { /* single variant */ }
         }

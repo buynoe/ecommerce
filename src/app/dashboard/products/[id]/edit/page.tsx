@@ -28,7 +28,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
   type RawVariant = {
     id: string; title: string; sku?: string; price: number;
     compareAtPrice?: number; costPrice?: number; options?: string;
-    images?: { url: string }[];
+    imageUrl?: string | null;
     inventoryItem?: { available: number };
   };
 
@@ -96,7 +96,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         costPrice: v.costPrice ? String(v.costPrice) : "",
         stock: String(v.inventoryItem?.available ?? 0),
         imageIds: [],
-        imageUrls: v.images?.[0]?.url ? [v.images[0].url] : [],
+        imageUrls: v.imageUrl ? [v.imageUrl] : [],
       };
     }),
     images: product.images?.map((img: { id: string; url: string; alt?: string }) => ({

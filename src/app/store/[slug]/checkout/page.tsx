@@ -406,12 +406,13 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
         customerId = regData.customer.id;
       }
 
-      // Save new address if customer is logged in and chose "Add new"
-      if (loggedInCustomer && showNewAddressForm && saveNewAddress) {
+      // Save address: logged-in customer adding new address, OR new account just created
+      const isNewlyRegistered = createAccount && !loggedInCustomer && !!customerId;
+      if (saveNewAddress && (isNewlyRegistered || (loggedInCustomer && showNewAddressForm))) {
         setSavingAddr(true);
         await fetch("/api/storefront/customer/addresses", {
           method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ storeId: store.id, ...shipping, isDefault: savedAddresses.length === 0 }),
+          body: JSON.stringify({ storeId: store.id, ...shipping, isDefault: true }),
         });
         setSavingAddr(false);
       }
