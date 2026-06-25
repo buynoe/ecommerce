@@ -6,7 +6,7 @@ import StorefrontBannerSlider from "@/components/storefront/BannerSlider";
 import CartBadge from "@/components/storefront/CartBadge";
 import AnimateOnScroll from "@/components/storefront/AnimateOnScroll";
 import { Metadata } from "next";
-import { cloudinaryTransform } from "@/lib/cloudinary";
+import { cloudinaryTransform } from "@/lib/cloudinary-url";
 
 const BASE = "https://ecomm.buynoe.com";
 // Resize collection tiles: 400px wide, 195:370 ratio, fill crop, auto quality/format
@@ -79,10 +79,18 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
               <Link key={c.id} href={`/store/${slug}/collections/${c.handle}`} className="text-sm text-gray-600 hover:text-gray-900">{c.title}</Link>
             ))}
           </nav>
-          <div className="flex items-center gap-3">
-            <Link href={`/store/${slug}/search`} className="text-gray-500 hover:text-gray-900">🔍</Link>
-            <Link href={`/store/${slug}/account`} className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-gray-50 font-medium">
-              👤 My Account
+          <div className="flex items-center gap-2">
+            <Link href={`/store/${slug}/search`} aria-label="Search"
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </Link>
+            <Link href={`/store/${slug}/account`} aria-label="My Account"
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
             </Link>
             <CartBadge slug={slug} storeId={store.id} />
           </div>

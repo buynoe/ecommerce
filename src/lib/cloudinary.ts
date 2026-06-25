@@ -1,17 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
 
-/**
- * Insert Cloudinary transformation string into an existing Cloudinary URL.
- * Works on any res.cloudinary.com URL regardless of which account uploaded it.
- * Returns the original url unchanged if it is not a Cloudinary URL.
- */
-export function cloudinaryTransform(url: string | null | undefined, transforms: string): string {
-  if (!url) return "";
-  const marker = "/image/upload/";
-  const idx = url.indexOf(marker);
-  if (idx === -1) return url; // not a Cloudinary URL
-  return url.slice(0, idx + marker.length) + transforms + "/" + url.slice(idx + marker.length);
-}
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

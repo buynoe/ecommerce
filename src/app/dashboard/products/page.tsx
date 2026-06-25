@@ -27,8 +27,10 @@ export default function ProductsPage() {
   useEffect(() => { fetch_(); }, [fetch_]);
 
   async function deleteProduct(id: string) {
-    if (!confirm("Delete this product permanently?")) return;
-    await fetch(`/api/products/${id}`, { method: "DELETE" });
+    if (!confirm("Delete this product? If it has order history it will be archived instead of permanently deleted.")) return;
+    const r = await fetch(`/api/products/${id}`, { method: "DELETE" });
+    const d = await r.json();
+    if (d.archived) alert(d.message);
     fetch_();
   }
 

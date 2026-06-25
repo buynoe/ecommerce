@@ -151,6 +151,27 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const m = await requireMerchant();
   if (!m) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   const { id } = await params;
-  await prisma.product.delete({ where: { id, storeId: m.store!.id } });
-  return NextResponse.json({ success: true });
+
+  const product = await prisma.product.findFirst({ where: { id, storeId: m.store!.id }, select: { id: true } });
+  if (!product) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  // Check whether any orders or live cart items reference this product
+  const [orderCount, cartCount] = await Promise.all([
+    prisma.orderItem.count({ where: { productId: id } }),
+    prisma.cartItem.count({ where: { variant: { productId: id } } }),
+  ]);
+
+  if (orderCount > 0 || cartCount > 0) {
+    // Hard-delete would break order history — archive instead
+    await prisma.product.update({ where: { id }, data: { status: "ARCHIVED" } });
+    return NextResponse.json({
+      success: true,
+      archived: true,
+      message: `Product archived — it has ${orderCount} order${orderCount !== 1 ? "s" : ""} referencing it. It is hidden from your storefront but order history is preserved.`,
+    });
+  }
+
+  // No references — safe to permanently delete
+  await prisma.product.delete({ where: { id } });
+  return NextResponse.json({ success: true, archived: false, message: "Product permanently deleted." });
 }

@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import Image from "next/image";
-import { cloudinaryTransform } from "@/lib/cloudinary";
+import { cloudinaryTransform } from "@/lib/cloudinary-url";
 
 const COLLECTION_TRANSFORMS = "w_600,h_300,c_fill,g_auto,q_auto,f_auto";
 
