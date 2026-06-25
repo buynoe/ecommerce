@@ -29,7 +29,7 @@ export default function AnimateOnScroll({ children, className = "", delay = 0, f
           ob.unobserve(el);
         }
       },
-      { threshold: 0.08 }
+      { threshold: 0.1 }
     );
     ob.observe(el);
     return () => ob.disconnect();
