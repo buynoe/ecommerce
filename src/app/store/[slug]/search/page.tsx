@@ -102,20 +102,26 @@ function SearchContent({ slug }: { slug: string }) {
   }
 
   // Client-side filter + sort
+  function getDisplayVariant(p: typeof products[0]) {
+    const inStock = p.variants?.find(v => (v.inventoryItem?.available ?? 0) > 0);
+    return inStock ?? p.variants?.[0];
+  }
+
   const filtered = products.filter(p => {
-    const price = p.variants?.[0]?.price || 0;
+    const dv = getDisplayVariant(p);
+    const price = dv?.price || 0;
     if (priceMin && price < parseFloat(priceMin)) return false;
     if (priceMax && price > parseFloat(priceMax)) return false;
     if (inStockOnly) {
-      const inv = p.variants?.[0]?.inventoryItem;
-      if (inv && inv.available <= 0) return false;
+      const hasStock = p.variants?.some(v => (v.inventoryItem?.available ?? 0) > 0);
+      if (!hasStock) return false;
     }
     return true;
   });
 
   const sorted = [...filtered].sort((a, b) => {
-    const pa = a.variants?.[0]?.price || 0;
-    const pb = b.variants?.[0]?.price || 0;
+    const pa = getDisplayVariant(a)?.price || 0;
+    const pb = getDisplayVariant(b)?.price || 0;
     if (sort === "price_asc") return pa - pb;
     if (sort === "price_desc") return pb - pa;
     if (sort === "title_asc") return a.title.localeCompare(b.title);
@@ -322,10 +328,10 @@ function SearchContent({ slug }: { slug: string }) {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {sorted.map(p => {
                   const img = p.images?.[0]?.url;
-                  const v = p.variants?.[0];
+                  const v = getDisplayVariant(p);
                   const isOnSale = v?.compareAtPrice && v.compareAtPrice > v.price;
                   const discount = isOnSale ? Math.round((1 - v!.price / v!.compareAtPrice!) * 100) : 0;
-                  const isOutOfStock = v?.inventoryItem && v.inventoryItem.available <= 0;
+                  const isOutOfStock = !p.variants?.some(vv => (vv.inventoryItem?.available ?? 0) > 0);
                   return (
                     <Link key={p.id} href={`/store/${slug}/products/${p.handle}`}
                       className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group relative">
@@ -363,10 +369,10 @@ function SearchContent({ slug }: { slug: string }) {
               <div className="space-y-3">
                 {sorted.map(p => {
                   const img = p.images?.[0]?.url;
-                  const v = p.variants?.[0];
+                  const v = getDisplayVariant(p);
                   const isOnSale = v?.compareAtPrice && v.compareAtPrice > v.price;
                   const discount = isOnSale ? Math.round((1 - v!.price / v!.compareAtPrice!) * 100) : 0;
-                  const isOutOfStock = v?.inventoryItem && v.inventoryItem.available <= 0;
+                  const isOutOfStock = !p.variants?.some(vv => (vv.inventoryItem?.available ?? 0) > 0);
                   return (
                     <Link key={p.id} href={`/store/${slug}/products/${p.handle}`}
                       className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all flex group">

@@ -14,7 +14,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
       banners: { where: { isActive: true }, orderBy: { position: "asc" } },
       products: {
         where: { status: "ACTIVE" },
-        include: { images: { where: { isFeatured: true }, take: 1 }, variants: { take: 1, include: { inventoryItem: { select: { available: true } } }, orderBy: { price: "asc" } } },
+        include: { images: { where: { isFeatured: true }, take: 1 }, variants: { where: { status: "ACTIVE" }, include: { inventoryItem: { select: { available: true } } }, orderBy: { price: "asc" } } },
         orderBy: { createdAt: "desc" },
         take: 8,
       },
@@ -107,9 +107,11 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5">
               {store.products.map(product => {
-                const price = product.variants[0]?.price || 0;
-                const compareAt = product.variants[0]?.compareAtPrice;
-                const stock = product.variants[0]?.inventoryItem?.available ?? 0;
+                const cheapestInStock = product.variants.find(v => (v.inventoryItem?.available ?? 0) > 0);
+                const displayVariant = cheapestInStock ?? product.variants[0];
+                const price = displayVariant?.price || 0;
+                const compareAt = displayVariant?.compareAtPrice;
+                const isOutOfStock = !cheapestInStock;
                 const img = product.images[0]?.url;
                 const discount = compareAt && compareAt > price ? Math.round((1 - price / compareAt) * 100) : 0;
                 return (
@@ -129,7 +131,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
                         <span className="font-bold text-gray-900">{formatCurrency(price, store.currency)}</span>
                         {compareAt && compareAt > price && <span className="text-xs text-gray-400 line-through">{formatCurrency(compareAt, store.currency)}</span>}
                       </div>
-                      {stock === 0 && <p className="text-xs text-red-500 mt-1">Out of stock</p>}
+                      {isOutOfStock && <p className="text-xs text-red-500 mt-1">Out of stock</p>}
                     </div>
                   </Link>
                 );

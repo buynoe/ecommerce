@@ -51,9 +51,10 @@ export default function CollectionPage({ params }: { params: Promise<{ slug: str
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {data.products.map((p: { id: string; handle: string; title: string; vendor: string; images: { url: string }[]; variants: { price: number; compareAtPrice?: number }[] }) => {
+            {data.products.map((p: { id: string; handle: string; title: string; vendor: string; images: { url: string }[]; variants: { price: number; compareAtPrice?: number; inventoryItem?: { available: number } }[] }) => {
               const img = p.images?.[0]?.url;
-              const v = p.variants?.[0];
+              const cheapestInStock = p.variants?.find(vv => (vv.inventoryItem?.available ?? 0) > 0);
+              const v = cheapestInStock ?? p.variants?.[0];
               return (
                 <Link key={p.id} href={`/store/${slug}/products/${p.handle}`} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group">
                   <div className="aspect-square bg-gray-50 overflow-hidden">

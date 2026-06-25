@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
       where, skip: (page - 1) * limit, take: limit,
       include: {
         images: { where: { isFeatured: true }, take: 1 },
-        variants: { where: { status: "ACTIVE" }, include: { inventoryItem: { select: { available: true } } }, orderBy: { price: "asc" }, take: 1 },
+        variants: { where: { status: "ACTIVE" }, include: { inventoryItem: { select: { available: true } } }, orderBy: { price: "asc" } },
       },
       orderBy: (orderByMap[sortBy] || { createdAt: "desc" }) as Record<string, string>,
     }),
