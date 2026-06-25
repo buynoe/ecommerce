@@ -77,7 +77,7 @@ export async function createOrder(input: CreateOrderInput) {
             taxAmount: item.taxAmount || 0,
             discountAmount: item.discountAmount || 0,
             total: item.price * item.quantity,
-            imageUrl: variant.product.images[0]?.url,
+            imageUrl: variant.imageUrl || variant.product.images[0]?.url,
           };
         }),
       },

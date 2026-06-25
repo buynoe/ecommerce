@@ -49,7 +49,7 @@ export default function InventoryPage() {
                     <tr key={v.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          {v.product.images?.[0] && <img src={v.product.images[0].url} alt="" className="w-8 h-8 rounded object-cover" />}
+                          {(v.imageUrl || v.product.images?.[0]?.url) && <img src={v.imageUrl || v.product.images[0].url} alt="" className="w-8 h-8 rounded object-cover" />}
                           <span className="text-sm font-medium text-gray-900">{v.product.title}</span>
                         </div>
                       </td>

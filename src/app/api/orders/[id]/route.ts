@@ -15,7 +15,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
   const order = await prisma.order.findFirst({
     where: { id, storeId: m.store!.id },
     include: {
-      items: { include: { product: { select: { title: true, images: { take: 1 } } } } },
+      items: { include: { product: { select: { title: true, images: { take: 1 } } }, variant: { select: { imageUrl: true } } } },
       customer: true, payments: true, shipments: true,
       timeline: { orderBy: { createdAt: "asc" } },
       shippingMethod: true, returns: { include: { items: true } },

@@ -470,10 +470,12 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             <div className="flex items-center gap-3 mb-4">
               <div className="flex items-center border-2 border-gray-200 rounded-xl overflow-hidden">
                 <button onClick={() => setQty(q => Math.max(1, q - 1))}
-                  className="w-10 h-11 text-xl font-medium text-gray-600 hover:bg-gray-100 transition-colors">−</button>
+                  className="w-10 h-11 text-xl font-medium text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  disabled={qty <= 1}>−</button>
                 <span className="w-10 text-center text-base font-bold text-gray-900">{qty}</span>
                 <button onClick={() => setQty(q => q + 1)}
-                  className="w-10 h-11 text-xl font-medium text-gray-600 hover:bg-gray-100 transition-colors">+</button>
+                  className="w-10 h-11 text-xl font-medium text-gray-600 hover:bg-gray-100 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  disabled={qty >= (selectedVariant?.inventoryItem?.available ?? 9999)}>+</button>
               </div>
               <button
                 onClick={addToCart}

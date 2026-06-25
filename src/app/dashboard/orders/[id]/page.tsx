@@ -63,12 +63,12 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             <div className="px-6 py-4 border-b border-gray-100 font-semibold text-gray-900">Order Items</div>
             <table className="w-full">
               <tbody className="divide-y divide-gray-50">
-                {order.items.map((item: { id: string; imageUrl?: string; title: string; variantTitle?: string; sku?: string; price: number; quantity: number; total: number }) => (
+                {order.items.map((item: { id: string; imageUrl?: string; title: string; variantTitle?: string; sku?: string; price: number; quantity: number; total: number; variant?: { imageUrl?: string | null } }) => (
                   <tr key={item.id}>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden">
-                          {item.imageUrl ? <img src={item.imageUrl} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-lg">📦</div>}
+                          {(item.variant?.imageUrl || item.imageUrl) ? <img src={item.variant?.imageUrl || item.imageUrl!} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-lg">📦</div>}
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-900">{item.title}</p>
