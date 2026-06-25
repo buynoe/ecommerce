@@ -177,7 +177,7 @@ function SearchContent({ slug }: { slug: string }) {
                 {collections.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
               </select>
             ) : (
-              <div className="space-y-1">
+              <div className="space-y-1 max-h-44 overflow-y-auto">
                 <button onClick={() => setCollectionId("")}
                   className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!collectionId ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                   All Products
@@ -203,7 +203,7 @@ function SearchContent({ slug }: { slug: string }) {
                 {brandFacets.map(([brand, count]) => <option key={brand} value={brand}>{brand} ({count})</option>)}
               </select>
             ) : (
-              <div className="space-y-1">
+              <div className="space-y-1 max-h-44 overflow-y-auto">
                 <button onClick={() => setBrandFilter("")}
                   className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!brandFilter ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                   All Brands
@@ -230,7 +230,7 @@ function SearchContent({ slug }: { slug: string }) {
                 {categoryFacets.map(([id, { title, count }]) => <option key={id} value={id}>{title} ({count})</option>)}
               </select>
             ) : (
-              <div className="space-y-1">
+              <div className="space-y-1 max-h-44 overflow-y-auto">
                 <button onClick={() => setCategoryFilter("")}
                   className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!categoryFilter ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                   All Categories
@@ -257,7 +257,7 @@ function SearchContent({ slug }: { slug: string }) {
                 {materialFacets.map(([mat, count]) => <option key={mat} value={mat}>{mat} ({count})</option>)}
               </select>
             ) : (
-              <div className="space-y-1">
+              <div className="space-y-1 max-h-44 overflow-y-auto">
                 <button onClick={() => setMaterialFilter("")}
                   className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!materialFilter ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                   All Materials
@@ -321,14 +321,16 @@ function SearchContent({ slug }: { slug: string }) {
       <div className="max-w-7xl mx-auto px-4 py-6 flex gap-6">
         {/* Sidebar — desktop */}
         <aside className="hidden lg:block w-60 shrink-0">
-          <div className="bg-white rounded-xl border border-gray-200 p-5 sticky top-24">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-white rounded-xl border border-gray-200 sticky top-20 max-h-[calc(100vh-6rem)] flex flex-col overflow-hidden">
+            <div className="flex items-center justify-between px-5 pt-5 pb-3 shrink-0">
               <h3 className="font-bold text-gray-900 text-sm">Filters</h3>
               {hasActiveFilters && (
                 <button onClick={clearFilters} className="text-xs text-red-500 hover:underline">Clear all</button>
               )}
             </div>
-            {renderFilters()}
+            <div className="overflow-y-auto px-5 pb-5 space-y-5 flex-1 scrollbar-thin">
+              {renderFilters()}
+            </div>
           </div>
         </aside>
 
