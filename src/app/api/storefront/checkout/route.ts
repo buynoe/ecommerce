@@ -33,7 +33,19 @@ export async function POST(req: NextRequest) {
 
     const cart = await prisma.cart.findFirst({
       where: { storeId, sessionId },
-      include: { items: { where: { savedForLater: false }, include: { variant: { include: { inventoryItem: true } } } } },
+      include: {
+        items: {
+          where: { savedForLater: false },
+          include: {
+            variant: {
+              include: {
+                inventoryItem: true,
+                product: { select: { gstRate: true, gstIncluded: true } },
+              },
+            },
+          },
+        },
+      },
     });
     if (!cart || cart.items.length === 0) return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
 
@@ -54,18 +66,39 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const taxableAmount = subtotal - discountAmount;
-    const taxAmount = taxableAmount * 0.18;
+    // Calculate per-product GST
+    let gstDisplay = 0;   // Total GST for invoice display
+    let gstToAdd = 0;     // GST NOT included in prices (needs adding to total)
+    let allIncluded = true;
+    const orderItems = cart.items.map(item => {
+      const price = item.variant.price;
+      const qty = item.quantity;
+      const rate = (item.variant.product as { gstRate?: number; gstIncluded?: boolean })?.gstRate ?? 18;
+      const included = (item.variant.product as { gstRate?: number; gstIncluded?: boolean })?.gstIncluded ?? true;
+      let itemGst: number;
+      if (included) {
+        itemGst = price * qty * rate / (100 + rate);
+        gstDisplay += itemGst;
+      } else {
+        itemGst = price * qty * rate / 100;
+        gstDisplay += itemGst;
+        gstToAdd += itemGst;
+        allIncluded = false;
+      }
+      return {
+        variantId: item.variantId, quantity: qty, price,
+        compareAtPrice: item.variant.compareAtPrice || undefined,
+        taxAmount: Math.round(itemGst * 100) / 100,
+      };
+    });
+    const taxAmount = Math.round(gstDisplay * 100) / 100;
 
     const order = await createOrder({
       storeId, email, phone, customerId: customerId || undefined,
-      items: cart.items.map(item => ({
-        variantId: item.variantId, quantity: item.quantity, price: item.variant.price,
-        compareAtPrice: item.variant.compareAtPrice || undefined,
-      })),
+      items: orderItems,
       shippingAddress, billingAddress: billingAddress || shippingAddress,
       shippingMethodId, shippingCost: isFreeShipping ? 0 : shippingCost,
-      taxAmount, discountAmount, couponId, paymentGatewayId, notes,
+      taxAmount, taxIncluded: allIncluded, discountAmount, couponId, paymentGatewayId, notes,
     });
 
     if (couponId) {

@@ -185,6 +185,8 @@ model Product {
   vendor       String?
   productType  String?
   material     String?
+  gstRate      Float    @default(18)      // GST % e.g. 0, 5, 12, 18, 28
+  gstIncluded  Boolean  @default(true)    // true = price includes GST
   tags         String   @default("[]")    // JSON array
   options      String   @default("[]")    // JSON: [{name:"Size",values:["S","M","L"]},{name:"Color",values:["Red","Blue"]}]
   status       String   @default("ACTIVE") // ACTIVE | DRAFT | ARCHIVED

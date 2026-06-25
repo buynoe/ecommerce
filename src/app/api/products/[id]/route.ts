@@ -45,6 +45,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       ...(body.vendor !== undefined && { vendor: body.vendor }),
       ...(body.productType !== undefined && { productType: body.productType }),
       ...(body.material !== undefined && { material: body.material }),
+      ...(body.gstRate !== undefined && { gstRate: body.gstRate }),
+      ...(body.gstIncluded !== undefined && { gstIncluded: body.gstIncluded }),
       ...(body.tags !== undefined && { tags: JSON.stringify(body.tags) }),
     },
   });

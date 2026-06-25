@@ -322,7 +322,10 @@ function OrderSuccessContent({ slug }: { slug: string }) {
                 </div>
                 {order.taxAmount > 0 && (
                   <div className="flex justify-between text-gray-600">
-                    <span>GST (18%)</span>
+                    <span className="flex items-center gap-1.5">
+                      GST
+                      <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-1.5 py-0.5 rounded-full font-medium">Incl. in price</span>
+                    </span>
                     <span>{formatCurrency(order.taxAmount, order.currency)}</span>
                   </div>
                 )}

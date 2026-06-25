@@ -73,6 +73,8 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     vendor: product.vendor || "",
     productType: product.productType || "",
     material: product.material || "",
+    gstRate: product.gstRate ?? 18,
+    gstIncluded: product.gstIncluded ?? true,
     status: product.status,
     tags: (() => { try { return JSON.parse(product.tags || "[]").join(", "); } catch { return ""; } })(),
     options: reconstructedOptions,

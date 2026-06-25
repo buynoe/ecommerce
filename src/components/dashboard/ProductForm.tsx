@@ -38,7 +38,7 @@ interface Asset { id: string; url: string; thumbnailUrl?: string; filename: stri
 interface Props {
   initialData?: {
     id?: string; title?: string; description?: string; vendor?: string;
-    productType?: string; material?: string; status?: string; tags?: string;
+    productType?: string; material?: string; gstRate?: number; gstIncluded?: boolean; status?: string; tags?: string;
     options?: ProductOption[];
     variants?: VariantRow[];
     images?: ProductImage[];
@@ -91,6 +91,8 @@ export default function ProductForm({ initialData, mode }: Props) {
     vendor: initialData?.vendor || "",
     productType: initialData?.productType || "",
     material: initialData?.material || "",
+    gstRate: initialData?.gstRate ?? 18,
+    gstIncluded: initialData?.gstIncluded ?? true,
     status: initialData?.status || "ACTIVE",
     tags: initialData?.tags || "",
   });
@@ -309,6 +311,37 @@ export default function ProductForm({ initialData, mode }: Props) {
                   <label className="block text-sm font-medium text-gray-700 mb-1">Material <span className="text-xs text-gray-400">(optional)</span></label>
                   <input className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
                     value={form.material} onChange={e => setForm(f => ({ ...f, material: e.target.value }))} placeholder="Cotton, Stainless Steel, Leather…" />
+                </div>
+              </div>
+
+              {/* GST Configuration */}
+              <div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
+                <p className="text-sm font-semibold text-gray-800 mb-3">GST Configuration</p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">GST Rate</label>
+                    <select
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-green-500 focus:outline-none"
+                      value={form.gstRate}
+                      onChange={e => setForm(f => ({ ...f, gstRate: parseFloat(e.target.value) }))}>
+                      <option value={0}>0% — Exempt</option>
+                      <option value={5}>5%</option>
+                      <option value={12}>12%</option>
+                      <option value={18}>18%</option>
+                      <option value={28}>28%</option>
+                    </select>
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" checked={form.gstIncluded}
+                        onChange={e => setForm(f => ({ ...f, gstIncluded: e.target.checked }))}
+                        className="w-4 h-4 rounded text-green-600 border-gray-300" />
+                      <span className="text-sm text-gray-700">GST included in price</span>
+                    </label>
+                    <p className="text-xs text-gray-400 mt-1 ml-6">
+                      {form.gstIncluded ? "Price shown to customers already includes GST" : "GST will be added to price at checkout"}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>

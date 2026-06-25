@@ -23,6 +23,8 @@ interface Product {
   bodyHtml?: string;
   vendor?: string;
   tags?: string;
+  gstRate?: number;
+  gstIncluded?: boolean;
   variants: Variant[];
   images: ProductImage[];
 }
@@ -137,6 +139,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   const [zoomOpen, setZoomOpen] = useState(false);
   const [zoomIndex, setZoomIndex] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [showBreakup, setShowBreakup] = useState(false);
   // For reviews: check if customer is logged in
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [loggedInCustomer, setLoggedInCustomer] = useState<any>(null);
@@ -391,15 +394,54 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             <h1 className="text-3xl font-bold text-gray-900 leading-tight mb-4">{product.title}</h1>
 
             {/* Price */}
-            <div className="flex items-baseline gap-3 mb-6">
-              <span className="text-3xl font-black text-gray-900">{formatCurrency(price, store?.currency)}</span>
-              {compareAtPrice && compareAtPrice > price && (
-                <>
-                  <span className="text-xl text-gray-400 line-through font-medium">{formatCurrency(compareAtPrice, store?.currency)}</span>
-                  <span className="text-sm font-bold text-green-600 bg-green-50 px-2.5 py-0.5 rounded-full">
-                    Save {formatCurrency(compareAtPrice - price, store?.currency)}
-                  </span>
-                </>
+            <div className="mb-6">
+              <div className="flex items-baseline gap-3">
+                <span className="text-3xl font-black text-gray-900">{formatCurrency(price, store?.currency)}</span>
+                {compareAtPrice && compareAtPrice > price && (
+                  <>
+                    <span className="text-xl text-gray-400 line-through font-medium">{formatCurrency(compareAtPrice, store?.currency)}</span>
+                    <span className="text-sm font-bold text-green-600 bg-green-50 px-2.5 py-0.5 rounded-full">
+                      Save {formatCurrency(compareAtPrice - price, store?.currency)}
+                    </span>
+                  </>
+                )}
+              </div>
+              {/* GST label + breakup */}
+              {product.gstRate !== undefined && product.gstRate > 0 && product.gstIncluded && (
+                <div className="mt-1.5">
+                  <button
+                    onClick={() => setShowBreakup(b => !b)}
+                    className="text-xs text-gray-500 hover:text-green-700 flex items-center gap-1 transition-colors"
+                  >
+                    <span className="bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-full font-medium">
+                      Tax Included
+                    </span>
+                    <span className="underline underline-offset-2">
+                      {showBreakup ? "Hide Price Breakup ▲" : "View Price Breakup ▼"}
+                    </span>
+                  </button>
+                  {showBreakup && (() => {
+                    const gstRate = product.gstRate ?? 18;
+                    const gstAmount = price * gstRate / (100 + gstRate);
+                    const basePrice = price - gstAmount;
+                    return (
+                      <div className="mt-2 text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-xl p-3 space-y-1 w-fit">
+                        <div className="flex justify-between gap-8">
+                          <span>Base Price</span>
+                          <span className="font-medium">{formatCurrency(Math.round(basePrice * 100) / 100, store?.currency)}</span>
+                        </div>
+                        <div className="flex justify-between gap-8">
+                          <span>GST ({gstRate}%)</span>
+                          <span className="font-medium">{formatCurrency(Math.round(gstAmount * 100) / 100, store?.currency)}</span>
+                        </div>
+                        <div className="flex justify-between gap-8 border-t border-gray-200 pt-1 font-semibold text-gray-800">
+                          <span>Total (Incl. GST)</span>
+                          <span>{formatCurrency(price, store?.currency)}</span>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
               )}
             </div>
 

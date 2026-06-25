@@ -3,7 +3,8 @@ import { generateHandle, parseJSON } from "@/lib/utils";
 
 export async function createProduct(storeId: string, data: {
   title: string; description?: string; bodyHtml?: string; vendor?: string;
-  productType?: string; material?: string; tags?: string[]; status?: string; taxProfileId?: string;
+  productType?: string; material?: string; gstRate?: number; gstIncluded?: boolean;
+  tags?: string[]; status?: string; taxProfileId?: string;
   variants: Array<{ title?: string; sku?: string; price: number; compareAtPrice?: number;
     costPrice?: number; weight?: number; options?: Record<string, string>; stock?: number; imageUrl?: string | null }>;
   images?: Array<{ url: string; alt?: string; position?: number; isFeatured?: boolean }>;
@@ -17,6 +18,7 @@ export async function createProduct(storeId: string, data: {
       storeId, title: data.title, handle,
       description: data.description, bodyHtml: data.bodyHtml,
       vendor: data.vendor, productType: data.productType, material: data.material,
+      gstRate: data.gstRate ?? 18, gstIncluded: data.gstIncluded ?? true,
       tags: JSON.stringify(data.tags || []),
       status: data.status || "ACTIVE",
       taxProfileId: data.taxProfileId,

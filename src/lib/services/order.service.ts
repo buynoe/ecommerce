@@ -14,6 +14,7 @@ interface CreateOrderInput {
   shippingMethodId?: string;
   shippingCost?: number;
   taxAmount?: number;
+  taxIncluded?: boolean;
   discountAmount?: number;
   couponId?: string;
   paymentGatewayId?: string;
@@ -41,7 +42,9 @@ export async function createOrder(input: CreateOrderInput) {
   }
 
   const subtotal = input.items.reduce((s, i) => s + i.price * i.quantity, 0);
-  const total = subtotal + (input.shippingCost || 0) + (input.taxAmount || 0) - (input.discountAmount || 0);
+  // If tax is included in prices, don't add it again to the total
+  const taxToAdd = input.taxIncluded ? 0 : (input.taxAmount || 0);
+  const total = subtotal + (input.shippingCost || 0) + taxToAdd - (input.discountAmount || 0);
 
   const order = await prisma.order.create({
     data: {

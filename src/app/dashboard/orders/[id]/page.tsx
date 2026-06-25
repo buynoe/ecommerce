@@ -87,7 +87,15 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
               <div className="flex justify-between text-sm text-gray-600"><span>Subtotal</span><span>{formatCurrency(order.subtotal)}</span></div>
               {order.discountAmount > 0 && <div className="flex justify-between text-sm link-brand"><span>Discount</span><span>-{formatCurrency(order.discountAmount)}</span></div>}
               <div className="flex justify-between text-sm text-gray-600"><span>Shipping</span><span>{formatCurrency(order.shippingCost)}</span></div>
-              <div className="flex justify-between text-sm text-gray-600"><span>Tax (GST)</span><span>{formatCurrency(order.taxAmount)}</span></div>
+              {order.taxAmount > 0 && (
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span className="flex items-center gap-1.5">
+                    GST
+                    <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-1.5 py-0.5 rounded-full">Incl. in price</span>
+                  </span>
+                  <span>{formatCurrency(order.taxAmount)}</span>
+                </div>
+              )}
               <div className="flex justify-between text-base font-bold text-gray-900 pt-2 border-t border-gray-200"><span>Total</span><span>{formatCurrency(order.total)}</span></div>
             </div>
           </div>
