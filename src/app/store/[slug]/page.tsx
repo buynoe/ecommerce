@@ -76,11 +76,11 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
         <section className="py-12 px-6 bg-gray-50">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Shop by Category</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {store.collections.map(c => (
                 <Link key={c.id} href={`/store/${slug}/collections/${c.handle}`}
                   className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow hover:border-green-300 group">
-                  <div className="relative w-full aspect-[4/3] bg-gray-100 overflow-hidden">
+                  <div className="relative w-full bg-gray-100 overflow-hidden" style={{ aspectRatio: "195/370" }}>
                     {c.imageUrl ? (
                       <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     ) : (
