@@ -79,9 +79,19 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {store.collections.map(c => (
                 <Link key={c.id} href={`/store/${slug}/collections/${c.handle}`}
-                  className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md transition-shadow text-center hover:border-green-300 group">
-                  <div className="text-4xl mb-2 group-hover:scale-110 transition-transform">🗂️</div>
-                  <h3 className="font-semibold text-gray-900">{c.title}</h3>
+                  className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow hover:border-green-300 group">
+                  <div className="relative w-full aspect-[4/3] bg-gray-100 overflow-hidden">
+                    {c.imageUrl ? (
+                      <img src={c.imageUrl} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-gray-300 group-hover:scale-110 transition-transform duration-300">
+                        <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-3 text-center">
+                    <h3 className="font-semibold text-gray-900 text-sm">{c.title}</h3>
+                  </div>
                 </Link>
               ))}
             </div>
