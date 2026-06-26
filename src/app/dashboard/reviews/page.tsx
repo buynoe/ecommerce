@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
+import { Star, Check, X } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,7 +17,9 @@ function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map(s => (
-        <span key={s} className={s <= rating ? "text-yellow-400" : "text-gray-200"} style={{ fontSize: 14 }}>★</span>
+        s <= rating
+          ? <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+          : <Star key={s} className="w-4 h-4 text-gray-200" />
       ))}
     </div>
   );
@@ -91,7 +94,7 @@ export default function ReviewsPage() {
         <div className="p-12 text-center text-gray-400">Loading reviews…</div>
       ) : reviews.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-200 p-16 text-center">
-          <div className="text-5xl mb-4">⭐</div>
+          <div className="mb-4 flex justify-center"><Star className="w-14 h-14 text-gray-300" /></div>
           <h2 className="text-xl font-semibold text-gray-700 mb-2">No reviews yet</h2>
           <p className="text-gray-400 text-sm">Customer reviews will appear here once submitted</p>
         </div>
@@ -105,7 +108,7 @@ export default function ReviewsPage() {
                     <StarRating rating={review.rating} />
                     {statusBadge(review.status)}
                     {review.verified && (
-                      <span className="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-semibold">✓ Verified Purchase</span>
+                      <span className="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1"><Check className="w-3 h-3" /> Verified Purchase</span>
                     )}
                   </div>
                   {review.title && <p className="font-bold text-gray-900 mb-1">{review.title}</p>}
@@ -121,14 +124,14 @@ export default function ReviewsPage() {
                 <div className="flex items-center gap-2 shrink-0">
                   {review.status !== "APPROVED" && (
                     <button onClick={() => approve(review.id)}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 font-semibold">
-                      ✓ Approve
+                      className="text-xs px-3 py-1.5 rounded-lg bg-green-50 border border-green-200 text-green-700 hover:bg-green-100 font-semibold flex items-center gap-1">
+                      <Check className="w-4 h-4" /> Approve
                     </button>
                   )}
                   {review.status !== "REJECTED" && (
                     <button onClick={() => reject(review.id)}
-                      className="text-xs px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 font-semibold">
-                      ✕ Reject
+                      className="text-xs px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 font-semibold flex items-center gap-1">
+                      <X className="w-3 h-3" /> Reject
                     </button>
                   )}
                   <button onClick={() => del(review.id)}

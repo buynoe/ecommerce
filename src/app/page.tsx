@@ -13,6 +13,14 @@ import {
   Package2,
   Timer,
   RotateCcw,
+  Shield,
+  Smartphone,
+  BarChart2,
+  ShoppingCart,
+  Tag,
+  Mail,
+  Plug,
+  FileText,
   type LucideIcon,
 } from "lucide-react";
 
@@ -500,17 +508,17 @@ export default function LandingPage() {
             <h3 className="text-lg font-bold text-gray-900 text-center mb-6">Included in every plan</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
               {[
-                { icon: "🔒", title: "SSL & Security",    desc: "Free SSL certificate, DDoS protection, daily backups" },
-                { icon: "📱", title: "Mobile Storefront", desc: "Responsive store that works perfectly on every device" },
-                { icon: "📊", title: "Basic Analytics",   desc: "Sales reports, traffic overview and order insights" },
-                { icon: "🛒", title: "Cart & Checkout",   desc: "Abandoned cart recovery, one-page checkout, UPI QR" },
-                { icon: "🏷️", title: "SEO Tools",         desc: "Meta tags, sitemap, product schema for Google ranking" },
-                { icon: "📧", title: "Email Notifications", desc: "Order confirmation, shipping updates, review requests" },
-                { icon: "🔌", title: "API Access",        desc: "REST API to connect your own tools and workflows" },
-                { icon: "🇮🇳", title: "GST Invoicing",   desc: "Auto-generate GST-compliant invoices for every order" },
+                { icon: Shield,       title: "SSL & Security",      desc: "Free SSL certificate, DDoS protection, daily backups" },
+                { icon: Smartphone,   title: "Mobile Storefront",   desc: "Responsive store that works perfectly on every device" },
+                { icon: BarChart2,    title: "Basic Analytics",     desc: "Sales reports, traffic overview and order insights" },
+                { icon: ShoppingCart, title: "Cart & Checkout",     desc: "Abandoned cart recovery, one-page checkout, UPI QR" },
+                { icon: Tag,          title: "SEO Tools",           desc: "Meta tags, sitemap, product schema for Google ranking" },
+                { icon: Mail,         title: "Email Notifications", desc: "Order confirmation, shipping updates, review requests" },
+                { icon: Plug,         title: "API Access",          desc: "REST API to connect your own tools and workflows" },
+                { icon: FileText,     title: "GST Invoicing",       desc: "Auto-generate GST-compliant invoices for every order" },
               ].map((item, i) => (
                 <div key={item.title} className="flex gap-3 items-start">
-                  <div className="text-xl shrink-0 mt-0.5">{item.icon}</div>
+                  <div className="shrink-0 mt-0.5 text-gray-500"><item.icon className="w-5 h-5" /></div>
                   <div>
                     <div className="text-sm font-semibold text-gray-800">{item.title}</div>
                     <div className="text-xs text-gray-400 mt-0.5 leading-relaxed">{item.desc}</div>

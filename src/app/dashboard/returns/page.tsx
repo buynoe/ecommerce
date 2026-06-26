@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { Undo2, Package, Truck, AlertTriangle, Check, Download, CheckCircle2, Search, DollarSign, X } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
@@ -34,14 +35,14 @@ interface ReturnRecord {
 
 const RETURN_STATUSES = ["", "REQUESTED", "APPROVED", "PICKUP_SCHEDULED", "RECEIVED", "INSPECTED", "REFUNDED", "REJECTED"];
 
-const STATUS_META: Record<string, { label: string; color: string; icon: string }> = {
-  REQUESTED:        { label: "Requested",        color: "bg-yellow-100 text-yellow-700 border-yellow-200",  icon: "📥" },
-  APPROVED:         { label: "Approved",          color: "bg-blue-100 text-blue-700 border-blue-200",        icon: "✅" },
-  PICKUP_SCHEDULED: { label: "Pickup Scheduled",  color: "bg-indigo-100 text-indigo-700 border-indigo-200",  icon: "🚚" },
-  RECEIVED:         { label: "Received",          color: "bg-purple-100 text-purple-700 border-purple-200",  icon: "📦" },
-  INSPECTED:        { label: "Inspected",         color: "bg-orange-100 text-orange-700 border-orange-200",  icon: "🔍" },
-  REFUNDED:         { label: "Refunded",          color: "bg-green-100 text-green-700 border-green-200",     icon: "💰" },
-  REJECTED:         { label: "Rejected",          color: "bg-red-100 text-red-700 border-red-200",           icon: "✕" },
+const STATUS_META: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
+  REQUESTED:        { label: "Requested",        color: "bg-yellow-100 text-yellow-700 border-yellow-200",  icon: <Download className="w-3.5 h-3.5 inline" /> },
+  APPROVED:         { label: "Approved",          color: "bg-blue-100 text-blue-700 border-blue-200",        icon: <CheckCircle2 className="w-3.5 h-3.5 inline" /> },
+  PICKUP_SCHEDULED: { label: "Pickup Scheduled",  color: "bg-indigo-100 text-indigo-700 border-indigo-200",  icon: <Truck className="w-3.5 h-3.5 inline" /> },
+  RECEIVED:         { label: "Received",          color: "bg-purple-100 text-purple-700 border-purple-200",  icon: <Package className="w-3.5 h-3.5 inline" /> },
+  INSPECTED:        { label: "Inspected",         color: "bg-orange-100 text-orange-700 border-orange-200",  icon: <Search className="w-3.5 h-3.5 inline" /> },
+  REFUNDED:         { label: "Refunded",          color: "bg-green-100 text-green-700 border-green-200",     icon: <DollarSign className="w-3.5 h-3.5 inline" /> },
+  REJECTED:         { label: "Rejected",          color: "bg-red-100 text-red-700 border-red-200",           icon: <X className="w-3.5 h-3.5 inline" /> },
 };
 
 const NEXT_ACTIONS: Record<string, { label: string; status: string; color: string }[]> = {
@@ -116,7 +117,7 @@ function ReturnDetailModal({ ret, onClose, onUpdate }: { ret: ReturnRecord; onCl
           </div>
 
           <div className="p-6 space-y-5">
-            {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">⚠️ {error}</div>}
+            {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm flex items-center gap-2"><AlertTriangle className="w-4 h-4 shrink-0" /> {error}</div>}
 
             {/* Progress stepper */}
             <div>
@@ -133,7 +134,7 @@ function ReturnDetailModal({ ret, onClose, onUpdate }: { ret: ReturnRecord; onCl
                       <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold ${
                         active ? "btn-brand" : done ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-400"
                       }`}>
-                        {done && !active ? "✓ " : ""}{STATUS_META[s]?.label || s}
+                        {done && !active ? <><Check className="w-3 h-3 inline mr-0.5" /></> : null}{STATUS_META[s]?.label || s}
                       </div>
                       {i < arr.length - 1 && <span className="text-gray-300 text-xs">→</span>}
                     </div>
@@ -142,7 +143,7 @@ function ReturnDetailModal({ ret, onClose, onUpdate }: { ret: ReturnRecord; onCl
                 {ret.status === "REJECTED" && (
                   <div className="flex items-center gap-1 shrink-0">
                     <span className="text-gray-300 text-xs">→</span>
-                    <div className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-red-100 text-red-700">✕ Rejected</div>
+                    <div className="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-red-100 text-red-700 flex items-center gap-1"><X className="w-3 h-3" /> Rejected</div>
                   </div>
                 )}
               </div>
@@ -163,7 +164,7 @@ function ReturnDetailModal({ ret, onClose, onUpdate }: { ret: ReturnRecord; onCl
                 {ret.items.map((item, i) => (
                   <div key={item.id} className={`flex items-center gap-4 px-4 py-3 ${i > 0 ? "border-t border-gray-100" : ""}`}>
                     <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                      <span className="text-lg">📦</span>
+                      <Package className="w-5 h-5 text-gray-400" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-gray-900 truncate">{item.orderItem.title}</p>
@@ -219,7 +220,7 @@ function ReturnDetailModal({ ret, onClose, onUpdate }: { ret: ReturnRecord; onCl
 
             {isTerminal && (
               <div className={`rounded-xl px-4 py-3 text-sm font-semibold ${ret.status === "REFUNDED" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
-                {ret.status === "REFUNDED" ? `✅ Refund of ${formatCurrency(ret.refundAmount || 0)} processed` : "✕ Return request rejected"}
+                {ret.status === "REFUNDED" ? <span className="flex items-center gap-1"><Check className="w-4 h-4" /> Refund of {formatCurrency(ret.refundAmount || 0)} processed</span> : "Return request rejected"}
               </div>
             )}
 
@@ -283,7 +284,7 @@ export default function ReturnsPage() {
             </span>
           ))}
           <span className="text-blue-400 text-xs font-bold">or</span>
-          <span className="text-xs bg-red-100 text-red-700 px-2.5 py-1 rounded-full font-semibold">✕ Reject</span>
+          <span className="text-xs bg-red-100 text-red-700 px-2.5 py-1 rounded-full font-semibold flex items-center gap-1"><X className="w-3 h-3" /> Reject</span>
         </div>
       </div>
 
@@ -311,7 +312,7 @@ export default function ReturnsPage() {
           </div>
         ) : returns.length === 0 ? (
           <div className="p-20 text-center">
-            <div className="text-5xl mb-3">↩️</div>
+            <div className="mb-3 flex justify-center"><Undo2 className="w-14 h-14 text-gray-300" /></div>
             <p className="text-gray-600 font-semibold mb-1">No return requests</p>
             <p className="text-sm text-gray-400">
               {statusFilter ? `No returns with status "${STATUS_META[statusFilter]?.label || statusFilter}"` : "Customers can request returns from their account page after delivery."}

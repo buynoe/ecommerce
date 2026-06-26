@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Tag } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,7 +76,7 @@ export default function CategoriesPage() {
         <div className="p-12 text-center text-gray-400">Loading categories…</div>
       ) : categories.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-200 p-16 text-center">
-          <div className="text-5xl mb-4">🏷️</div>
+          <div className="mb-4 flex justify-center"><Tag className="w-14 h-14 text-gray-300" /></div>
           <h2 className="text-xl font-semibold text-gray-700 mb-2">No categories yet</h2>
           <p className="text-gray-400 text-sm mb-6">Create categories to organise your products and help customers browse easily</p>
           <button onClick={openNew} className="btn-brand px-6 py-3 rounded-xl font-semibold">
@@ -101,7 +102,7 @@ export default function CategoriesPage() {
                       {cat.imageUrl ? (
                         <img src={cat.imageUrl} alt={cat.name} className="w-10 h-10 rounded-lg object-cover shrink-0" />
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center shrink-0 text-lg">🏷️</div>
+                        <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center shrink-0"><Tag className="w-5 h-5 text-gray-400" /></div>
                       )}
                       <div>
                         <p className="font-semibold text-gray-900 text-sm">{cat.name}</p>

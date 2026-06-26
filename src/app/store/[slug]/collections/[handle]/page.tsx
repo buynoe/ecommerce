@@ -3,6 +3,7 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import CartBadge from "@/components/storefront/CartBadge";
+import { Package, ShoppingBag } from "lucide-react";
 
 export default function CollectionPage({ params }: { params: Promise<{ slug: string; handle: string }> }) {
   const { slug, handle } = use(params);
@@ -49,7 +50,7 @@ export default function CollectionPage({ params }: { params: Promise<{ slug: str
         </div>
         {!data?.products?.length ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-            <div className="text-5xl mb-3">📦</div>
+            <div className="mb-3 flex justify-center text-gray-300"><Package className="w-12 h-12" /></div>
             <p className="text-gray-500">No products in this collection</p>
           </div>
         ) : (
@@ -61,7 +62,7 @@ export default function CollectionPage({ params }: { params: Promise<{ slug: str
               return (
                 <Link key={p.id} href={`/store/${slug}/products/${p.handle}`} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group">
                   <div className="relative aspect-square bg-gray-50 overflow-hidden">
-                    {img ? <img src={img} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : <div className="w-full h-full flex items-center justify-center text-4xl">🛍️</div>}
+                    {img ? <img src={img} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : <div className="w-full h-full flex items-center justify-center text-gray-300"><ShoppingBag className="w-10 h-10" /></div>}
                     {v?.compareAtPrice && v.compareAtPrice > v.price && (
                       <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                         {Math.round((1 - v.price / v.compareAtPrice) * 100)}% OFF

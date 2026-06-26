@@ -3,6 +3,7 @@ import { use, useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
 import CartBadge from "@/components/storefront/CartBadge";
+import { Package, ShoppingBag, Truck, Lock, Star, Check, X, Search, Zap } from "lucide-react";
 
 interface Variant {
   id: string;
@@ -405,11 +406,11 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 </div>
               )}
               <div className="absolute bottom-3 right-3 z-10 bg-black/40 text-white text-xs px-2.5 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                🔍 Click to zoom
+                <Search className="w-3.5 h-3.5 inline mr-1" /> Click to zoom
               </div>
               {featImg
                 ? <img src={featImg} alt={product.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                : <div className="w-full h-full flex items-center justify-center text-8xl text-gray-200">📦</div>}
+                : <div className="w-full h-full flex items-center justify-center text-gray-200"><Package className="w-20 h-20" /></div>}
             </div>
             {galleryImages.length > 1 && (
               <div className="grid grid-cols-5 gap-2">
@@ -500,13 +501,13 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             {selectedVariant && (
               <div className="mb-5">
                 {!inStock ? (
-                  <span className="text-xs font-semibold bg-red-50 text-red-600 px-3 py-1 rounded-full border border-red-200">✗ Out of Stock</span>
+                  <span className="text-xs font-semibold bg-red-50 text-red-600 px-3 py-1 rounded-full border border-red-200 flex items-center gap-1 w-fit"><X className="w-3 h-3" /> Out of Stock</span>
                 ) : (selectedVariant.inventoryItem?.available ?? 99) <= 5 ? (
                   <span className="text-xs font-semibold bg-amber-50 text-amber-700 px-3 py-1 rounded-full border border-amber-200">
-                    ⚡ Only {selectedVariant.inventoryItem?.available} left!
+                    <Zap className="w-3 h-3 inline mr-1" /> Only {selectedVariant.inventoryItem?.available} left!
                   </span>
                 ) : (
-                  <span className="text-xs font-semibold sf-chip border px-3 py-1 rounded-full">✓ In Stock</span>
+                  <span className="text-xs font-semibold sf-chip border px-3 py-1 rounded-full flex items-center gap-1 w-fit"><Check className="w-3 h-3" /> In Stock</span>
                 )}
               </div>
             )}
@@ -579,7 +580,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                   : "bg-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
               >
-                {adding ? "Adding…" : added ? "✓ Added to Cart!" : inStock ? "Add to Cart" : "Out of Stock"}
+                {adding ? "Adding…" : added ? "Added to Cart!" : inStock ? "Add to Cart" : "Out of Stock"}
               </button>
             </div>
 
@@ -617,12 +618,12 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             {/* Trust badges */}
             <div className="grid grid-cols-3 gap-3 text-center">
               {[
-                { icon: "🚚", label: "Free Delivery", sub: "On orders above ₹499" },
-                { icon: "↩️", label: "Easy Returns", sub: "7-day return policy" },
-                { icon: "🔒", label: "Secure Payment", sub: "100% safe checkout" },
+                { icon: <Truck className="w-6 h-6" />, label: "Free Delivery", sub: "On orders above ₹499" },
+                { icon: <ShoppingBag className="w-6 h-6" />, label: "Easy Returns", sub: "7-day return policy" },
+                { icon: <Lock className="w-6 h-6" />, label: "Secure Payment", sub: "100% safe checkout" },
               ].map(b => (
                 <div key={b.label} className="bg-gray-50 rounded-xl p-3 border border-gray-100">
-                  <div className="text-2xl mb-1">{b.icon}</div>
+                  <div className="flex justify-center mb-1 text-gray-500">{b.icon}</div>
                   <p className="text-xs font-semibold text-gray-700">{b.label}</p>
                   <p className="text-xs text-gray-400 mt-0.5">{b.sub}</p>
                 </div>
@@ -668,7 +669,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                   <div className="relative aspect-square bg-gray-50 overflow-hidden">
                     {img
                       ? <img src={img} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                      : <div className="w-full h-full flex items-center justify-center text-4xl">🛍️</div>}
+                      : <div className="w-full h-full flex items-center justify-center text-gray-300"><ShoppingBag className="w-10 h-10" /></div>}
                     {isOnSale && discount > 0 && (
                       <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                         {discount}% OFF
@@ -730,8 +731,8 @@ function StarPicker({ value, onChange }: { value: number; onChange: (v: number) 
       {[1, 2, 3, 4, 5].map(s => (
         <button key={s} type="button" onClick={() => onChange(s)}
           onMouseEnter={() => setHover(s)} onMouseLeave={() => setHover(0)}
-          className="text-2xl transition-colors" style={{ color: s <= (hover || value) ? "#FBBF24" : "#E5E7EB" }}>
-          ★
+          className="transition-colors">
+          <Star className="w-6 h-6" style={{ color: s <= (hover || value) ? "#FBBF24" : "#E5E7EB", fill: s <= (hover || value) ? "#FBBF24" : "#E5E7EB" }} />
         </button>
       ))}
     </div>
@@ -800,9 +801,9 @@ function ReviewsSection({
             <h2 className="text-2xl font-bold text-gray-900">Customer Reviews</h2>
             {count > 0 && (
               <div className="flex items-center gap-3 mt-2">
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5">
                   {[1, 2, 3, 4, 5].map(s => (
-                    <span key={s} style={{ color: s <= Math.round(avg) ? "#FBBF24" : "#E5E7EB", fontSize: 20 }}>★</span>
+                    <Star key={s} className={`w-5 h-5 ${s <= Math.round(avg) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
                   ))}
                 </div>
                 <span className="font-bold text-gray-900 text-lg">{avg}</span>
@@ -823,7 +824,7 @@ function ReviewsSection({
                 href={`/store/${slug}/account`}
                 className="border border-gray-200 text-gray-600 px-5 py-2.5 rounded-xl font-semibold hover:bg-gray-50 text-sm transition-colors"
               >
-                🔐 Sign in to write a review
+                <Lock className="w-4 h-4 inline mr-1.5" /> Sign in to write a review
               </Link>
             )
           )}
@@ -831,7 +832,7 @@ function ReviewsSection({
 
         {submitted && (
           <div className="mb-6 sf-chip border px-5 py-4 rounded-2xl text-sm font-medium">
-            ✓ {submitMsg}
+            <Check className="w-4 h-4 inline mr-1" />{submitMsg}
           </div>
         )}
 
@@ -887,7 +888,7 @@ function ReviewsSection({
 
         {reviews.length === 0 ? (
           <div className="text-center py-12 text-gray-400">
-            <div className="text-4xl mb-3">⭐</div>
+            <div className="mb-3 flex justify-center"><Star className="w-10 h-10 text-gray-300" /></div>
             <p className="font-medium">No reviews yet</p>
             <p className="text-sm mt-1">Be the first to review this product!</p>
           </div>
@@ -900,11 +901,11 @@ function ReviewsSection({
                     <div className="flex items-center gap-3 mb-1 flex-wrap">
                       <div className="flex items-center gap-0.5">
                         {[1, 2, 3, 4, 5].map(s => (
-                          <span key={s} style={{ color: s <= review.rating ? "#FBBF24" : "#E5E7EB", fontSize: 14 }}>★</span>
+                          <Star key={s} className={`w-4 h-4 ${s <= review.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
                         ))}
                       </div>
                       {review.verified && (
-                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold">✓ Verified Purchase</span>
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-semibold flex items-center gap-1"><Check className="w-3 h-3" /> Verified Purchase</span>
                       )}
                     </div>
                     {review.title && <p className="font-bold text-gray-900 mb-1">{review.title}</p>}

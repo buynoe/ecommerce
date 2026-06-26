@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
+import { X } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { ORDER_STATUS_COLORS, ORDER_STATUS_LABELS } from "@/types";
 import Link from "next/link";
+import { ShoppingBag, Search, CalendarDays } from "lucide-react";
 
 const STATUSES = ["", "PENDING_PAYMENT", "PAID", "CONFIRMED", "PROCESSING", "PACKED", "SHIPPED", "DELIVERED", "CANCELLED", "RETURNED"];
 
@@ -112,8 +114,8 @@ export default function OrdersPage() {
         </div>
 
         {hasFilters && (
-          <button onClick={clearFilters} className="px-3 py-2 text-xs text-red-500 border border-red-200 rounded-lg hover:bg-red-50 font-medium whitespace-nowrap">
-            ✕ Clear
+          <button onClick={clearFilters} className="px-3 py-2 text-xs text-red-500 border border-red-200 rounded-lg hover:bg-red-50 font-medium whitespace-nowrap flex items-center gap-1">
+            <X className="w-3 h-3" /> Clear
           </button>
         )}
       </div>
@@ -121,9 +123,9 @@ export default function OrdersPage() {
       {/* Active filter chips */}
       {hasFilters && (
         <div className="flex gap-2 mb-3 flex-wrap text-xs">
-          {search && <span className="bg-green-100 text-green-700 px-2.5 py-1 rounded-full font-medium">🔍 &quot;{search}&quot;</span>}
-          {dateFrom && <span className="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-medium">📅 From {dateFrom}</span>}
-          {dateTo && <span className="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-medium">📅 To {dateTo}</span>}
+          {search && <span className="bg-green-100 text-green-700 px-2.5 py-1 rounded-full font-medium flex items-center gap-1"><Search className="w-4 h-4" />&quot;{search}&quot;</span>}
+          {dateFrom && <span className="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-medium flex items-center gap-1"><CalendarDays className="w-4 h-4" />From {dateFrom}</span>}
+          {dateTo && <span className="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-medium flex items-center gap-1"><CalendarDays className="w-4 h-4" />To {dateTo}</span>}
         </div>
       )}
 
@@ -133,7 +135,7 @@ export default function OrdersPage() {
           Loading orders…
         </div>
           : orders.length === 0 ? <div className="p-16 text-center text-gray-400">
-            <div className="text-4xl mb-3">🛍️</div>
+            <div className="flex justify-center mb-4"><ShoppingBag className="w-14 h-14 text-gray-300" /></div>
             <p className="font-medium">No orders found</p>
             {hasFilters && <button onClick={clearFilters} className="mt-3 text-[#ec1f78] text-sm hover:underline">Clear filters</button>}
           </div>

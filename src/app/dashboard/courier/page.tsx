@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, type ReactNode } from "react";
+import { Rocket, Package, Truck, Send, PackageCheck, Zap, MapPin, Edit2, Settings, Check, X, Lock } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 
 interface CourierAccount {
@@ -8,9 +9,9 @@ interface CourierAccount {
   warehousePincode?: string; isActive: boolean; isDefault: boolean; createdAt: string;
 }
 
-const PROVIDERS = [
+const PROVIDERS: { id: string; name: string; logo: ReactNode; color: string; desc: string; fields: string[]; docsUrl: string; fieldKeys: string[]; fieldLabels: string[] }[] = [
   {
-    id: "SHIPROCKET", name: "Shiprocket", logo: "🚀", color: "bg-orange-500",
+    id: "SHIPROCKET", name: "Shiprocket", logo: <Rocket className="w-6 h-6 text-white" />, color: "bg-orange-500",
     desc: "India's largest eCommerce shipping solution. Integrates 25+ couriers.",
     fields: ["email (username)", "password", "channelId (optional)"],
     docsUrl: "https://apidocs.shiprocket.in/",
@@ -18,7 +19,7 @@ const PROVIDERS = [
     fieldLabels: ["Email / Username", "Password", "Channel ID (optional)"],
   },
   {
-    id: "DELHIVERY", name: "Delhivery", logo: "📦", color: "bg-red-500",
+    id: "DELHIVERY", name: "Delhivery", logo: <Package className="w-6 h-6 text-white" />, color: "bg-red-500",
     desc: "India's fastest growing fully-integrated logistics services company.",
     fields: ["API Token"],
     docsUrl: "https://www.delhivery.com/",
@@ -26,7 +27,7 @@ const PROVIDERS = [
     fieldLabels: ["API Token"],
   },
   {
-    id: "DTDC", name: "DTDC", logo: "🔴", color: "bg-red-600",
+    id: "DTDC", name: "DTDC", logo: <Truck className="w-6 h-6 text-white" />, color: "bg-red-600",
     desc: "Premium courier service with pan-India coverage.",
     fields: ["Client ID", "API Key"],
     docsUrl: "https://dtdc.com/",
@@ -34,7 +35,7 @@ const PROVIDERS = [
     fieldLabels: ["Client ID", "API Key"],
   },
   {
-    id: "BLUEDART", name: "BlueDart", logo: "🔵", color: "bg-blue-600",
+    id: "BLUEDART", name: "BlueDart", logo: <Send className="w-6 h-6 text-white" />, color: "bg-blue-600",
     desc: "South Asia's leading courier delivery services company.",
     fields: ["Client ID", "API Key", "API Secret"],
     docsUrl: "https://www.bluedart.com/",
@@ -42,7 +43,7 @@ const PROVIDERS = [
     fieldLabels: ["Client ID", "API Key", "API Secret"],
   },
   {
-    id: "ECOMEXPRESS", name: "Ecom Express", logo: "🟢", color: "bg-brand-gradient",
+    id: "ECOMEXPRESS", name: "Ecom Express", logo: <PackageCheck className="w-6 h-6 text-white" />, color: "bg-green-600",
     desc: "Technology-driven end-to-end logistics solutions provider.",
     fields: ["Username", "Password"],
     docsUrl: "https://ecomexpress.in/",
@@ -50,7 +51,7 @@ const PROVIDERS = [
     fieldLabels: ["Username", "Password"],
   },
   {
-    id: "XPRESSBEES", name: "Xpressbees", logo: "🐝", color: "bg-yellow-500",
+    id: "XPRESSBEES", name: "Xpressbees", logo: <Zap className="w-6 h-6 text-white" />, color: "bg-yellow-500",
     desc: "Fastest delivery partner in India with AI-driven logistics.",
     fields: ["Username", "Password"],
     docsUrl: "https://www.xpressbees.com/",
@@ -153,8 +154,8 @@ export default function CourierPage() {
                 <div key={account.id} className={`bg-white rounded-xl border overflow-hidden ${account.isActive ? "border-gray-200" : "border-gray-100 opacity-70"}`}>
                   <div className="flex items-center justify-between p-5">
                     <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 ${prov?.color || "bg-gray-400"} rounded-xl flex items-center justify-center text-2xl text-white`}>
-                        {prov?.logo || "📦"}
+                      <div className={`w-12 h-12 ${prov?.color || "bg-gray-400"} rounded-xl flex items-center justify-center text-white`}>
+                        {prov?.logo || <Package className="w-6 h-6 text-white" />}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
@@ -163,7 +164,7 @@ export default function CourierPage() {
                           {!account.isActive && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">Paused</span>}
                         </div>
                         <p className="text-xs text-gray-400 mt-0.5">{prov?.desc}</p>
-                        {account.warehousePincode && <p className="text-xs text-gray-500 mt-0.5">📍 Pickup PIN: {account.warehousePincode}</p>}
+                        {account.warehousePincode && <p className="text-xs text-gray-500 mt-0.5 flex items-center gap-1"><MapPin className="w-3 h-3" /> Pickup PIN: {account.warehousePincode}</p>}
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
@@ -175,8 +176,8 @@ export default function CourierPage() {
                       <button onClick={() => toggle(account)} className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium">
                         {account.isActive ? "Pause" : "Activate"}
                       </button>
-                      <button onClick={() => openEdit(account)} className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium">
-                        ✏️ Edit
+                      <button onClick={() => openEdit(account)} className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 font-medium flex items-center gap-1">
+                        <Edit2 className="w-3 h-3" /> Edit
                       </button>
                       <button onClick={() => remove(account.id)} className="text-xs px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 font-medium">
                         Remove
@@ -200,11 +201,11 @@ export default function CourierPage() {
           return (
             <div key={prov.id} className="bg-white rounded-xl border border-gray-200 p-5">
               <div className="flex items-start gap-3 mb-4">
-                <div className={`w-12 h-12 ${prov.color} rounded-xl flex items-center justify-center text-2xl text-white shrink-0`}>{prov.logo}</div>
+                <div className={`w-12 h-12 ${prov.color} rounded-xl flex items-center justify-center text-white shrink-0`}>{prov.logo}</div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <h3 className="font-bold text-gray-900">{prov.name}</h3>
-                    {isConnected && <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">✓ Connected</span>}
+                    {isConnected && <span className="text-xs bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full flex items-center gap-0.5"><Check className="w-3 h-3" /> Connected</span>}
                   </div>
                   <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{prov.desc}</p>
                 </div>
@@ -227,7 +228,7 @@ export default function CourierPage() {
 
       {/* How it works */}
       <div className="mt-8 bg-blue-50 border border-blue-200 rounded-xl p-5">
-        <h3 className="font-bold text-blue-900 mb-3">⚙️ How Courier Integration Works</h3>
+        <h3 className="font-bold text-blue-900 mb-3 flex items-center gap-2"><Settings className="w-4 h-4" /> How Courier Integration Works</h3>
         <div className="grid sm:grid-cols-3 gap-4 text-sm text-blue-800">
           <div><span className="font-semibold">1. Connect API Credentials</span><p className="text-blue-600 text-xs mt-1">Enter your courier account credentials here. Your keys are encrypted and stored securely.</p></div>
           <div><span className="font-semibold">2. Create Shipment from Orders</span><p className="text-blue-600 text-xs mt-1">In each order detail page, click "Create Shipment" to book a pickup via your connected courier.</p></div>
@@ -241,13 +242,13 @@ export default function CourierPage() {
           <div className="bg-white rounded-2xl w-full max-w-lg">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 ${activeProv.color} rounded-xl flex items-center justify-center text-xl text-white`}>{activeProv.logo}</div>
+                <div className={`w-10 h-10 ${activeProv.color} rounded-xl flex items-center justify-center text-white`}>{activeProv.logo}</div>
                 <div>
                   <h2 className="font-bold text-gray-900">{editId ? "Edit" : "Connect"} {activeProv.name}</h2>
                   <p className="text-xs text-gray-500">Enter your {activeProv.name} API credentials</p>
                 </div>
               </div>
-              <button onClick={() => setAddingProvider(null)} className="text-gray-400 hover:text-gray-600 text-xl">×</button>
+              <button onClick={() => setAddingProvider(null)} className="text-gray-400 hover:text-gray-600 flex items-center"><X className="w-5 h-5" /></button>
             </div>
 
             <div className="p-6 space-y-4">
@@ -285,7 +286,7 @@ export default function CourierPage() {
               </label>
 
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-800">
-                🔐 Your credentials are encrypted before storage. We recommend using test/sandbox keys first to verify the connection.
+                <Lock className="w-3.5 h-3.5 inline mr-1" /> Your credentials are encrypted before storage. We recommend using test/sandbox keys first to verify the connection.
               </div>
 
               <div className="flex gap-3">

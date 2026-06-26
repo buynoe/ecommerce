@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma";
 
 // Canonical gateway definitions — always show these even before DB rows exist
 const GATEWAY_DEFAULTS = [
-  { provider: "RAZORPAY", name: "Razorpay", description: "Accept UPI, Cards, Net Banking & Wallets — India's #1 payment gateway", icon: "💳" },
-  { provider: "CASHFREE", name: "Cashfree", description: "All Indian payment methods — UPI, Cards, Net Banking, EMI & more", icon: "🏦" },
-  { provider: "COD", name: "Cash on Delivery", description: "Let customers pay at the time of delivery", icon: "💵" },
+  { provider: "RAZORPAY", name: "Razorpay", description: "Accept UPI, Cards, Net Banking & Wallets — India's #1 payment gateway" },
+  { provider: "CASHFREE", name: "Cashfree", description: "All Indian payment methods — UPI, Cards, Net Banking, EMI & more" },
+  { provider: "COD", name: "Cash on Delivery", description: "Let customers pay at the time of delivery" },
 ];
 
 // GET — list all gateways for this store (merge DB rows with defaults)
@@ -27,7 +27,6 @@ export async function GET() {
       provider: def.provider,
       name: def.name,
       description: def.description,
-      icon: def.icon,
       isActive: row?.isActive ?? false,
       keyId: config.keyId ?? "",
       keySecret: config.keySecret ?? "",

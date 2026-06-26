@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Truck } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { formatCurrency } from "@/lib/utils";
 
@@ -33,7 +34,7 @@ export default function ShippingPage() {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {providers.map((p: { id: string; name: string }) => (
             <div key={p.id} className="bg-white border border-gray-200 rounded-xl p-4 text-center hover:border-green-300 hover:shadow-sm transition-all">
-              <div className="text-2xl mb-1">🚚</div>
+              <div className="mb-1 flex justify-center"><Truck className="w-5 h-5 text-gray-500" /></div>
               <div className="text-xs font-semibold text-gray-700">{p.name}</div>
               <div className="text-xs link-brand mt-1 font-medium">Available</div>
             </div>

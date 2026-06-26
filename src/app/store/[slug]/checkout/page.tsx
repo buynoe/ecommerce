@@ -3,6 +3,7 @@ import { use, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { formatCurrency } from "@/lib/utils";
+import { ShoppingCart, Package, CreditCard, Landmark, Banknote, Lock } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types
@@ -589,7 +590,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
   if (!store) return <div className="min-h-screen flex items-center justify-center text-red-500">Store not found</div>;
   if (!cart?.items?.length) return (
     <div className="min-h-screen flex items-center justify-center flex-col gap-4">
-      <div className="text-5xl">🛒</div>
+      <div className="flex justify-center text-gray-300"><ShoppingCart className="w-12 h-12" /></div>
       <p className="text-gray-600 text-lg font-medium">Your cart is empty</p>
       <Link href={`/store/${slug}`} className="sf-btn px-6 py-3 rounded-xl font-semibold">Continue Shopping</Link>
     </div>
@@ -726,7 +727,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
             {/* Summary of selected saved address (when form is hidden) */}
             {isLoggedIn && !showNewAddressForm && selectedAddressId && selectedAddressId !== "new" && (
               <div className="text-xs text-gray-400 mt-2 pl-1">
-                ✓ Address selected above will be used for delivery
+                Address selected above will be used for delivery
               </div>
             )}
           </div>
@@ -774,9 +775,9 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
                     className="sf-accent" />
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-gray-800 flex items-center gap-2">
-                      {g.provider === "RAZORPAY" && "💳"}
-                      {g.provider === "CASHFREE" && "🏦"}
-                      {g.provider === "COD" && "💵"}
+                      {g.provider === "RAZORPAY" && <CreditCard className="w-5 h-5" />}
+                      {g.provider === "CASHFREE" && <Landmark className="w-5 h-5" />}
+                      {g.provider === "COD" && <Banknote className="w-5 h-5" />}
                       {g.name}
                     </p>
                     {g.provider === "COD" && <p className="text-xs text-gray-500">Pay at doorstep — no online payment needed</p>}
@@ -803,7 +804,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
                 return (
                 <div key={item.id} className="flex items-start gap-3 text-sm">
                   <div className="w-10 h-10 bg-gray-100 rounded-lg shrink-0 overflow-hidden flex items-center justify-center text-lg">
-                    {imgUrl ? <img src={imgUrl} alt="" className="w-full h-full object-cover" /> : "📦"}
+                    {imgUrl ? <img src={imgUrl} alt="" className="w-full h-full object-cover" /> : <Package className="w-5 h-5 text-gray-300" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-gray-800 text-xs leading-tight truncate">{item.variant.product?.title}</p>
@@ -892,7 +893,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
               ? `Pay with Cashfree · ${formatCurrency(total, store.currency)}`
               : `Place Order · ${formatCurrency(total, store.currency)}`}
             </button>
-            <p className="text-center text-xs text-gray-400 mt-2">🔒 Secure · Encrypted · GST Compliant</p>
+            <p className="text-center text-xs text-gray-400 mt-2 flex items-center justify-center gap-1"><Lock className="w-3 h-3" /> Secure · Encrypted · GST Compliant</p>
           </div>
         </div>
       </div>

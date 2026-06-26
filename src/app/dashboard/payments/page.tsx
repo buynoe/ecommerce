@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, type ReactNode } from "react";
+import { Lock, Rocket, Check, CreditCard, Landmark, Banknote } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 
 interface Gateway {
@@ -7,11 +8,16 @@ interface Gateway {
   provider: string;
   name: string;
   description: string;
-  icon: string;
   isActive: boolean;
   keyId: string;
   keySecret: string;
 }
+
+const PROVIDER_ICON: Record<string, ReactNode> = {
+  RAZORPAY: <CreditCard className="w-7 h-7 text-blue-500" />,
+  CASHFREE:  <Landmark className="w-7 h-7 text-green-600" />,
+  COD:       <Banknote className="w-7 h-7 text-amber-500" />,
+};
 
 function GatewayCard({ gateway, onSaved }: { gateway: Gateway; onSaved: (updated: Gateway) => void }) {
   const [keyId, setKeyId] = useState(gateway.keyId);
@@ -59,7 +65,7 @@ function GatewayCard({ gateway, onSaved }: { gateway: Gateway; onSaved: (updated
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-3xl">{gateway.icon}</span>
+          <span className="text-3xl">{PROVIDER_ICON[gateway.provider] ?? <CreditCard className="w-7 h-7 text-gray-400" />}</span>
           <div>
             <p className="font-bold text-gray-900">{gateway.name}</p>
             <p className="text-xs text-gray-500 mt-0.5">{gateway.description}</p>
@@ -102,7 +108,7 @@ function GatewayCard({ gateway, onSaved }: { gateway: Gateway; onSaved: (updated
 
       {/* Error / Success messages */}
       {error && <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
-      {success && <p className="text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2">✓ {success}</p>}
+      {success && <p className="text-xs text-green-700 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-1"><Check className="w-3 h-3" /> {success}</p>}
 
       {/* Action buttons */}
       <div className="flex gap-2 pt-1">
@@ -198,11 +204,11 @@ export default function PaymentsPage() {
       )}
 
       <div className="mt-8 bg-blue-50 border border-blue-200 rounded-2xl p-5">
-        <h3 className="font-semibold text-blue-900 mb-1">🔒 Security Note</h3>
+        <h3 className="font-semibold text-blue-900 mb-1 flex items-center gap-1.5"><Lock className="w-4 h-4" /> Security Note</h3>
         <p className="text-sm text-blue-700 mb-3">
           Your API keys are stored encrypted in the database and are never exposed publicly. Always use test keys during development.
         </p>
-        <h3 className="font-semibold text-blue-900 mb-1 mt-3">🚀 Coming Soon</h3>
+        <h3 className="font-semibold text-blue-900 mb-1 mt-3 flex items-center gap-1.5"><Rocket className="w-4 h-4" /> Coming Soon</h3>
         <p className="text-sm text-blue-700">
           Stripe, PayPal, PhonePe, PayU, UPI Direct — the architecture is designed to plug in any gateway.
         </p>

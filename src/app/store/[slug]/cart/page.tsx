@@ -3,6 +3,7 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import CartBadge from "@/components/storefront/CartBadge";
+import { ShoppingCart, Package } from "lucide-react";
 
 export default function CartPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -85,7 +86,7 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
 
         {!cart?.items?.length ? (
           <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-            <div className="text-6xl mb-4">🛒</div>
+            <div className="mb-4 flex justify-center text-gray-300"><ShoppingCart className="w-16 h-16" /></div>
             <h2 className="text-xl font-semibold text-gray-700">Your cart is empty</h2>
             <Link href={`/store/${slug}`} className="mt-4 inline-block sf-btn px-6 py-3 rounded-xl font-medium">Shop Now</Link>
           </div>
@@ -99,7 +100,7 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
                   <div className="w-20 h-20 bg-gray-50 rounded-lg overflow-hidden shrink-0">
                     {imgSrc
                       ? <img src={imgSrc} alt="" className="w-full h-full object-cover" onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                      : <div className="w-full h-full flex items-center justify-center text-3xl">📦</div>}
+                      : <div className="w-full h-full flex items-center justify-center text-gray-300"><Package className="w-8 h-8" /></div>}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 text-sm">{item.variant.product.title}</h3>

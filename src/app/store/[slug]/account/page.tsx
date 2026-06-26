@@ -3,6 +3,7 @@ import { use, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import CartBadge from "@/components/storefront/CartBadge";
+import { Package, MapPin, Truck, Smartphone, Check, X, CheckCircle2, AlertTriangle } from "lucide-react";
 
 const STATUS_COLORS: Record<string, string> = {
   PENDING_PAYMENT: "bg-yellow-100 text-yellow-700",
@@ -91,7 +92,7 @@ function CancelModal({ order, storeId, onClose, onSuccess }: { order: any; store
             {error && <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
 
             <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
-              <p className="font-semibold mb-1">⚠️ Before you cancel</p>
+              <p className="font-semibold mb-1 flex items-center gap-1.5"><AlertTriangle className="w-4 h-4" /> Before you cancel</p>
               <p>Once cancelled, this cannot be undone. If you&apos;ve already paid, a refund will be initiated within 5–7 business days.</p>
             </div>
 
@@ -204,7 +205,7 @@ function ReturnModal({ order, storeId, onClose, onSuccess }: { order: any; store
                   <div className="w-12 h-12 bg-gray-100 rounded-lg shrink-0 overflow-hidden flex items-center justify-center">
                     {(item.variantImageUrl || item.product?.images?.[0]?.url)
                       ? <img src={item.variantImageUrl || item.product!.images![0].url} alt="" className="w-full h-full object-cover" />
-                      : <span className="text-xl">📦</span>}
+                      : <Package className="w-6 h-6 text-gray-300" />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-gray-900 text-sm truncate">{item.title}</p>
@@ -293,7 +294,7 @@ function ProfileEditPanel({ customer, storeId, onUpdated }: { customer: any; sto
       <div className="bg-white rounded-2xl border border-gray-200 p-6">
         <h2 className="text-lg font-bold text-gray-900 mb-5">Edit Profile</h2>
         {error && <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">{error}</div>}
-        {success && <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm">✓ {success}</div>}
+        {success && <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm flex items-center gap-1"><Check className="w-4 h-4" /> {success}</div>}
         <form onSubmit={save} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
@@ -544,7 +545,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                 </div>
                 {orders.length === 0 ? (
                   <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
-                    <div className="text-5xl mb-3">📦</div>
+                    <div className="mb-3 flex justify-center text-gray-300"><Package className="w-12 h-12" /></div>
                     <p className="text-gray-500 mb-4">You haven&apos;t placed any orders yet</p>
                     <Link href={`/store/${slug}`} className="sf-btn px-6 py-3 rounded-xl font-semibold">Start Shopping</Link>
                   </div>
@@ -579,7 +580,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                             <div className="w-14 h-14 bg-gray-50 rounded-xl overflow-hidden shrink-0 border border-gray-100 flex items-center justify-center relative">
                               {itemImg
                                 ? <img src={itemImg} alt="" className="w-full h-full object-cover" />
-                                : <span className="text-xl">📦</span>}
+                                : <Package className="w-10 h-10 text-gray-300" />}
                               {isCancelled && (
                                 <div className="absolute inset-0 bg-gray-900/50 flex items-center justify-center rounded-xl">
                                   <span className="text-white text-[9px] font-bold text-center leading-tight px-1">CANCELLED</span>
@@ -590,7 +591,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                               <p className="font-semibold text-gray-900 text-sm truncate">{item.product?.title || item.title}</p>
                               {item.variantTitle && item.variantTitle !== "Default" && <p className="text-xs text-gray-500">{item.variantTitle}</p>}
                               <p className="text-xs text-gray-400">Qty: {item.quantity} · {formatCurrency(item.price, store.currency)}</p>
-                              {isCancelled && <p className="text-xs text-red-500 mt-0.5 font-medium">✕ Cancelled{item.cancelReason ? ` — ${item.cancelReason}` : ""}</p>}
+                              {isCancelled && <p className="text-xs text-red-500 mt-0.5 font-medium flex items-center gap-1"><X className="w-3 h-3" /> Cancelled{item.cancelReason ? ` — ${item.cancelReason}` : ""}</p>}
                             </div>
                             <div className="flex items-center gap-3 shrink-0">
                               <p className={`font-bold text-sm ${isCancelled ? "line-through text-gray-400" : "text-gray-900"}`}>
@@ -613,7 +614,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                     {/* Shipment tracking */}
                     {order.shipments?.[0] && (
                       <div className="px-6 py-3 bg-blue-50 border-t border-blue-100 flex items-center gap-3">
-                        <span className="text-blue-600 text-lg">🚚</span>
+                        <Truck className="w-5 h-5 text-blue-600" />
                         <div className="text-sm flex-1">
                           <span className="font-semibold text-blue-800">{order.shipments[0].provider || order.shipments[0].courierName}</span>
                           {order.shipments[0].trackingNumber && (
@@ -636,7 +637,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                     {/* Timeline latest */}
                     {order.timeline?.[0] && (
                       <div className="px-6 py-2.5 bg-gray-50 border-t border-gray-100 flex items-center gap-2 text-xs text-gray-500">
-                        <span>📌</span>
+                        <MapPin className="w-4 h-4" />
                         <span className="font-medium text-gray-700">{order.timeline[0].message}</span>
                         <span className="ml-auto">{new Date(order.timeline[0].createdAt).toLocaleDateString("en-IN")}</span>
                       </div>
@@ -653,7 +654,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                           </div>
                           <button onClick={() => setCancelOrder(order)}
                             className="shrink-0 text-xs px-4 py-2 border border-red-300 text-red-600 hover:bg-red-50 rounded-lg font-semibold transition-colors ml-4">
-                            ✕ Cancel Order
+                            Cancel Order
                           </button>
                         </div>
                       )}
@@ -694,7 +695,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                       {/* Already cancelled */}
                       {order.status === "CANCELLED" && (
                         <div className="px-6 py-3 bg-red-50">
-                          <p className="text-xs text-red-700 font-semibold">✕ Order Cancelled</p>
+                          <p className="text-xs text-red-700 font-semibold flex items-center gap-1"><X className="w-3 h-3" /> Order Cancelled</p>
                           {order.cancelReason && <p className="text-xs text-red-500 mt-0.5">Reason: {order.cancelReason}</p>}
                           <p className="text-xs text-red-400 mt-0.5">If you paid online, refund will be processed in 5–7 business days.</p>
                         </div>
@@ -716,7 +717,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                       {/* Refunded */}
                       {order.status === "REFUNDED" && (
                         <div className="px-6 py-3 bg-pink-50">
-                          <p className="text-xs text-pink-700 font-semibold">✅ Refund Processed</p>
+                          <p className="text-xs text-pink-700 font-semibold flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-green-500" /> Refund Processed</p>
                           <p className="text-xs text-pink-500 mt-0.5">Your refund has been initiated. Allow 5–7 business days.</p>
                         </div>
                       )}
@@ -739,7 +740,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
 
                 {addresses.length === 0 && !showAddrForm && (
                   <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
-                    <div className="text-5xl mb-3">📍</div>
+                    <div className="mb-3 flex justify-center text-gray-300"><MapPin className="w-12 h-12" /></div>
                     <p className="text-gray-500 mb-4">No saved addresses yet</p>
                     <button onClick={() => { setAddrForm({ firstName: customer.firstName, lastName: customer.lastName, phone: customer.phone || "", address1: "", address2: "", city: "", state: "", pincode: "" }); setAddrErrors({}); setShowAddrForm(true); }} className="sf-btn px-6 py-3 rounded-xl font-semibold">
                       Add Your First Address
@@ -755,7 +756,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                     {/* Error summary banner */}
                     {Object.keys(addrErrors).length > 0 && (
                       <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                        ⚠️ Please fix the highlighted fields before saving.
+                        <AlertTriangle className="w-4 h-4 inline mr-1.5" /> Please fix the highlighted fields before saving.
                       </div>
                     )}
 
@@ -932,7 +933,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                         <span className="absolute top-3 right-3 text-xs sf-chip px-2.5 py-1 rounded-full font-semibold">Default</span>
                       )}
                       <p className="font-bold text-gray-900 mb-1 pr-16">{addr.firstName} {addr.lastName}</p>
-                      {addr.phone && <p className="text-xs text-gray-500 mb-2">📱 {addr.phone}</p>}
+                      {addr.phone && <p className="text-xs text-gray-500 mb-2 flex items-center gap-1"><Smartphone className="w-3 h-3" /> {addr.phone}</p>}
                       <p className="text-sm text-gray-600 leading-relaxed">
                         {addr.address1}{addr.address2 ? `, ${addr.address2}` : ""}<br />
                         {addr.city}, {addr.state} – {addr.pincode}
@@ -1094,7 +1095,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
               <div className="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden shrink-0">
                 {(cancelItemTarget.item.variantImageUrl || cancelItemTarget.item.product?.images?.[0]?.url)
                   ? <img src={cancelItemTarget.item.variantImageUrl || cancelItemTarget.item.product!.images![0].url} alt="" className="w-full h-full object-cover" />
-                  : <span className="text-xl">📦</span>}
+                  : <Package className="w-6 h-6 text-gray-300" />}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-semibold text-gray-900 text-sm truncate">{cancelItemTarget.item.product?.title || cancelItemTarget.item.title}</p>

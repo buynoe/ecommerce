@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
+import { type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Bell, ChevronDown, User, Settings, LogOut, ExternalLink, Store } from "lucide-react";
+import { Bell, ChevronDown, User, Settings, LogOut, ExternalLink, Store, ShoppingBag, CreditCard, CheckCircle2, Package, Sparkles, XCircle, Undo2, Star, AlertTriangle } from "lucide-react";
 
 interface Props {
   storeName: string;
@@ -12,16 +13,16 @@ interface Props {
   plan: string;
 }
 
-const TYPE_ICON: Record<string, string> = {
-  ORDER_NEW:       "🛍️",
-  ORDER_PAID:      "💳",
-  ORDER_CONFIRMED: "✅",
-  ORDER_SHIPPED:   "📦",
-  ORDER_DELIVERED: "🎉",
-  ORDER_CANCELLED: "❌",
-  ORDER_RETURNED:  "↩️",
-  REVIEW_NEW:      "⭐",
-  LOW_STOCK:       "⚠️",
+const TYPE_ICON: Record<string, ReactNode> = {
+  ORDER_NEW:       <ShoppingBag className="w-4 h-4" />,
+  ORDER_PAID:      <CreditCard className="w-4 h-4" />,
+  ORDER_CONFIRMED: <CheckCircle2 className="w-4 h-4" />,
+  ORDER_SHIPPED:   <Package className="w-4 h-4" />,
+  ORDER_DELIVERED: <Sparkles className="w-4 h-4" />,
+  ORDER_CANCELLED: <XCircle className="w-4 h-4" />,
+  ORDER_RETURNED:  <Undo2 className="w-4 h-4" />,
+  REVIEW_NEW:      <Star className="w-4 h-4" />,
+  LOW_STOCK:       <AlertTriangle className="w-4 h-4" />,
 };
 
 function timeAgo(date: string) {
@@ -157,7 +158,7 @@ export default function DashboardHeader({ storeName, storeSlug, merchantName, me
                   <div className="py-8 text-center text-sm text-gray-400">Loading…</div>
                 ) : notifications.length === 0 ? (
                   <div className="py-8 text-center">
-                    <div className="text-3xl mb-2">🔔</div>
+                    <div className="flex justify-center mb-2"><Bell className="w-8 h-8 text-gray-300" /></div>
                     <p className="text-sm text-gray-400">No notifications yet</p>
                   </div>
                 ) : (
@@ -168,7 +169,7 @@ export default function DashboardHeader({ storeName, storeSlug, merchantName, me
                       onClick={() => setNotifOpen(false)}
                       className={`flex gap-3 px-4 py-3 hover:bg-gray-50 transition-colors ${!n.read ? "bg-blue-50/40" : ""}`}
                     >
-                      <span className="text-xl shrink-0 mt-0.5">{TYPE_ICON[n.type] ?? "🔔"}</span>
+                      <span className="shrink-0 mt-0.5 text-gray-500">{TYPE_ICON[n.type] ?? <Bell className="w-4 h-4" />}</span>
                       <div className="flex-1 min-w-0">
                         <p className={`text-xs font-semibold leading-tight ${!n.read ? "text-gray-900" : "text-gray-700"}`}>{n.title}</p>
                         <p className="text-xs text-gray-500 mt-0.5 truncate">{n.message}</p>

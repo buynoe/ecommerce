@@ -1,24 +1,24 @@
 "use client";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, type ReactNode } from "react";
 import Link from "next/link";
+import { ShoppingBag, CreditCard, CheckCircle2, Package, PartyPopper, XCircle, Undo2, Star, AlertTriangle, Bell, CheckCheck, Trash2 } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
-import { Bell, CheckCheck, Trash2 } from "lucide-react";
 
 interface Notification {
   id: string; type: string; title: string; message: string;
   link?: string | null; read: boolean; createdAt: string;
 }
 
-const TYPE_ICON: Record<string, string> = {
-  ORDER_NEW:       "🛍️",
-  ORDER_PAID:      "💳",
-  ORDER_CONFIRMED: "✅",
-  ORDER_SHIPPED:   "📦",
-  ORDER_DELIVERED: "🎉",
-  ORDER_CANCELLED: "❌",
-  ORDER_RETURNED:  "↩️",
-  REVIEW_NEW:      "⭐",
-  LOW_STOCK:       "⚠️",
+const TYPE_ICON: Record<string, ReactNode> = {
+  ORDER_NEW:       <ShoppingBag className="w-5 h-5" />,
+  ORDER_PAID:      <CreditCard className="w-5 h-5" />,
+  ORDER_CONFIRMED: <CheckCircle2 className="w-5 h-5" />,
+  ORDER_SHIPPED:   <Package className="w-5 h-5" />,
+  ORDER_DELIVERED: <PartyPopper className="w-5 h-5" />,
+  ORDER_CANCELLED: <XCircle className="w-5 h-5" />,
+  ORDER_RETURNED:  <Undo2 className="w-5 h-5" />,
+  REVIEW_NEW:      <Star className="w-5 h-5" />,
+  LOW_STOCK:       <AlertTriangle className="w-5 h-5" />,
 };
 
 const TYPE_LABEL: Record<string, string> = {
@@ -131,8 +131,8 @@ export default function NotificationsPage() {
                 !n.read ? "bg-blue-50/50" : "bg-white"
               } ${i > 0 ? "border-t border-gray-100" : ""}`}>
               {/* Icon */}
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0 bg-gray-50 border border-gray-100">
-                {TYPE_ICON[n.type] ?? "🔔"}
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 bg-gray-50 border border-gray-100 text-gray-500">
+                {TYPE_ICON[n.type] ?? <Bell className="w-5 h-5" />}
               </div>
 
               {/* Content */}

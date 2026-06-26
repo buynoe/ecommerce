@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from "react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { formatCurrency } from "@/lib/utils";
 import Link from "next/link";
+import { Package } from "lucide-react";
 
 interface Product {
   id: string; title: string; status: string; vendor?: string; createdAt: string;
@@ -179,7 +180,7 @@ export default function ProductsPage() {
         {loading ? <div className="p-12 text-center text-gray-400">Loading…</div>
           : products.length === 0 ? (
             <div className="p-16 text-center">
-              <div className="text-5xl mb-3">📦</div>
+              <div className="flex justify-center mb-4"><Package className="w-14 h-14 text-gray-300" /></div>
               <p className="text-gray-500 mb-4">No products yet</p>
               <Link href="/dashboard/products/new" className="btn-brand px-4 py-2 rounded-lg text-sm font-medium">Add your first product</Link>
             </div>
@@ -207,7 +208,7 @@ export default function ProductsPage() {
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
                               <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden shrink-0">
-                                {p.images[0] ? <img src={p.images[0].url} alt="" className="w-full h-full object-cover" /> : <span className="text-lg">📦</span>}
+                                {p.images[0] ? <img src={p.images[0].url} alt="" className="w-full h-full object-cover" /> : <Package className="w-5 h-5 text-gray-400" />}
                               </div>
                               <div>
                                 <p className="text-sm font-medium text-gray-900">{p.title}</p>

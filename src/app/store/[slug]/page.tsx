@@ -7,6 +7,7 @@ import CartBadge from "@/components/storefront/CartBadge";
 import AnimateOnScroll from "@/components/storefront/AnimateOnScroll";
 import { Metadata } from "next";
 import { cloudinaryTransform } from "@/lib/cloudinary-url";
+import { Store, Package } from "lucide-react";
 
 const BASE = "https://ecomm.buynoe.com";
 // Resize collection tiles: 400px wide, 195:370 ratio, fill crop, auto quality/format
@@ -167,7 +168,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
           </AnimateOnScroll>
           {store.products.length === 0 ? (
             <div className="text-center py-20 text-gray-400">
-              <div className="text-5xl mb-4">🏪</div>
+              <div className="mb-4 flex justify-center"><Store className="w-12 h-12 text-gray-300" /></div>
               <p className="text-xl font-medium">Coming Soon</p>
               <p className="mt-2">Products are being added. Check back soon!</p>
             </div>
@@ -191,7 +192,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
                       <div className="aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
                         {img
                           ? <img src={img} alt={product.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                          : <span className="text-5xl">📦</span>}
+                          : <Package className="w-12 h-12 text-gray-200" />}
                       </div>
                       <div className="p-4">
                         <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-2">{product.title}</h3>

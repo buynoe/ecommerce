@@ -1,6 +1,7 @@
 "use client";
 import { use, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 export default function PaymentCallbackPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -65,14 +66,14 @@ export default function PaymentCallbackPage({ params }: { params: Promise<{ slug
         )}
         {status === "success" && (
           <>
-            <div className="text-6xl mb-4">✅</div>
+            <div className="flex justify-center mb-4"><CheckCircle2 className="w-16 h-16 text-green-500" /></div>
             <h2 className="text-xl font-bold text-green-700 mb-2">Payment Successful!</h2>
             <p className="text-gray-500 text-sm">Redirecting to your order confirmation…</p>
           </>
         )}
         {status === "failed" && (
           <>
-            <div className="text-6xl mb-4">❌</div>
+            <div className="flex justify-center mb-4"><XCircle className="w-16 h-16 text-red-500" /></div>
             <h2 className="text-xl font-bold text-red-700 mb-2">Payment Verification Failed</h2>
             <p className="text-gray-500 text-sm mb-6">{message}</p>
             <button

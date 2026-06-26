@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { formatCurrency } from "@/lib/utils";
+import { Frown, Truck, Package, FileText, Receipt, ShoppingBag, ClipboardList, CheckCircle2, Mail, MapPin, Smartphone } from "lucide-react";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface OrderItem {
@@ -123,7 +124,7 @@ function OrderSuccessContent({ slug }: { slug: string }) {
   if (notFound || !order) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-4">
-        <div className="text-6xl">😕</div>
+        <Frown className="w-16 h-16 text-gray-400" />
         <h1 className="text-2xl font-bold text-gray-800">Order not found</h1>
         <p className="text-gray-500">We couldn&apos;t find the order details. Please check your email for confirmation.</p>
         <Link href={`/store/${slug}`} className="sf-btn px-6 py-3 rounded-xl font-semibold">
@@ -147,7 +148,7 @@ function OrderSuccessContent({ slug }: { slug: string }) {
             onClick={downloadInvoice}
             className="flex items-center gap-2 border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
-            📄 Download Invoice
+            <FileText className="w-4 h-4" /> Download Invoice
           </button>
         </div>
       </header>
@@ -156,7 +157,7 @@ function OrderSuccessContent({ slug }: { slug: string }) {
         {/* ── Success Banner ── */}
         <div className="bg-white rounded-2xl border border-green-200 p-8 text-center shadow-sm no-print">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-4xl">✅</span>
+            <CheckCircle2 className="w-10 h-10 text-green-500" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Order Confirmed!</h1>
           <p className="text-gray-500 mb-5">
@@ -191,7 +192,7 @@ function OrderSuccessContent({ slug }: { slug: string }) {
         {shipment?.trackingNumber && (
           <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 flex items-center justify-between no-print">
             <div className="flex items-center gap-4">
-              <div className="text-3xl">🚚</div>
+              <Truck className="w-8 h-8 text-blue-700" />
               <div>
                 <p className="font-semibold text-blue-900">{shipment.carrier || "Courier"} — Tracking Available</p>
                 <p className="text-blue-700 text-sm font-mono">{shipment.trackingNumber}</p>
@@ -248,7 +249,7 @@ function OrderSuccessContent({ slug }: { slug: string }) {
                           unoptimized
                         />
                       ) : (
-                        <span className="text-3xl">📦</span>
+                        <Package className="w-8 h-8 text-gray-300" />
                       )}
                     </div>
 
@@ -288,7 +289,7 @@ function OrderSuccessContent({ slug }: { slug: string }) {
             {order.shippingAddress && (
               <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
                 <h3 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  <span>📦</span> Delivering To
+                  <MapPin className="w-4 h-4" /> Delivering To
                 </h3>
                 <address className="not-italic text-sm text-gray-700 space-y-0.5 leading-relaxed">
                   <p className="font-semibold text-gray-900">{order.shippingAddress.firstName} {order.shippingAddress.lastName}</p>
@@ -297,7 +298,7 @@ function OrderSuccessContent({ slug }: { slug: string }) {
                   <p>{order.shippingAddress.city}, {order.shippingAddress.state} — {order.shippingAddress.pincode}</p>
                   <p>{order.shippingAddress.country || "India"}</p>
                   {order.shippingAddress.phone && (
-                    <p className="font-medium mt-1">📱 {order.shippingAddress.phone}</p>
+                    <p className="font-medium mt-1 flex items-center gap-1"><Smartphone className="w-3 h-3" /> {order.shippingAddress.phone}</p>
                   )}
                 </address>
               </div>
@@ -305,7 +306,7 @@ function OrderSuccessContent({ slug }: { slug: string }) {
 
             <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
               <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <span>🧾</span> Price Breakdown
+                <Receipt className="w-4 h-4" /> Price Breakdown
               </h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between text-gray-600">
@@ -356,19 +357,19 @@ function OrderSuccessContent({ slug }: { slug: string }) {
             href={`/store/${slug}`}
             className="flex items-center justify-center gap-2 sf-btn px-8 py-4 rounded-xl font-bold text-base"
           >
-            🛍️ Continue Shopping
+            <ShoppingBag className="w-5 h-5" /> Continue Shopping
           </Link>
           <Link
             href={`/store/${slug}/account`}
             className="flex items-center justify-center gap-2 border-2 border-gray-200 text-gray-700 px-8 py-4 rounded-xl font-bold text-base hover:border-gray-400 hover:bg-gray-50 transition-colors"
           >
-            📋 View All Orders
+            <ClipboardList className="w-5 h-5" /> View All Orders
           </Link>
           <button
             onClick={downloadInvoice}
             className="flex items-center justify-center gap-2 border-2 border-gray-200 text-gray-700 px-8 py-4 rounded-xl font-bold text-base hover:border-gray-400 hover:bg-gray-50 transition-colors"
           >
-            📄 Download Invoice
+            <FileText className="w-5 h-5" /> Download Invoice
           </button>
         </div>
 
@@ -377,12 +378,12 @@ function OrderSuccessContent({ slug }: { slug: string }) {
           <h3 className="font-bold text-gray-900 mb-4">What happens next?</h3>
           <div className="grid sm:grid-cols-3 gap-4">
             {[
-              { icon: "📧", title: "Order Confirmation", desc: "You'll receive an email with order details shortly" },
-              { icon: "📦", title: "Processing & Packing", desc: "We'll carefully pack your items within 1-2 business days" },
-              { icon: "🚚", title: "Delivery to Your Door", desc: "Our courier will deliver at your shipping address" },
+              { icon: <Mail className="w-8 h-8" />, title: "Order Confirmation", desc: "You'll receive an email with order details shortly" },
+              { icon: <Package className="w-8 h-8" />, title: "Processing & Packing", desc: "We'll carefully pack your items within 1-2 business days" },
+              { icon: <Truck className="w-8 h-8" />, title: "Delivery to Your Door", desc: "Our courier will deliver at your shipping address" },
             ].map((s) => (
               <div key={s.title} className="text-center p-4 bg-gray-50 rounded-xl">
-                <div className="text-3xl mb-2">{s.icon}</div>
+                <div className="flex justify-center mb-2 text-gray-500">{s.icon}</div>
                 <p className="font-semibold text-gray-800 text-sm mb-1">{s.title}</p>
                 <p className="text-xs text-gray-500">{s.desc}</p>
               </div>

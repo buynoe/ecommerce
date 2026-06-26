@@ -3,6 +3,7 @@ import { useEffect, useState, use } from "react";
 import { formatCurrency, formatDateTime, SHIPPING_PROVIDERS } from "@/lib/utils";
 import { ORDER_STATUS_COLORS, ORDER_STATUS_LABELS } from "@/types";
 import Link from "next/link";
+import { Package, CreditCard, Banknote } from "lucide-react";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -68,7 +69,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden">
-                          {(item.variant?.imageUrl || item.imageUrl) ? <img src={item.variant?.imageUrl || item.imageUrl!} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-lg">📦</div>}
+                          {(item.variant?.imageUrl || item.imageUrl) ? <img src={item.variant?.imageUrl || item.imageUrl!} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><Package className="w-5 h-5 text-gray-400" /></div>}
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-900">{item.title}</p>
@@ -104,7 +105,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
           {order.payments?.length > 0 && (
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100 font-semibold text-gray-900 flex items-center gap-2">
-                💳 Payment Information
+                <CreditCard className="w-5 h-5" /> Payment Information
               </div>
               <div className="divide-y divide-gray-50">
                 {order.payments.map((p: { id: string; status: string; amount: number; method?: string; gatewayOrderId?: string; gatewayPaymentId?: string; gatewaySignature?: string; createdAt: string; metadata?: string; gateway?: { provider: string; name: string } }) => {
@@ -126,9 +127,9 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                       <div>
                         <p className="text-xs text-gray-500 mb-0.5">Payment Gateway</p>
                         <p className="font-medium text-gray-800">
-                          {gatewayProvider === "RAZORPAY" ? "🟦 Razorpay" :
-                           gatewayProvider === "CASHFREE" ? "🟩 Cashfree" :
-                           gatewayProvider === "COD" ? "💵 Cash on Delivery" :
+                          {gatewayProvider === "RAZORPAY" ? "Razorpay" :
+                           gatewayProvider === "CASHFREE" ? "Cashfree" :
+                           gatewayProvider === "COD" ? <span className="flex items-center gap-1"><Banknote className="w-4 h-4" />Cash on Delivery</span> :
                            gatewayName || gatewayProvider}
                         </p>
                       </div>
@@ -170,7 +171,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
           {/* No payment record yet */}
           {!order.payments?.length && (
             <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 flex items-center gap-3">
-              <span className="text-amber-500 text-xl">💳</span>
+              <CreditCard className="w-5 h-5 text-amber-500 shrink-0" />
               <div>
                 <p className="text-sm font-semibold text-amber-800">Payment Pending</p>
                 <p className="text-xs text-amber-600 mt-0.5">
@@ -229,9 +230,9 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                 order.status === "REFUNDED"  ? "bg-pink-50 text-pink-600 border border-pink-200" :
                 "bg-rose-50 text-rose-600 border border-rose-200"
               }`}>
-                {order.status === "CANCELLED" ? "✕ Order Cancelled — no further actions" :
-                 order.status === "REFUNDED"  ? "💰 Refunded — no further actions" :
-                 "↩ Returned — manage via Returns page"}
+                {order.status === "CANCELLED" ? "Order Cancelled — no further actions" :
+                 order.status === "REFUNDED"  ? "Refunded — no further actions" :
+                 "Returned — manage via Returns page"}
                 {order.cancelReason && (
                   <p className="text-xs font-normal mt-1 opacity-75">Reason: {order.cancelReason}</p>
                 )}
@@ -279,7 +280,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
           {order.shipments?.map((s: { id: string; provider: string | null; awbCode?: string | null; trackingUrl?: string | null; status: string }) => (
             <div key={s.id} className="bg-blue-50 border border-blue-200 rounded-xl p-5">
-              <h2 className="font-semibold text-blue-900 mb-2">📦 Shipment</h2>
+              <h2 className="font-semibold text-blue-900 mb-2 flex items-center gap-2"><Package className="w-5 h-5" /> Shipment</h2>
               <p className="text-sm text-blue-700">Provider: {s.provider}</p>
               <p className="text-sm text-blue-700">AWB: {s.awbCode}</p>
               <p className="text-sm text-blue-700">Status: {s.status}</p>

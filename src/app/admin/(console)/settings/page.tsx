@@ -395,7 +395,7 @@ export default function SettingsPage() {
                       ))}
                     </div>
                     {form.CASHFREE_ENV === "production" && (
-                      <p className="text-xs text-amber-600 mt-1.5">⚠ Production mode — real payments will be processed.</p>
+                      <p className="text-xs text-amber-600 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" /> Production mode — real payments will be processed.</p>
                     )}
                   </div>
                 </div>

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
+import { Lock, Receipt, Check, AlertTriangle } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import Script from "next/script";
 
@@ -118,7 +119,7 @@ export default function BillingPage() {
           const verifyData = await verifyRes.json();
           if (!verifyRes.ok) throw new Error(verifyData.error || "Verification failed");
 
-          setSuccess(`🎉 Successfully upgraded to ${planKey} plan! Payment ID: ${response.razorpay_payment_id}`);
+          setSuccess(`Successfully upgraded to ${planKey} plan! Payment ID: ${response.razorpay_payment_id}`);
           await Promise.all([fetchMerchant(), fetchTransactions()]); // refresh plan + transactions
           setPaying(null);
         },
@@ -171,12 +172,12 @@ export default function BillingPage() {
                 </p>
               )}
               {currentPlan !== "TRIAL" && merchant?.planRenewsAt && (
-                <p className="text-sm mt-1" style={{ color: "#ec1f78" }}>
-                  ✓ Active · Renews {new Date(merchant.planRenewsAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+                <p className="text-sm mt-1 flex items-center gap-1" style={{ color: "#ec1f78" }}>
+                  <Check className="w-4 h-4" /> Active · Renews {new Date(merchant.planRenewsAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
                 </p>
               )}
               {currentPlan !== "TRIAL" && !merchant?.planRenewsAt && (
-                <p className="text-sm mt-1" style={{ color: "#ec1f78" }}>✓ Active subscription</p>
+                <p className="text-sm mt-1 flex items-center gap-1" style={{ color: "#ec1f78" }}><Check className="w-4 h-4" /> Active subscription</p>
               )}
             </div>
             <div className="text-right">
@@ -200,8 +201,8 @@ export default function BillingPage() {
           </div>
         )}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-4 rounded-xl text-sm">
-            ⚠️ {error}
+          <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-4 rounded-xl text-sm flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 shrink-0" /> {error}
           </div>
         )}
 
@@ -268,7 +269,7 @@ export default function BillingPage() {
                 <ul className="space-y-2 mb-6">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-start gap-2 text-sm text-gray-600">
-                      <span className="font-bold mt-0.5 shrink-0" style={{ color: "#ec1f78" }}>✓</span>
+                      <Check className="w-4 h-4 mt-0.5 shrink-0" style={{ color: "#ec1f78" }} />
                       <span>{f}</span>
                     </li>
                   ))}
@@ -303,7 +304,7 @@ export default function BillingPage() {
                       Opening Razorpay…
                     </span>
                   ) : isCurrentPlan ? (
-                    isFree ? "Active — Trial Running" : "Current Plan ✓"
+                    isFree ? "Active — Trial Running" : <span className="flex items-center justify-center gap-1">Current Plan <Check className="w-4 h-4" /></span>
                   ) : isFree ? (
                     "Not Available After Trial"
                   ) : !scriptLoaded ? (
@@ -321,7 +322,7 @@ export default function BillingPage() {
         <div className="mt-8 p-5 bg-gray-50 rounded-2xl border border-gray-200">
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
-              <p className="text-sm font-semibold text-gray-700 mb-1">🔒 Secure payments powered by Razorpay</p>
+              <p className="text-sm font-semibold text-gray-700 mb-1 flex items-center gap-1.5"><Lock className="w-4 h-4" /> Secure payments powered by Razorpay</p>
               <p className="text-xs text-gray-500">
                 All payments are processed securely via Razorpay. Your card details are never stored on our servers.
                 Accepts UPI, Net Banking, Credit/Debit Cards, and Wallets.
@@ -356,7 +357,7 @@ export default function BillingPage() {
         <div className="mt-10">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-lg font-bold text-gray-900">🧾 Transaction History</h3>
+              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2"><Receipt className="w-5 h-5" /> Transaction History</h3>
               <p className="text-sm text-gray-500 mt-0.5">All your subscription payments and invoices</p>
             </div>
           </div>
@@ -372,7 +373,7 @@ export default function BillingPage() {
               </div>
             ) : transactions.length === 0 ? (
               <div className="p-14 text-center">
-                <div className="text-5xl mb-3">🧾</div>
+                <div className="mb-3 flex justify-center"><Receipt className="w-14 h-14 text-gray-300" /></div>
                 <p className="text-gray-500 font-medium">No transactions yet</p>
                 <p className="text-sm text-gray-400 mt-1">Your subscription payments will appear here after your first upgrade.</p>
               </div>
@@ -427,7 +428,7 @@ export default function BillingPage() {
                             : tx.status === "REFUNDED" ? "bg-amber-100 text-amber-700"
                             : "bg-red-100 text-red-700"
                           }`}>
-                            {tx.status === "SUCCESS" ? "✓ Paid" : tx.status === "REFUNDED" ? "↩ Refunded" : "✗ Failed"}
+                            {tx.status === "SUCCESS" ? <span className="flex items-center gap-1"><Check className="w-3 h-3" /> Paid</span> : tx.status === "REFUNDED" ? "Refunded" : "Failed"}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">

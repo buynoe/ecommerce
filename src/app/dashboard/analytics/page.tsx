@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { DollarSign, ShoppingBag, BarChart2, Package, Trophy, AlertTriangle, CheckCircle2 } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import StatCard from "@/components/dashboard/StatCard";
 import { formatCurrency } from "@/lib/utils";
@@ -161,10 +162,10 @@ export default function AnalyticsPage() {
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <StatCard label="Total Revenue" value={formatCurrency(totalRevenue)} icon="💰" color="green" />
-        <StatCard label="Total Orders" value={totalOrders} icon="🛍️" color="blue" />
-        <StatCard label="Avg Order Value" value={formatCurrency(avgOrderValue)} icon="📊" color="purple" />
-        <StatCard label="Active Products" value={data.stats.totalProducts} icon="📦" color="orange" />
+        <StatCard label="Total Revenue" value={formatCurrency(totalRevenue)} icon={<DollarSign className="w-5 h-5" />} color="green" />
+        <StatCard label="Total Orders" value={totalOrders} icon={<ShoppingBag className="w-5 h-5" />} color="blue" />
+        <StatCard label="Avg Order Value" value={formatCurrency(avgOrderValue)} icon={<BarChart2 className="w-5 h-5" />} color="purple" />
+        <StatCard label="Active Products" value={data.stats.totalProducts} icon={<Package className="w-5 h-5" />} color="orange" />
       </div>
 
       {/* Secondary stats */}
@@ -221,12 +222,12 @@ export default function AnalyticsPage() {
         {/* Top Products */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="font-semibold text-gray-900">🏆 Top Selling Products</h2>
+            <h2 className="font-semibold text-gray-900 flex items-center gap-2"><Trophy className="w-4 h-4 text-yellow-500" /> Top Selling Products</h2>
             <span className="text-xs text-gray-400">By revenue</span>
           </div>
           {data.topProducts.length === 0 ? (
             <div className="px-6 py-10 text-center">
-              <div className="text-4xl mb-2">📦</div>
+              <Package className="w-10 h-10 mb-2 text-gray-200 mx-auto" />
               <p className="text-sm text-gray-400">No sales yet in this period</p>
               <p className="text-xs text-gray-300 mt-1">Orders will appear here once placed</p>
             </div>
@@ -255,12 +256,12 @@ export default function AnalyticsPage() {
         {/* Low Stock */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="font-semibold text-gray-900">⚠️ Low Stock Alert</h2>
+            <h2 className="font-semibold text-gray-900 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-amber-500" /> Low Stock Alert</h2>
             <span className="text-xs text-gray-400">≤5 units</span>
           </div>
           {data.lowStock.length === 0 ? (
             <div className="px-6 py-10 text-center">
-              <div className="text-4xl mb-2">✅</div>
+              <CheckCircle2 className="w-10 h-10 mb-2 text-green-400 mx-auto" />
               <p className="text-sm text-gray-500 font-medium">All products well stocked!</p>
               <p className="text-xs text-gray-400 mt-1">You&apos;re good to go</p>
             </div>

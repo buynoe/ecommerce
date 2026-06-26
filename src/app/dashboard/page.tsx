@@ -134,7 +134,7 @@ export default function DashboardPage() {
             <Link href="/dashboard/inventory" className="text-xs font-medium hover:underline" style={{ color: BRAND_COLOR }}>View all</Link>
           </div>
           {data.lowStock.length === 0
-            ? <p className="text-sm text-gray-400 text-center py-4">All items well stocked 🎉</p>
+            ? <p className="text-sm text-gray-400 text-center py-4">All items well stocked</p>
             : data.lowStock.slice(0, 5).map((item, i) => (
               <div key={i} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
                 <div>

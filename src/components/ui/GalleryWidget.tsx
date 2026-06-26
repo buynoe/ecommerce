@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
+import { Image as ImageIcon, Upload, AlertTriangle, Check, Home, FolderOpen, Folder } from "lucide-react";
 
 interface Asset {
   id: string; url: string; thumbnailUrl?: string; filename: string;
@@ -205,7 +206,7 @@ export default function GalleryWidget({ open, onClose, onSelect, multiple = true
         {/* ── Header ── */}
         <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-200 shrink-0">
           <div className="flex items-center gap-3">
-            <span className="text-xl">🖼️</span>
+            <ImageIcon className="w-5 h-5 text-gray-500" />
             <h2 className="font-bold text-gray-900 text-lg">Media Gallery</h2>
             {selected.length > 0 && (
               <span className="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">
@@ -226,7 +227,7 @@ export default function GalleryWidget({ open, onClose, onSelect, multiple = true
               disabled={uploading}
               className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors"
             >
-              {uploading ? `Uploading ${uploadProgress}%` : "📤 Upload"}
+              {uploading ? `Uploading ${uploadProgress}%` : <><Upload className="w-4 h-4" /> Upload</>}
             </button>
             <button
               onClick={onClose}
@@ -240,7 +241,7 @@ export default function GalleryWidget({ open, onClose, onSelect, multiple = true
         {/* ── Upload error ── */}
         {uploadError && (
           <div className="mx-4 mt-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-xl text-sm flex items-center justify-between shrink-0">
-            <span>⚠️ {uploadError}</span>
+            <span className="flex items-center gap-1.5"><AlertTriangle className="w-4 h-4" /> {uploadError}</span>
             <button onClick={() => setUploadError("")} className="text-red-400 hover:text-red-600 ml-3">×</button>
           </div>
         )}
@@ -278,15 +279,15 @@ export default function GalleryWidget({ open, onClose, onSelect, multiple = true
                     onKeyDown={e => e.key === "Enter" && createFolder()}
                     placeholder="Folder name"
                   />
-                  <button onClick={createFolder} className="bg-green-600 text-white px-2 py-1 rounded text-xs font-semibold">✓</button>
+                  <button onClick={createFolder} className="bg-green-600 text-white px-2 py-1 rounded text-xs font-semibold"><Check className="w-3 h-3" /></button>
                 </div>
               )}
             </div>
 
             <div className="flex-1 p-2 space-y-0.5">
               {[
-                { id: null, label: "All Images", icon: "🏠" },
-                { id: "null", label: "Uncategorized", icon: "📂" },
+                { id: null, label: "All Images", Icon: Home },
+                { id: "null", label: "Uncategorized", Icon: FolderOpen },
               ].map(item => (
                 <button
                   key={String(item.id)}
@@ -295,7 +296,7 @@ export default function GalleryWidget({ open, onClose, onSelect, multiple = true
                     activeFolderId === item.id ? "bg-green-600 text-white" : "text-gray-700 hover:bg-gray-200"
                   }`}
                 >
-                  <span>{item.icon}</span> {item.label}
+                  <item.Icon className="w-4 h-4 shrink-0" /> {item.label}
                 </button>
               ))}
 
@@ -308,7 +309,7 @@ export default function GalleryWidget({ open, onClose, onSelect, multiple = true
                   }`}
                 >
                   <span className="flex items-center gap-2 min-w-0">
-                    <span>📁</span>
+                    <Folder className="w-4 h-4 shrink-0" />
                     <span className="truncate">{f.name}</span>
                   </span>
                   {f._count?.files !== undefined && (
@@ -328,7 +329,7 @@ export default function GalleryWidget({ open, onClose, onSelect, multiple = true
               {/* Load error */}
               {loadError && !loading && (
                 <div className="flex flex-col items-center justify-center h-48 gap-3">
-                  <span className="text-4xl">⚠️</span>
+                  <AlertTriangle className="w-10 h-10 text-red-400" />
                   <p className="text-red-600 font-medium text-sm">{loadError}</p>
                   <button onClick={() => loadAssets(activeFolderId, search)}
                     className="text-sm text-green-600 hover:underline font-semibold">Try again</button>
@@ -352,7 +353,7 @@ export default function GalleryWidget({ open, onClose, onSelect, multiple = true
                   onDrop={onDrop}
                   className="h-64 border-2 border-dashed border-gray-300 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-green-400 hover:bg-green-50 transition-colors"
                 >
-                  <div className="text-5xl mb-3">📤</div>
+                  <Upload className="w-12 h-12 mb-3 text-gray-400" />
                   <p className="font-semibold text-gray-600 mb-1">Drop images here or click to upload</p>
                   <p className="text-xs text-gray-400">JPEG, PNG, WebP, GIF — max 10 MB each</p>
                 </div>
@@ -386,7 +387,7 @@ export default function GalleryWidget({ open, onClose, onSelect, multiple = true
                         </div>
                         {isSel && (
                           <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center shadow">
-                            <span className="text-white text-xs font-bold">✓</span>
+                            <Check className="w-3 h-3 text-white" />
                           </div>
                         )}
                         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-2 py-1.5 opacity-0 group-hover:opacity-100 transition-opacity">

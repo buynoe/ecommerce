@@ -6,6 +6,7 @@ import RichTextEditor from "@/components/ui/RichTextEditor";
 import GalleryWidget from "@/components/ui/GalleryWidget";
 import Link from "next/link";
 import Image from "next/image";
+import { Camera, Shuffle, Package, Layers, Tag, Image as ImageIcon, Lightbulb } from "lucide-react";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -355,14 +356,14 @@ export default function ProductForm({ initialData, mode }: Props) {
                 </div>
                 <button type="button" onClick={() => { setVariantGalleryFor(null); setGalleryOpen(true); }}
                   className="flex items-center gap-2 border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:border-green-400 transition-colors">
-                  🖼️ Open Gallery
+                  <ImageIcon className="w-4 h-4" /> Open Gallery
                 </button>
               </div>
 
               {productImages.length === 0 ? (
                 <button type="button" onClick={() => { setVariantGalleryFor(null); setGalleryOpen(true); }}
                   className="w-full h-36 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center text-gray-300 hover:border-green-400 hover:text-green-400 transition-colors">
-                  <span className="text-4xl">📷</span>
+                  <Camera className="w-8 h-8" />
                   <span className="text-sm mt-2 font-medium">Click to add images from gallery</span>
                 </button>
               ) : (
@@ -507,7 +508,7 @@ export default function ProductForm({ initialData, mode }: Props) {
                               >
                                 {v.imageUrls[0]
                                   ? <Image src={v.imageUrls[0]} alt="" width={40} height={40} className="w-full h-full object-cover rounded" unoptimized />
-                                  : <span className="text-gray-300 text-lg">📷</span>}
+                                  : <Camera className="w-4 h-4 text-gray-300" />}
                               </button>
                             </td>
                             <td className="px-2 py-1.5">
@@ -543,7 +544,7 @@ export default function ProductForm({ initialData, mode }: Props) {
                   {/* Bulk fill tip */}
                   {variants.length > 1 && (
                     <p className="text-xs text-gray-400 mt-2">
-                      💡 Tip: Set price on the first row, then copy to others as needed. Each variant can have its own image.
+                      <Lightbulb className="w-3.5 h-3.5 inline mr-1" /> Tip: Set price on the first row, then copy to others as needed. Each variant can have its own image.
                     </p>
                   )}
                 </div>
@@ -558,9 +559,9 @@ export default function ProductForm({ initialData, mode }: Props) {
               <h2 className="font-semibold text-gray-900 mb-3">Status</h2>
               <select className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none"
                 value={form.status} onChange={e => setForm(f => ({ ...f, status: e.target.value }))}>
-                <option value="ACTIVE">🟢 Active — visible in store</option>
-                <option value="DRAFT">⚪ Draft — hidden from store</option>
-                <option value="ARCHIVED">🔴 Archived</option>
+                <option value="ACTIVE">Active — visible in store</option>
+                <option value="DRAFT">Draft — hidden from store</option>
+                <option value="ARCHIVED">Archived</option>
               </select>
             </div>
 
@@ -610,11 +611,11 @@ export default function ProductForm({ initialData, mode }: Props) {
             {/* Summary */}
             <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-xs text-green-800 space-y-1">
               <p className="font-semibold">Summary</p>
-              <p>📸 {productImages.length} product image{productImages.length !== 1 ? "s" : ""}</p>
-              <p>🔀 {options.length} option group{options.length !== 1 ? "s" : ""}</p>
-              <p>📦 {variants.length} variant{variants.length !== 1 ? "s" : ""}</p>
-              <p>🗂️ {selectedCollections.length} collection{selectedCollections.length !== 1 ? "s" : ""}</p>
-              <p>🏷️ {selectedCategories.length} categor{selectedCategories.length !== 1 ? "ies" : "y"}</p>
+              <p className="flex items-center gap-1.5"><Camera className="w-3.5 h-3.5" /> {productImages.length} product image{productImages.length !== 1 ? "s" : ""}</p>
+              <p className="flex items-center gap-1.5"><Shuffle className="w-3.5 h-3.5" /> {options.length} option group{options.length !== 1 ? "s" : ""}</p>
+              <p className="flex items-center gap-1.5"><Package className="w-3.5 h-3.5" /> {variants.length} variant{variants.length !== 1 ? "s" : ""}</p>
+              <p className="flex items-center gap-1.5"><Layers className="w-3.5 h-3.5" /> {selectedCollections.length} collection{selectedCollections.length !== 1 ? "s" : ""}</p>
+              <p className="flex items-center gap-1.5"><Tag className="w-3.5 h-3.5" /> {selectedCategories.length} categor{selectedCategories.length !== 1 ? "ies" : "y"}</p>
             </div>
 
             <button type="submit" disabled={saving}

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
+import { Tag, Zap, Lightbulb, AlertTriangle } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
@@ -192,9 +193,9 @@ export default function DiscountsPage() {
       {/* Tabs */}
       <div className="flex gap-1 mb-5 bg-gray-100 p-1 rounded-xl w-fit">
         {([
-          { key: "coupons", label: "🏷️ Coupon Codes" },
-          { key: "auto", label: "⚡ Auto Discounts" },
-        ] as { key: "coupons" | "auto"; label: string }[]).map(t => (
+          { key: "coupons", label: <span className="flex items-center gap-1.5"><Tag className="w-4 h-4" /> Coupon Codes</span> },
+          { key: "auto", label: <span className="flex items-center gap-1.5"><Zap className="w-4 h-4" /> Auto Discounts</span> },
+        ] as { key: "coupons" | "auto"; label: React.ReactNode }[]).map(t => (
           <button key={t.key} onClick={() => setActiveTab(t.key)}
             className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${activeTab === t.key ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
             {t.label}
@@ -207,7 +208,7 @@ export default function DiscountsPage() {
         <>
           {/* Info banner */}
           <div className="mb-5 bg-blue-50 border border-blue-100 rounded-xl px-5 py-3 text-sm text-blue-700 flex items-start gap-3">
-            <span className="text-lg shrink-0">💡</span>
+            <Lightbulb className="w-5 h-5 shrink-0 mt-0.5" />
             <p>Coupon codes are entered by customers at checkout (e.g. <code className="bg-blue-100 px-1.5 py-0.5 rounded font-mono text-xs">WELCOME20</code>). They are validated in real-time when the customer clicks Apply.</p>
           </div>
 
@@ -221,7 +222,7 @@ export default function DiscountsPage() {
                 </div>
 
                 {couponSaveErr && (
-                  <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">⚠️ {couponSaveErr}</div>
+                  <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm flex items-center gap-2"><AlertTriangle className="w-4 h-4 shrink-0" /> {couponSaveErr}</div>
                 )}
 
                 <form onSubmit={saveCoupon} className="space-y-4" noValidate>
@@ -346,7 +347,7 @@ export default function DiscountsPage() {
               <div className="p-12 text-center text-gray-400">Loading…</div>
             ) : coupons.length === 0 ? (
               <div className="p-16 text-center">
-                <div className="text-5xl mb-3">🏷️</div>
+                <div className="mb-3 flex justify-center"><Tag className="w-14 h-14 text-gray-300" /></div>
                 <p className="text-gray-500 font-medium mb-1">No coupon codes yet</p>
                 <p className="text-sm text-gray-400 mb-5">Create your first coupon code to offer discounts to customers at checkout</p>
                 <button onClick={() => { setCouponForm(emptyCouponForm()); setCouponErrors({}); setShowCouponForm(true); }}
@@ -420,7 +421,7 @@ export default function DiscountsPage() {
       {activeTab === "auto" && (
         <>
           <div className="mb-5 bg-amber-50 border border-amber-100 rounded-xl px-5 py-3 text-sm text-amber-700 flex items-start gap-3">
-            <span className="text-lg shrink-0">⚡</span>
+            <Zap className="w-5 h-5 shrink-0 mt-0.5" />
             <p>Auto discounts are applied automatically at checkout without a code — e.g. buy any product from a collection and get 10% off.</p>
           </div>
 
@@ -431,7 +432,7 @@ export default function DiscountsPage() {
                   <h2 className="text-lg font-bold text-gray-900">New Auto Discount</h2>
                   <button onClick={() => setShowDiscountForm(false)} className="text-gray-400 hover:text-gray-600 text-2xl leading-none">×</button>
                 </div>
-                {discountSaveErr && <div className="mb-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm">⚠️ {discountSaveErr}</div>}
+                {discountSaveErr && <div className="mb-3 bg-red-50 border border-red-200 text-red-700 px-4 py-2 rounded-lg text-sm flex items-center gap-2"><AlertTriangle className="w-4 h-4 shrink-0" /> {discountSaveErr}</div>}
                 <form onSubmit={saveDiscount} className="space-y-3">
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">Discount Title <span className="text-red-500">*</span></label>
@@ -487,7 +488,7 @@ export default function DiscountsPage() {
               <div className="p-12 text-center text-gray-400">Loading…</div>
             ) : discounts.length === 0 ? (
               <div className="p-16 text-center">
-                <div className="text-5xl mb-3">⚡</div>
+                <div className="mb-3 flex justify-center"><Zap className="w-14 h-14 text-gray-300" /></div>
                 <p className="text-gray-500 font-medium mb-5">No auto discounts yet</p>
                 <button onClick={() => setShowDiscountForm(true)} className="btn-brand px-5 py-2.5 rounded-lg text-sm font-semibold">+ Create First Auto Discount</button>
               </div>

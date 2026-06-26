@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { Image as ImageIcon, FolderOpen, Upload } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import Image from "next/image";
 import { cloudinaryTransform } from "@/lib/cloudinary-url";
@@ -102,7 +103,7 @@ export default function CollectionsPage() {
                   </div>
                 ) : (
                   <label className={`flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:border-green-400 hover:bg-green-50 transition-colors ${uploading ? "opacity-60 pointer-events-none" : ""}`}>
-                    <span className="text-2xl mb-1">{uploading ? "⏳" : "🖼️"}</span>
+                    <span className="mb-1">{uploading ? <Upload className="w-6 h-6 text-gray-400" /> : <ImageIcon className="w-6 h-6 text-gray-400" />}</span>
                     <span className="text-xs text-gray-500">{uploading ? "Uploading…" : "Click to upload image"}</span>
                     <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFormImageChange} />
                   </label>
@@ -120,7 +121,7 @@ export default function CollectionsPage() {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading ? <div className="col-span-3 p-12 text-center text-gray-400">Loading…</div>
-          : collections.length === 0 ? <div className="col-span-3 p-16 text-center text-gray-400"><div className="text-4xl mb-3">🗂️</div>No collections yet</div>
+          : collections.length === 0 ? <div className="col-span-3 p-16 text-center text-gray-400"><div className="mb-3 flex justify-center"><FolderOpen className="w-14 h-14 text-gray-300" /></div>No collections yet</div>
           : collections.map(c => (
             <div key={c.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
               {/* Image area */}

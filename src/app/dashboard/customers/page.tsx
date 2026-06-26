@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
+import { Users } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import { formatDate } from "@/lib/utils";
 
@@ -31,7 +32,7 @@ export default function CustomersPage() {
       </div>
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         {loading ? <div className="p-12 text-center text-gray-400">Loading…</div>
-          : customers.length === 0 ? <div className="p-16 text-center text-gray-400"><div className="text-4xl mb-3">👥</div>No customers yet</div>
+          : customers.length === 0 ? <div className="p-16 text-center text-gray-400"><div className="mb-3 flex justify-center"><Users className="w-14 h-14 text-gray-300" /></div>No customers yet</div>
           : (
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">

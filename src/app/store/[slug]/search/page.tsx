@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { formatCurrency } from "@/lib/utils";
 import { Suspense } from "react";
+import { SlidersHorizontal, LayoutGrid, List, ShoppingBag } from "lucide-react";
 import CartBadge from "@/components/storefront/CartBadge";
 
 interface Product {
@@ -348,7 +349,7 @@ function SearchContent({ slug }: { slug: string }) {
           <div className="lg:hidden flex items-center gap-2 mb-4 overflow-x-auto pb-1">
             <button onClick={() => setShowFilters(!showFilters)}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium shrink-0 ${hasActiveFilters ? "sf-chip border" : "border-gray-200 text-gray-600"}`}>
-              🎛 Filters {hasActiveFilters && <span className="sf-chip-solid text-xs rounded-full w-5 h-5 flex items-center justify-center">!</span>}
+              <SlidersHorizontal className="w-4 h-4" /> Filters {hasActiveFilters && <span className="sf-chip-solid text-xs rounded-full w-5 h-5 flex items-center justify-center">!</span>}
             </button>
             <select value={sort} onChange={e => setSort(e.target.value as SortOption)}
               className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-green-500 focus:outline-none">
@@ -381,9 +382,9 @@ function SearchContent({ slug }: { slug: string }) {
               </div>
               <div className="flex border border-gray-200 rounded-lg overflow-hidden">
                 <button onClick={() => setLayout("grid")}
-                  className={`px-3 py-1.5 text-sm transition-colors ${layout === "grid" ? "bg-gray-900 text-white" : "text-gray-500 hover:bg-gray-50"}`}>⊞</button>
+                  className={`px-3 py-1.5 flex items-center transition-colors ${layout === "grid" ? "bg-gray-900 text-white" : "text-gray-500 hover:bg-gray-50"}`}><LayoutGrid className="w-4 h-4" /></button>
                 <button onClick={() => setLayout("list")}
-                  className={`px-3 py-1.5 text-sm transition-colors border-l border-gray-200 ${layout === "list" ? "bg-gray-900 text-white" : "text-gray-500 hover:bg-gray-50"}`}>☰</button>
+                  className={`px-3 py-1.5 flex items-center transition-colors border-l border-gray-200 ${layout === "list" ? "bg-gray-900 text-white" : "text-gray-500 hover:bg-gray-50"}`}><List className="w-4 h-4" /></button>
               </div>
             </div>
           </div>
@@ -451,7 +452,7 @@ function SearchContent({ slug }: { slug: string }) {
                       <div className="aspect-square bg-gray-50 overflow-hidden">
                         {img
                           ? <Image src={img} alt={p.title} width={300} height={300} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
-                          : <div className="w-full h-full flex items-center justify-center text-5xl">🛍️</div>}
+                          : <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="w-12 h-12 text-gray-200" /></div>}
                       </div>
                       <div className="p-3">
                         {p.vendor && <p className="text-xs text-gray-400 mb-0.5">{p.vendor}</p>}
@@ -481,7 +482,7 @@ function SearchContent({ slug }: { slug: string }) {
                       <div className="w-28 h-28 shrink-0 bg-gray-50 overflow-hidden relative">
                         {img
                           ? <Image src={img} alt={p.title} width={112} height={112} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
-                          : <div className="w-full h-full flex items-center justify-center text-3xl">🛍️</div>}
+                          : <div className="w-full h-full flex items-center justify-center"><ShoppingBag className="w-8 h-8 text-gray-200" /></div>}
                         {isOnSale && discount > 0 && (
                           <div className="absolute top-1 left-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
                             {discount}% OFF

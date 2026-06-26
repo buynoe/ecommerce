@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState, useCallback, useRef } from "react";
+import { Image as ImageIcon, Upload, FolderOpen, AlertTriangle, ChevronUp, ChevronDown, X, Edit2, Trash2, RefreshCw, Lightbulb } from "lucide-react";
 import PageHeader from "@/components/dashboard/PageHeader";
 import GalleryWidget from "@/components/ui/GalleryWidget";
 import Image from "next/image";
@@ -158,7 +159,7 @@ export default function BannersPage() {
 
       {/* Tips */}
       <div className="mb-5 bg-blue-50 border border-blue-100 rounded-xl px-5 py-3 text-sm text-blue-700 flex items-start gap-3">
-        <span className="text-lg shrink-0">💡</span>
+        <Lightbulb className="w-5 h-5 shrink-0 mt-0.5" />
         <div>
           <p className="font-semibold mb-0.5">Banner tips for best results</p>
           <p className="text-blue-600">Use landscape images (1600×600 px or wider). Multiple banners auto-slide every 5 seconds. Drag ↑↓ to reorder. Images are shown full-width with a text overlay.</p>
@@ -201,14 +202,14 @@ export default function BannersPage() {
             onClick={() => bulkInputRef.current?.click()}
             className="w-full px-6 py-6 flex flex-col items-center gap-2 text-gray-500 cursor-pointer"
           >
-            <span className="text-3xl">{dragOver ? "📂" : "📤"}</span>
+            {dragOver ? <FolderOpen className="w-8 h-8" /> : <Upload className="w-8 h-8" />}
             <span className="text-sm font-semibold text-gray-700">Drop multiple banner images here or click to upload</span>
             <span className="text-xs text-gray-400">Each image creates a new banner · Stored in your Cloudinary folder · JPEG, PNG, WebP supported</span>
           </button>
         )}
         {bulkError && (
           <div className="px-5 pb-4 text-xs text-red-600 bg-red-50 border-t border-red-100 rounded-b-xl py-2">
-            ⚠ {bulkError}
+            <AlertTriangle className="w-4 h-4 inline mr-1" />{bulkError}
           </div>
         )}
       </div>
@@ -218,7 +219,7 @@ export default function BannersPage() {
         <div className="text-center py-16 text-gray-400">Loading…</div>
       ) : banners.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
-          <div className="text-5xl mb-3">🖼️</div>
+          <div className="mb-3 flex justify-center"><ImageIcon className="w-12 h-12 text-gray-300" /></div>
           <p className="text-gray-600 font-medium mb-2">No banners yet</p>
           <p className="text-sm text-gray-400 mb-6">Add a banner with an image to make your storefront stand out</p>
           <button onClick={() => setEditing({ ...empty() })} className="btn-brand px-5 py-2.5 rounded-lg font-semibold">
@@ -252,7 +253,7 @@ export default function BannersPage() {
                 {/* Badges */}
                 <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
                   {!b.imageUrl && (
-                    <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium border border-amber-200">⚠ No image</span>
+                    <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium border border-amber-200 flex items-center gap-1"><AlertTriangle className="w-3 h-3" />No image</span>
                   )}
                   <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${b.isActive ? "bg-green-500 text-white" : "bg-gray-200 text-gray-600"}`}>
                     {b.isActive ? "● Active" : "○ Hidden"}
@@ -268,21 +269,21 @@ export default function BannersPage() {
               <div className="flex items-center justify-between px-4 py-2.5 border-t border-gray-100 bg-gray-50">
                 <div className="flex items-center gap-1">
                   <button onClick={() => moveUp(b, idx)} disabled={idx === 0}
-                    className="p-1.5 rounded-lg hover:bg-gray-200 disabled:opacity-30 text-gray-500 text-sm transition-colors" title="Move up">↑</button>
+                    className="p-1.5 rounded-lg hover:bg-gray-200 disabled:opacity-30 text-gray-500 transition-colors" title="Move up"><ChevronUp className="w-4 h-4" /></button>
                   <button onClick={() => moveDown(b, idx)} disabled={idx === banners.length - 1}
-                    className="p-1.5 rounded-lg hover:bg-gray-200 disabled:opacity-30 text-gray-500 text-sm transition-colors" title="Move down">↓</button>
+                    className="p-1.5 rounded-lg hover:bg-gray-200 disabled:opacity-30 text-gray-500 transition-colors" title="Move down"><ChevronDown className="w-4 h-4" /></button>
                 </div>
                 <div className="flex items-center gap-2">
                   <button onClick={() => toggle(b)} className={`text-xs px-3 py-1.5 rounded-lg font-semibold border transition-colors ${b.isActive ? "border-gray-200 text-gray-600 hover:bg-gray-100" : "border-green-200 text-green-700 hover:bg-green-50"}`}>
                     {b.isActive ? "Hide" : "Show"}
                   </button>
                   <button onClick={() => { setEditing(b); setErrors({}); }}
-                    className="text-xs px-3 py-1.5 rounded-lg font-semibold border border-gray-200 text-gray-600 hover:bg-gray-100">
-                    ✏️ Edit
+                    className="text-xs px-3 py-1.5 rounded-lg font-semibold border border-gray-200 text-gray-600 hover:bg-gray-100 flex items-center gap-1">
+                    <Edit2 className="w-3 h-3" /> Edit
                   </button>
                   <button onClick={() => deleteBanner(b.id)}
-                    className="text-xs px-3 py-1.5 rounded-lg font-semibold border border-red-200 text-red-600 hover:bg-red-50">
-                    🗑 Delete
+                    className="text-xs px-3 py-1.5 rounded-lg font-semibold border border-red-200 text-red-600 hover:bg-red-50 flex items-center gap-1">
+                    <Trash2 className="w-3 h-3" /> Delete
                   </button>
                 </div>
               </div>
@@ -299,7 +300,7 @@ export default function BannersPage() {
             {/* Header — sticky inside the scrollable overlay */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 rounded-t-2xl bg-white">
               <h2 className="font-bold text-gray-900 text-lg">{editing.id ? "Edit Banner" : "New Banner"}</h2>
-              <button onClick={() => setEditing(null)} className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 text-xl font-bold transition-colors">×</button>
+              <button onClick={() => setEditing(null)} className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"><X className="w-5 h-5" /></button>
             </div>
 
             {/* Live preview */}
@@ -336,19 +337,19 @@ export default function BannersPage() {
                     <Image src={editing.imageUrl} alt="Banner" fill className="object-cover" unoptimized />
                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 gap-3">
                       <button type="button" onClick={() => setGalleryOpen(true)}
-                        className="bg-white text-gray-800 px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-gray-100">
-                        🔄 Change Image
+                        className="bg-white text-gray-800 px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-gray-100 flex items-center gap-1">
+                        <RefreshCw className="w-3 h-3" /> Change Image
                       </button>
                       <button type="button" onClick={() => update("imageUrl", "")}
-                        className="bg-red-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-red-700">
-                        ✕ Remove
+                        className="bg-red-600 text-white px-4 py-2 rounded-lg text-xs font-bold shadow hover:bg-red-700 flex items-center gap-1">
+                        <X className="w-3 h-3" /> Remove
                       </button>
                     </div>
                   </div>
                 ) : (
                   <button type="button" onClick={() => setGalleryOpen(true)}
                     className="w-full border-2 border-dashed border-gray-300 rounded-xl py-8 flex flex-col items-center gap-2 text-gray-500 hover:border-pink-400 hover:bg-green-50 hover:text-pink-500 transition-all group">
-                    <span className="text-3xl group-hover:scale-110 transition-transform">🖼️</span>
+                    <ImageIcon className="w-10 h-10 text-gray-400 group-hover:scale-110 transition-transform" />
                     <span className="text-sm font-semibold">Choose Image from Gallery</span>
                     <span className="text-xs text-gray-400">Recommended: 1600 × 600 px or wider</span>
                   </button>
@@ -438,7 +439,7 @@ export default function BannersPage() {
 
               {hasImage && (
                 <div className="bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 text-xs text-blue-600">
-                  💡 When a banner has an image, text is shown white on a dark overlay for readability. Background color is used as fallback while the image loads.
+                  <Lightbulb className="w-3.5 h-3.5 inline mr-1" /> When a banner has an image, text is shown white on a dark overlay for readability. Background color is used as fallback while the image loads.
                 </div>
               )}
 
