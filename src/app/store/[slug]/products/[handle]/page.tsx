@@ -356,8 +356,18 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             {store?.name || slug}
           </Link>
           <div className="flex items-center gap-3">
-            <Link href={`/store/${slug}/search`} className="text-gray-500 hover:text-gray-900 text-sm font-medium">🔍 Search</Link>
-            <Link href={`/store/${slug}/account`} className="text-gray-500 hover:text-gray-900 text-sm font-medium hidden sm:block">👤 Account</Link>
+            <Link href={`/store/${slug}/search`} aria-label="Search"
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </Link>
+            <Link href={`/store/${slug}/account`} aria-label="My Account"
+              className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors hidden sm:flex">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </Link>
             {store?.id && <CartBadge slug={slug} storeId={store.id} />}
           </div>
         </div>
