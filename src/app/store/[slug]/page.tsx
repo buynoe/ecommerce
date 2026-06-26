@@ -123,32 +123,33 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
 
       {/* Collections */}
       {store.collections.length > 0 && (
-        <section className="py-12 px-4 md:px-8 bg-gray-50">
-          <div>
-            <AnimateOnScroll from="bottom">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Shop by Category</h2>
-            </AnimateOnScroll>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {store.collections.map((c, i) => (
-                <AnimateOnScroll key={c.id} from="bottom" delay={i * 60}>
-                  <Link href={`/store/${slug}/collections/${c.handle}`}
-                    className="block bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow hover:border-green-300 group h-full">
-                    <div className="relative w-full bg-gray-100 overflow-hidden" style={{ aspectRatio: "195/185" }}>
-                      {c.imageUrl ? (
-                        <img src={cloudinaryTransform(c.imageUrl, COLLECTION_TRANSFORMS)} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                      ) : (
-                        <div className="flex items-center justify-center h-full text-gray-300 group-hover:scale-110 transition-transform duration-300">
-                          <svg width="40" height="40" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
-                        </div>
-                      )}
+        <section className="py-10 bg-gray-50">
+          <AnimateOnScroll from="bottom">
+            <h2 className="text-2xl font-bold text-gray-900 mb-5 px-4 md:px-8">Shop by Category</h2>
+          </AnimateOnScroll>
+          {/* Mobile: horizontal scroll carousel; md+: grid */}
+          <div className="flex gap-3 overflow-x-auto pb-3 px-4 md:px-8 snap-x snap-mandatory scroll-smooth
+                          md:grid md:grid-cols-4 lg:grid-cols-5 md:gap-4 md:overflow-visible md:snap-none"
+               style={{ WebkitOverflowScrolling: "touch" }}>
+            {store.collections.map((c) => (
+              <Link key={c.id} href={`/store/${slug}/collections/${c.handle}`}
+                className="shrink-0 w-[120px] snap-start md:w-auto
+                           block bg-white rounded-xl border border-gray-200 overflow-hidden
+                           hover:shadow-md hover:border-gray-300 transition-all group">
+                <div className="relative w-full bg-gray-100 overflow-hidden" style={{ aspectRatio: "1/1" }}>
+                  {c.imageUrl ? (
+                    <img src={cloudinaryTransform(c.imageUrl, COLLECTION_TRANSFORMS)} alt={c.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-gray-300 group-hover:scale-110 transition-transform duration-300">
+                      <svg width="32" height="32" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
                     </div>
-                    <div className="p-3 text-center">
-                      <h3 className="font-semibold text-gray-900 text-sm">{c.title}</h3>
-                    </div>
-                  </Link>
-                </AnimateOnScroll>
-              ))}
-            </div>
+                  )}
+                </div>
+                <div className="p-2 text-center">
+                  <h3 className="font-semibold text-gray-900 text-xs leading-tight">{c.title}</h3>
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
       )}

@@ -978,7 +978,13 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
           /* Auth forms */
           <div className="max-w-md mx-auto">
             <div className="text-center mb-8">
-              <div className="text-4xl mb-3">👤</div>
+              <div className="mb-4 flex justify-center">
+                <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </div>
+              </div>
               <h1 className="text-2xl font-bold text-gray-900">My Account</h1>
               <p className="text-gray-500 text-sm mt-1">Sign in to view orders, track shipments and manage your profile</p>
             </div>

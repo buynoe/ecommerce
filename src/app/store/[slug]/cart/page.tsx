@@ -64,8 +64,8 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-100 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+      <header className="bg-white border-b border-gray-100 px-4 md:px-8 py-4">
+        <div className="flex items-center justify-between">
           <Link href={`/store/${slug}`} className="flex items-center gap-2 text-xl font-bold text-gray-900">
             {store?.logo ? (
               <img src={store.logo} alt={store.name} className="h-12 w-auto max-w-[160px] rounded-lg object-contain" />
@@ -80,7 +80,7 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
         </div>
       </header>
 
-      <div className="max-w-4xl mx-auto px-6 py-10">
+      <div className="px-4 md:px-8 py-10">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Shopping Cart ({cart?.items?.length || 0} items)</h1>
 
         {!cart?.items?.length ? (
@@ -119,7 +119,7 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
                       <button onClick={() => updateQty(item.variant.id, item.quantity - 1)} className="w-7 h-7 border border-gray-200 rounded text-sm hover:bg-gray-50">−</button>
                       <span className="text-sm font-medium w-6 text-center">{item.quantity}</span>
                       <button onClick={() => updateQty(item.variant.id, item.quantity + 1)} className="w-7 h-7 border border-gray-200 rounded text-sm hover:bg-gray-50">+</button>
-                      <button onClick={() => remove(item.variant.id)} className="text-xs text-red-500 hover:underline ml-2">Remove</button>
+                      <button onClick={() => remove(item.variant.id)} className="text-xs text-red-500 hover:underline ml-2 cursor-pointer">Remove</button>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
