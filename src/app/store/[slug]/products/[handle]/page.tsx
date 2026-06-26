@@ -350,10 +350,11 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
       <header className="border-b border-gray-100 bg-white sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href={`/store/${slug}`} className="flex items-center gap-2.5 text-xl font-bold text-gray-900">
-            {store?.logo && (
-              <img src={store.logo} alt={store.name} className="w-8 h-8 rounded-lg object-cover" />
+            {store?.logo ? (
+              <img src={store.logo} alt={store.name} className="h-12 w-auto max-w-[160px] rounded-lg object-contain" />
+            ) : (
+              <span>{store?.name || slug}</span>
             )}
-            {store?.name || slug}
           </Link>
           <div className="flex items-center gap-3">
             <Link href={`/store/${slug}/search`} aria-label="Search"

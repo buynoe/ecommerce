@@ -67,8 +67,11 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
       <header className="bg-white border-b border-gray-100 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link href={`/store/${slug}`} className="flex items-center gap-2 text-xl font-bold text-gray-900">
-            {store?.logo && <img src={store.logo} alt={store.name} className="w-7 h-7 rounded-lg object-cover" />}
-            {store?.name || slug}
+            {store?.logo ? (
+              <img src={store.logo} alt={store.name} className="h-12 w-auto max-w-[160px] rounded-lg object-contain" />
+            ) : (
+              <span>{store?.name || slug}</span>
+            )}
           </Link>
           <div className="flex items-center gap-4">
             <Link href={`/store/${slug}`} className="text-sm text-gray-500 hover:text-gray-700">← Continue Shopping</Link>

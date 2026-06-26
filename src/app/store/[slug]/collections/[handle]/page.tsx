@@ -29,8 +29,11 @@ export default function CollectionPage({ params }: { params: Promise<{ slug: str
       <header className="bg-white border-b border-gray-100 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link href={`/store/${slug}`} className="flex items-center gap-2 text-xl font-bold text-gray-900">
-            {data?.store?.logo && <img src={data.store.logo} alt={data.store.name} className="w-7 h-7 rounded-lg object-cover" />}
-            {data?.store?.name || slug}
+            {data?.store?.logo ? (
+              <img src={data.store.logo} alt={data.store.name} className="h-12 w-auto max-w-[160px] rounded-lg object-contain" />
+            ) : (
+              <span>{data?.store?.name || slug}</span>
+            )}
           </Link>
           <nav className="flex items-center gap-4 text-sm text-gray-600">
             <Link href={`/store/${slug}/search`} className="hover:text-gray-900">Search</Link>

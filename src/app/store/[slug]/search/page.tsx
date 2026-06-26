@@ -302,8 +302,11 @@ function SearchContent({ slug }: { slug: string }) {
       <header className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto flex items-center gap-4">
           <Link href={`/store/${slug}`} className="flex items-center gap-2 text-xl font-bold text-gray-900 shrink-0">
-            {store?.logo && <img src={store.logo} alt={store.name} className="w-7 h-7 rounded-lg object-cover" />}
-            {store?.name || slug}
+            {store?.logo ? (
+              <img src={store.logo} alt={store.name} className="h-12 w-auto max-w-[160px] rounded-lg object-contain" />
+            ) : (
+              <span>{store?.name || slug}</span>
+            )}
           </Link>
           <form onSubmit={onSearch} className="flex gap-2 flex-1">
             <input

@@ -68,10 +68,11 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
       <header className="border-b border-gray-100 sticky top-0 bg-white/95 backdrop-blur z-40">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href={`/store/${slug}`} className="flex items-center gap-2.5 text-xl font-bold text-gray-900">
-            {store.logo && (
-              <img src={store.logo} alt={store.name} className="w-8 h-8 rounded-lg object-cover" />
+            {store.logo ? (
+              <img src={store.logo} alt={store.name} className="h-12 w-auto max-w-[160px] rounded-lg object-contain" />
+            ) : (
+              <span>{store.name}</span>
             )}
-            {store.name}
           </Link>
           <nav className="hidden md:flex items-center gap-6">
             <Link href={`/store/${slug}/search`} className="text-sm text-gray-600 hover:text-gray-900">Products</Link>

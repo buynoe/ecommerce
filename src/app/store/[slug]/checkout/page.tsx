@@ -587,7 +587,13 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
       {/* Header */}
       <header className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-20">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <Link href={`/store/${slug}`} className="text-xl font-bold text-gray-900">{store.name}</Link>
+          <Link href={`/store/${slug}`} className="flex items-center text-xl font-bold text-gray-900">
+            {store?.logo ? (
+              <img src={store.logo} alt={store.name} className="h-12 w-auto max-w-[160px] rounded-lg object-contain" />
+            ) : (
+              <span>{store.name}</span>
+            )}
+          </Link>
           <div className="flex items-center gap-2 text-sm text-gray-400">
             <Link href={`/store/${slug}/cart`} className="text-gray-500 hover:text-gray-700">Cart</Link>
             <span>›</span>
