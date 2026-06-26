@@ -49,7 +49,7 @@ function addrToForm(a: SavedAddress): AddressForm {
 }
 
 function inputCls(err?: string) {
-  return `w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors ${err ? "border-red-400 bg-red-50 focus:ring-red-400" : "border-gray-200"}`;
+  return `w-full border rounded-lg px-3 py-2.5 text-sm sf-ring transition-colors ${err ? "border-red-400 bg-red-50 focus:ring-red-400" : "border-gray-200"}`;
 }
 
 function addrOneLine(a: SavedAddress | AddressForm) {
@@ -179,13 +179,14 @@ function AddressCard({
     <div
       onClick={onSelect}
       className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all ${
-        selected ? "border-green-500 bg-green-50" : "border-gray-200 hover:border-gray-300 bg-white"
+        selected ? "sf-border-active sf-chip" : "border-gray-200 hover:border-gray-300 bg-white"
       }`}
     >
       {/* Selection indicator */}
-      <div className={`absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-        selected ? "border-green-500 bg-green-500" : "border-gray-300"
-      }`}>
+      <div
+        className={`absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center ${selected ? "" : "border-gray-300"}`}
+        style={selected ? { borderColor: "var(--sf-brand)", backgroundColor: "var(--sf-brand)" } : {}}
+      >
         {selected && <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414L8.414 15l-4.121-4.121a1 1 0 011.414-1.414L8.414 12.172l7.879-7.879a1 1 0 011.414 0z" clipRule="evenodd" /></svg>}
       </div>
 
@@ -193,7 +194,7 @@ function AddressCard({
         <div className="flex items-center gap-2 mb-1">
           <p className="text-sm font-semibold text-gray-900">{addr.firstName} {addr.lastName}</p>
           {addr.isDefault && (
-            <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Default</span>
+            <span className="text-xs sf-chip border px-2 py-0.5 rounded-full font-medium">Default</span>
           )}
         </div>
         {addr.phone && <p className="text-xs text-gray-500 mb-1">{addr.phone}</p>}
@@ -206,7 +207,7 @@ function AddressCard({
           <button
             type="button"
             onClick={e => { e.stopPropagation(); onSetDefault(); }}
-            className="text-xs text-green-600 hover:text-green-800 font-medium"
+            className="text-xs sf-text font-medium hover:opacity-70"
           >
             Set as default
           </button>
@@ -575,7 +576,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
     <div className="min-h-screen flex items-center justify-center flex-col gap-4">
       <div className="text-5xl">🛒</div>
       <p className="text-gray-600 text-lg font-medium">Your cart is empty</p>
-      <Link href={`/store/${slug}`} className="bg-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-green-700">Continue Shopping</Link>
+      <Link href={`/store/${slug}`} className="sf-btn px-6 py-3 rounded-xl font-semibold">Continue Shopping</Link>
     </div>
   );
 
@@ -610,10 +611,10 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
           <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <h2 className="font-bold text-gray-900 mb-4 text-lg">Contact Information</h2>
             {isLoggedIn ? (
-              <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 text-sm">
+              <div className="flex items-center justify-between sf-chip border rounded-xl px-4 py-3 text-sm">
                 <div>
-                  <p className="font-semibold text-green-800">{loggedInCustomer.firstName} {loggedInCustomer.lastName}</p>
-                  <p className="text-green-700 text-xs">{loggedInCustomer.email}</p>
+                  <p className="font-semibold">{loggedInCustomer.firstName} {loggedInCustomer.lastName}</p>
+                  <p className="text-xs opacity-80">{loggedInCustomer.email}</p>
                 </div>
                 <button
                   onClick={async () => {
@@ -633,7 +634,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
                   {fieldErrors.email && <p className="text-xs text-red-500 mt-0.5">{fieldErrors.email}</p>}
                 </div>
                 <div className="flex items-center gap-2">
-                  <input type="checkbox" id="createAcc" checked={createAccount} onChange={e => setCreateAccount(e.target.checked)} className="w-4 h-4 rounded text-green-600 border-gray-300" />
+                  <input type="checkbox" id="createAcc" checked={createAccount} onChange={e => setCreateAccount(e.target.checked)} className="w-4 h-4 rounded sf-accent border-gray-300" />
                   <label htmlFor="createAcc" className="text-sm text-gray-600 cursor-pointer">Save details — create an account to track orders</label>
                 </div>
                 {createAccount && (
@@ -646,7 +647,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
                 )}
                 <p className="text-xs text-gray-400">
                   Already have an account?{" "}
-                  <Link href={`/store/${slug}/account`} className="text-green-600 hover:underline font-medium">Sign in →</Link>
+                  <Link href={`/store/${slug}/account`} className="sf-text hover:underline font-medium">Sign in →</Link>
                 </p>
               </div>
             )}
@@ -678,7 +679,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
                     onClick={pickNewAddress}
                     className={`w-full p-4 rounded-xl border-2 border-dashed text-sm font-semibold transition-all flex items-center gap-2 ${
                       selectedAddressId === "new"
-                        ? "border-green-500 text-green-700 bg-green-50"
+                        ? "sf-border-active sf-chip"
                         : "border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-700"
                     }`}
                   >
@@ -700,7 +701,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
                 {isLoggedIn && (
                   <label className="flex items-center gap-2 mt-4 cursor-pointer">
                     <input type="checkbox" checked={saveNewAddress} onChange={e => setSaveNewAddress(e.target.checked)}
-                      className="w-4 h-4 rounded text-green-600 border-gray-300" />
+                      className="w-4 h-4 rounded sf-accent border-gray-300" />
                     <span className="text-sm text-gray-600">Save this address to my account</span>
                   </label>
                 )}
@@ -719,7 +720,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
           <div className="bg-white rounded-2xl border border-gray-200 p-6">
             <h2 className="font-bold text-gray-900 mb-3 text-lg">Billing Address</h2>
             <label className="flex items-center gap-2 mb-4 cursor-pointer">
-              <input type="checkbox" checked={sameAsBilling} onChange={e => setSameAsBilling(e.target.checked)} className="w-4 h-4 rounded text-green-600 border-gray-300" />
+              <input type="checkbox" checked={sameAsBilling} onChange={e => setSameAsBilling(e.target.checked)} className="w-4 h-4 rounded sf-accent border-gray-300" />
               <span className="text-sm text-gray-600">Same as shipping address</span>
             </label>
             {!sameAsBilling && (
@@ -733,15 +734,15 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
             {fieldErrors.shippingMethod && <p className="text-sm text-red-500 mb-3 bg-red-50 px-3 py-2 rounded-lg">{fieldErrors.shippingMethod}</p>}
             <div className="space-y-2">
               {store.shippingMethods?.map((m: { id: string; name: string; price: number; minDays: number; maxDays: number }) => (
-                <label key={m.id} className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${shippingMethodId === m.id ? "border-green-500 bg-green-50" : "border-gray-200 hover:border-gray-300"}`}>
+                <label key={m.id} className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${shippingMethodId === m.id ? "sf-border-active sf-chip" : "border-gray-200 hover:border-gray-300"}`}>
                   <div className="flex items-center gap-3">
-                    <input type="radio" name="shipping" value={m.id} checked={shippingMethodId === m.id} onChange={() => setShippingMethodId(m.id)} className="text-green-600" />
+                    <input type="radio" name="shipping" value={m.id} checked={shippingMethodId === m.id} onChange={() => setShippingMethodId(m.id)} className="sf-accent" />
                     <div>
                       <p className="text-sm font-semibold text-gray-800">{m.name}</p>
                       <p className="text-xs text-gray-500">{m.minDays === 0 ? "Today" : `${m.minDays}–${m.maxDays} business days`}</p>
                     </div>
                   </div>
-                  <span className="text-sm font-bold text-gray-800">{m.price === 0 ? <span className="text-green-600">FREE</span> : formatCurrency(m.price, store.currency)}</span>
+                  <span className="text-sm font-bold text-gray-800">{m.price === 0 ? <span className="sf-text">FREE</span> : formatCurrency(m.price, store.currency)}</span>
                 </label>
               ))}
             </div>
@@ -752,10 +753,10 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
             <h2 className="font-bold text-gray-900 mb-4 text-lg">Payment Method</h2>
             <div className="space-y-2">
               {store.paymentGateways?.map((g: { id: string; provider: string; name: string }) => (
-                <label key={g.id} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${paymentMethod === g.provider ? "border-green-500 bg-green-50" : "border-gray-200 hover:border-gray-300"}`}>
+                <label key={g.id} className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${paymentMethod === g.provider ? "sf-border-active sf-chip" : "border-gray-200 hover:border-gray-300"}`}>
                   <input type="radio" name="payment" value={g.provider} checked={paymentMethod === g.provider}
                     onChange={() => { setPaymentMethod(g.provider); setPaymentGatewayId(g.id); }}
-                    className="text-green-600" />
+                    className="sf-accent" />
                   <div className="flex-1">
                     <p className="text-sm font-semibold text-gray-800 flex items-center gap-2">
                       {g.provider === "RAZORPAY" && "💳"}
@@ -768,7 +769,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
                     {g.provider === "CASHFREE" && <p className="text-xs text-gray-500">UPI · Cards · Net Banking · EMI</p>}
                   </div>
                   {paymentMethod === g.provider && (
-                    <span className="text-green-600 text-xs font-semibold bg-green-100 px-2 py-0.5 rounded-full">Selected</span>
+                    <span className="sf-chip border text-xs font-semibold px-2 py-0.5 rounded-full">Selected</span>
                   )}
                 </label>
               ))}
@@ -809,13 +810,13 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
             <div className="border-t border-gray-100 pt-4 mb-4">
               <div className="flex gap-2">
                 <input
-                  className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none uppercase tracking-wider"
+                  className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm sf-ring uppercase tracking-wider"
                   placeholder="COUPON CODE" value={coupon}
                   onChange={e => setCoupon(e.target.value.toUpperCase())}
                 />
                 <button onClick={applyCoupon} type="button" className="px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-700 font-medium">Apply</button>
               </div>
-              {couponMsg && <p className={`text-xs mt-1.5 ${couponDiscount > 0 ? "text-green-600 font-medium" : "text-red-500"}`}>{couponMsg}</p>}
+              {couponMsg && <p className={`text-xs mt-1.5 ${couponDiscount > 0 ? "sf-text font-medium" : "text-red-500"}`}>{couponMsg}</p>}
             </div>
 
             {/* Price breakdown */}
@@ -827,7 +828,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
               <div className="flex justify-between text-gray-600">
                 <span className="flex items-center gap-1.5">
                   GST
-                  <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-1.5 py-0.5 rounded-full font-medium">Incl. in price</span>
+                  <span className="text-xs sf-chip border px-1.5 py-0.5 rounded-full font-medium">Incl. in price</span>
                 </span>
                 <span>{formatCurrency(Math.round(taxAmount * 100) / 100, store.currency)}</span>
               </div>
@@ -836,10 +837,10 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Shipping</span>
-                <span>{shippingCost === 0 ? <span className="text-green-600 font-medium">FREE</span> : formatCurrency(shippingCost, store.currency)}</span>
+                <span>{shippingCost === 0 ? <span className="sf-text font-medium">FREE</span> : formatCurrency(shippingCost, store.currency)}</span>
               </div>
               {couponDiscount > 0 && (
-                <div className="flex justify-between text-green-600 font-medium"><span>Coupon Discount</span><span>−{formatCurrency(couponDiscount, store.currency)}</span></div>
+                <div className="flex justify-between sf-text font-medium"><span>Coupon Discount</span><span>−{formatCurrency(couponDiscount, store.currency)}</span></div>
               )}
               <div className="flex justify-between font-bold text-gray-900 text-base pt-3 border-t border-gray-200">
                 <span>Total</span><span>{formatCurrency(total, store.currency)}</span>
@@ -850,7 +851,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
             <button
               onClick={placeOrder}
               disabled={placing || savingAddr}
-              className="w-full mt-5 bg-green-600 text-white py-4 rounded-xl font-bold text-base hover:bg-green-700 disabled:opacity-50 transition-colors shadow-md shadow-green-200"
+              className="w-full mt-5 sf-btn py-4 rounded-xl font-bold text-base disabled:opacity-50 transition-colors shadow-md"
             >
               {placing || savingAddr ? (
                 <span className="flex items-center justify-center gap-2">

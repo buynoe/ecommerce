@@ -606,7 +606,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                   <Link
                     key={tag}
                     href={`/store/${slug}/search?tag=${encodeURIComponent(tag)}`}
-                    className="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full hover:bg-green-100 hover:text-green-700 transition-colors font-medium"
+                    className="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full hover:sf-chip transition-colors font-medium"
                   >
                     #{tag}
                   </Link>
@@ -815,7 +815,7 @@ function ReviewsSection({
           {customerChecked && !submitted && (
             loggedInCustomer ? (
               <button onClick={() => setShowForm(!showForm)}
-                className="bg-green-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-green-700 text-sm transition-colors">
+                className="sf-btn px-5 py-2.5 rounded-xl font-semibold text-sm transition-colors">
                 ✍️ Write a Review
               </button>
             ) : (
@@ -830,7 +830,7 @@ function ReviewsSection({
         </div>
 
         {submitted && (
-          <div className="mb-6 bg-green-50 border border-green-200 text-green-700 px-5 py-4 rounded-2xl text-sm font-medium">
+          <div className="mb-6 sf-chip border px-5 py-4 rounded-2xl text-sm font-medium">
             ✓ {submitMsg}
           </div>
         )}
@@ -850,20 +850,20 @@ function ReviewsSection({
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Your Name <span className="text-red-500">*</span></label>
                   <input required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                     placeholder="Rahul Sharma"
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" />
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm sf-ring" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Email <span className="text-xs font-normal text-gray-400">(optional)</span></label>
                   <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                     placeholder="rahul@email.com"
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" />
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm sf-ring" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Review Title</label>
                 <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                   placeholder="Summarise your experience"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" />
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm sf-ring" />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Your Review</label>
@@ -873,7 +873,7 @@ function ReviewsSection({
               </div>
               <div className="flex gap-3">
                 <button type="submit" disabled={submitting}
-                  className="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 disabled:opacity-50">
+                  className="flex-1 sf-btn py-3 rounded-xl font-bold disabled:opacity-50">
                   {submitting ? "Submitting…" : "Submit Review"}
                 </button>
                 <button type="button" onClick={() => setShowForm(false)}

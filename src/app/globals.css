@@ -72,6 +72,8 @@
 
 .sf-border-active { border-color: var(--sf-brand) !important; }
 
+.sf-accent { accent-color: var(--sf-brand); }
+
 .sf-ring:focus {
   outline: none;
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--sf-brand) 35%, transparent);
