@@ -84,7 +84,7 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
           <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
             <div className="text-6xl mb-4">🛒</div>
             <h2 className="text-xl font-semibold text-gray-700">Your cart is empty</h2>
-            <Link href={`/store/${slug}`} className="mt-4 inline-block bg-green-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-green-700">Shop Now</Link>
+            <Link href={`/store/${slug}`} className="mt-4 inline-block sf-btn px-6 py-3 rounded-xl font-medium">Shop Now</Link>
           </div>
         ) : (
           <div className="grid lg:grid-cols-3 gap-6">
@@ -138,9 +138,9 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
                   <span>{formatCurrency(Math.round(totalGst * 100) / 100, store?.currency)}</span>
                 </div>
                 <div className="flex justify-between font-bold text-gray-900 pt-2 border-t border-gray-100"><span>Subtotal (incl. GST)</span><span>{formatCurrency(subtotal, store?.currency)}</span></div>
-                <div className="flex justify-between text-gray-500 text-xs"><span>Shipping</span><span className="text-green-600">Calculated at checkout</span></div>
+                <div className="flex justify-between text-gray-500 text-xs"><span>Shipping</span><span className="sf-text">Calculated at checkout</span></div>
               </div>
-              <Link href={`/store/${slug}/checkout`} className="block w-full mt-5 bg-green-600 text-white py-3 rounded-xl font-semibold text-center hover:bg-green-700 transition-colors">
+              <Link href={`/store/${slug}/checkout`} className="block w-full mt-5 sf-btn py-3 rounded-xl font-semibold text-center transition-colors">
                 Proceed to Checkout →
               </Link>
             </div>

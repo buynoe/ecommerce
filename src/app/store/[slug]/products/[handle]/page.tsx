@@ -330,7 +330,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
   if (!product) return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center">
-        <div className="w-16 h-16 border-4 border-green-200 border-t-green-600 rounded-full animate-spin mx-auto mb-4" />
+        <div className="w-16 h-16 border-4 border-gray-200 border-t-[var(--sf-brand)] rounded-full animate-spin mx-auto mb-4" />
         <p className="text-gray-400 text-sm">Loading product…</p>
       </div>
     </div>
@@ -417,7 +417,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                     onClick={() => { setFeatImg(img.url); setZoomIndex(i); }}
                     onDoubleClick={() => { setZoomIndex(i); setZoomOpen(true); }}
                     title={img.variantLabel ? `${img.variantLabel} · Double-click to zoom` : "Double-click to zoom"}
-                    className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${featImg === img.url ? "border-green-500 shadow-md" : "border-transparent hover:border-gray-300"}`}>
+                    className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${featImg === img.url ? "sf-border-active shadow-md" : "border-transparent hover:border-gray-300"}`}>
                     <img src={img.url} alt={img.variantLabel || ""} className="w-full h-full object-cover" />
                     {img.variantLabel && (
                       <div className="absolute bottom-0 inset-x-0 bg-black/50 text-white text-[9px] font-semibold text-center py-0.5 leading-tight truncate px-0.5">
@@ -436,7 +436,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             {product.vendor && (
               <Link
                 href={`/store/${slug}/search?vendor=${encodeURIComponent(product.vendor)}`}
-                className="inline-block text-sm font-semibold text-green-600 tracking-wide uppercase mb-2 hover:underline"
+                className="inline-block text-sm font-semibold sf-text tracking-wide uppercase mb-2 hover:underline"
               >
                 {product.vendor}
               </Link>
@@ -450,7 +450,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 {compareAtPrice && compareAtPrice > price && (
                   <>
                     <span className="text-xl text-gray-400 line-through font-medium">{formatCurrency(compareAtPrice, store?.currency)}</span>
-                    <span className="text-sm font-bold text-green-600 bg-green-50 px-2.5 py-0.5 rounded-full">
+                    <span className="text-sm font-bold sf-chip border px-2.5 py-0.5 rounded-full">
                       Save {formatCurrency(compareAtPrice - price, store?.currency)}
                     </span>
                   </>
@@ -461,9 +461,9 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 <div className="mt-1.5">
                   <button
                     onClick={() => setShowBreakup(b => !b)}
-                    className="text-xs text-gray-500 hover:text-green-700 flex items-center gap-1 transition-colors"
+                    className="text-xs text-gray-500 hover:sf-text flex items-center gap-1 transition-colors"
                   >
-                    <span className="bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-full font-medium">
+                    <span className="sf-chip border px-2 py-0.5 rounded-full font-medium">
                       Tax Included
                     </span>
                     <span className="underline underline-offset-2">
@@ -505,7 +505,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                     ⚡ Only {selectedVariant.inventoryItem?.available} left!
                   </span>
                 ) : (
-                  <span className="text-xs font-semibold bg-green-50 text-green-700 px-3 py-1 rounded-full border border-green-200">✓ In Stock</span>
+                  <span className="text-xs font-semibold sf-chip border px-3 py-1 rounded-full">✓ In Stock</span>
                 )}
               </div>
             )}
@@ -532,7 +532,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                             className={[
                               "px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all",
                               isSelected
-                                ? "border-green-600 bg-green-50 text-green-700 shadow-sm"
+                                ? "sf-border-active sf-chip shadow-sm"
                                 : isAvail
                                 ? "border-gray-200 text-gray-700 hover:border-gray-400 bg-white"
                                 : isSelectable
@@ -573,8 +573,8 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                 onClick={addToCart}
                 disabled={!inStock || adding || !selectedVariant}
                 className={`flex-1 h-11 rounded-xl font-bold text-sm transition-all ${
-                  added ? "bg-green-500 text-white scale-[0.99]"
-                  : inStock ? "bg-green-600 text-white hover:bg-green-700 shadow-sm hover:shadow-md"
+                  added ? "sf-btn scale-[0.99]"
+                  : inStock ? "sf-btn shadow-sm hover:shadow-md"
                   : "bg-gray-200 text-gray-400 cursor-not-allowed"
                 }`}
               >

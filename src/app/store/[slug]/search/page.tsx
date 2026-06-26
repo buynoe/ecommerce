@@ -179,12 +179,12 @@ function SearchContent({ slug }: { slug: string }) {
             ) : (
               <div className="space-y-1 max-h-44 overflow-y-auto">
                 <button onClick={() => setCollectionId("")}
-                  className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!collectionId ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
+                  className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!collectionId ? "sf-chip font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                   All Products
                 </button>
                 {collections.map(c => (
                   <button key={c.id} onClick={() => setCollectionId(c.id)}
-                    className={`w-full text-left text-sm px-2 py-1.5 rounded-lg flex items-center justify-between ${collectionId === c.id ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
+                    className={`w-full text-left text-sm px-2 py-1.5 rounded-lg flex items-center justify-between ${collectionId === c.id ? "sf-chip font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                     <span className="truncate">{c.title}</span>
                   </button>
                 ))}
@@ -205,14 +205,14 @@ function SearchContent({ slug }: { slug: string }) {
             ) : (
               <div className="space-y-1 max-h-44 overflow-y-auto">
                 <button onClick={() => setBrandFilter("")}
-                  className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!brandFilter ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
+                  className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!brandFilter ? "sf-chip font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                   All Brands
                 </button>
                 {brandFacets.map(([brand, count]) => (
                   <button key={brand} onClick={() => setBrandFilter(brandFilter === brand ? "" : brand)}
-                    className={`w-full text-left text-sm px-2 py-1.5 rounded-lg flex items-center justify-between gap-1 ${brandFilter === brand ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
+                    className={`w-full text-left text-sm px-2 py-1.5 rounded-lg flex items-center justify-between gap-1 ${brandFilter === brand ? "sf-chip font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                     <span className="truncate">{brand}</span>
-                    <span className={`text-xs shrink-0 px-1.5 py-0.5 rounded-full ${brandFilter === brand ? "bg-green-100" : "bg-gray-100 text-gray-500"}`}>{count}</span>
+                    <span className={`text-xs shrink-0 px-1.5 py-0.5 rounded-full ${brandFilter === brand ? "sf-chip-solid" : "bg-gray-100 text-gray-500"}`}>{count}</span>
                   </button>
                 ))}
               </div>
@@ -232,14 +232,14 @@ function SearchContent({ slug }: { slug: string }) {
             ) : (
               <div className="space-y-1 max-h-44 overflow-y-auto">
                 <button onClick={() => setCategoryFilter("")}
-                  className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!categoryFilter ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
+                  className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!categoryFilter ? "sf-chip font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                   All Categories
                 </button>
                 {categoryFacets.map(([id, { title, count }]) => (
                   <button key={id} onClick={() => setCategoryFilter(categoryFilter === id ? "" : id)}
-                    className={`w-full text-left text-sm px-2 py-1.5 rounded-lg flex items-center justify-between gap-1 ${categoryFilter === id ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
+                    className={`w-full text-left text-sm px-2 py-1.5 rounded-lg flex items-center justify-between gap-1 ${categoryFilter === id ? "sf-chip font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                     <span className="truncate">{title}</span>
-                    <span className={`text-xs shrink-0 px-1.5 py-0.5 rounded-full ${categoryFilter === id ? "bg-green-100" : "bg-gray-100 text-gray-500"}`}>{count}</span>
+                    <span className={`text-xs shrink-0 px-1.5 py-0.5 rounded-full ${categoryFilter === id ? "sf-chip-solid" : "bg-gray-100 text-gray-500"}`}>{count}</span>
                   </button>
                 ))}
               </div>
@@ -259,14 +259,14 @@ function SearchContent({ slug }: { slug: string }) {
             ) : (
               <div className="space-y-1 max-h-44 overflow-y-auto">
                 <button onClick={() => setMaterialFilter("")}
-                  className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!materialFilter ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
+                  className={`w-full text-left text-sm px-2 py-1.5 rounded-lg ${!materialFilter ? "sf-chip font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                   All Materials
                 </button>
                 {materialFacets.map(([mat, count]) => (
                   <button key={mat} onClick={() => setMaterialFilter(materialFilter === mat ? "" : mat)}
-                    className={`w-full text-left text-sm px-2 py-1.5 rounded-lg flex items-center justify-between gap-1 ${materialFilter === mat ? "bg-green-50 text-green-700 font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
+                    className={`w-full text-left text-sm px-2 py-1.5 rounded-lg flex items-center justify-between gap-1 ${materialFilter === mat ? "sf-chip font-semibold" : "text-gray-700 hover:bg-gray-50"}`}>
                     <span className="truncate">{mat}</span>
-                    <span className={`text-xs shrink-0 px-1.5 py-0.5 rounded-full ${materialFilter === mat ? "bg-green-100" : "bg-gray-100 text-gray-500"}`}>{count}</span>
+                    <span className={`text-xs shrink-0 px-1.5 py-0.5 rounded-full ${materialFilter === mat ? "sf-chip-solid" : "bg-gray-100 text-gray-500"}`}>{count}</span>
                   </button>
                 ))}
               </div>
@@ -311,7 +311,7 @@ function SearchContent({ slug }: { slug: string }) {
               placeholder="Search products…" autoFocus
               className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
             />
-            <button type="submit" className="px-5 py-2.5 bg-green-600 text-white rounded-xl text-sm font-semibold hover:bg-green-700">Search</button>
+            <button type="submit" className="px-5 py-2.5 sf-btn rounded-xl text-sm font-semibold">Search</button>
           </form>
           <Link href={`/store/${slug}/account`} aria-label="My Account"
             className="w-9 h-9 flex items-center justify-center rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors hidden sm:flex shrink-0">
@@ -344,8 +344,8 @@ function SearchContent({ slug }: { slug: string }) {
           {/* Mobile filter bar */}
           <div className="lg:hidden flex items-center gap-2 mb-4 overflow-x-auto pb-1">
             <button onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium shrink-0 ${hasActiveFilters ? "bg-green-50 border-green-200 text-green-700" : "border-gray-200 text-gray-600"}`}>
-              🎛 Filters {hasActiveFilters && <span className="bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">!</span>}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm font-medium shrink-0 ${hasActiveFilters ? "sf-chip border" : "border-gray-200 text-gray-600"}`}>
+              🎛 Filters {hasActiveFilters && <span className="sf-chip-solid text-xs rounded-full w-5 h-5 flex items-center justify-center">!</span>}
             </button>
             <select value={sort} onChange={e => setSort(e.target.value as SortOption)}
               className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-green-500 focus:outline-none">
@@ -388,14 +388,14 @@ function SearchContent({ slug }: { slug: string }) {
           {/* Active filter chips */}
           {hasActiveFilters && (
             <div className="flex gap-2 flex-wrap mb-3">
-              {tagFilter && <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">#{tagFilter} <button onClick={() => setTagFilter("")} className="ml-1">×</button></span>}
+              {tagFilter && <span className="text-xs sf-chip border px-2 py-1 rounded-full font-medium">#{tagFilter} <button onClick={() => setTagFilter("")} className="ml-1">×</button></span>}
               {brandFilter && <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">Brand: {brandFilter} <button onClick={() => setBrandFilter("")} className="ml-1">×</button></span>}
               {categoryFilter && <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full font-medium">Category: {categoryFacets.find(([id]) => id === categoryFilter)?.[1].title} <button onClick={() => setCategoryFilter("")} className="ml-1">×</button></span>}
               {materialFilter && <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full font-medium">Material: {materialFilter} <button onClick={() => setMaterialFilter("")} className="ml-1">×</button></span>}
-              {priceMin && <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Min ₹{priceMin} <button onClick={() => setPriceMin("")} className="ml-1">×</button></span>}
-              {priceMax && <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Max ₹{priceMax} <button onClick={() => setPriceMax("")} className="ml-1">×</button></span>}
-              {inStockOnly && <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">In Stock <button onClick={() => setInStockOnly(false)} className="ml-1">×</button></span>}
-              {collectionId && <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">{collections.find(c => c.id === collectionId)?.title} <button onClick={() => setCollectionId("")} className="ml-1">×</button></span>}
+              {priceMin && <span className="text-xs sf-chip border px-2 py-1 rounded-full">Min ₹{priceMin} <button onClick={() => setPriceMin("")} className="ml-1">×</button></span>}
+              {priceMax && <span className="text-xs sf-chip border px-2 py-1 rounded-full">Max ₹{priceMax} <button onClick={() => setPriceMax("")} className="ml-1">×</button></span>}
+              {inStockOnly && <span className="text-xs sf-chip border px-2 py-1 rounded-full">In Stock <button onClick={() => setInStockOnly(false)} className="ml-1">×</button></span>}
+              {collectionId && <span className="text-xs sf-chip border px-2 py-1 rounded-full">{collections.find(c => c.id === collectionId)?.title} <button onClick={() => setCollectionId("")} className="ml-1">×</button></span>}
             </div>
           )}
 
@@ -415,7 +415,7 @@ function SearchContent({ slug }: { slug: string }) {
               <div className="text-5xl mb-3">🔍</div>
               <h2 className="text-xl font-semibold text-gray-700">{query ? `No results for "${query}"` : "No products found"}</h2>
               <p className="text-gray-400 text-sm mt-1 mb-4">Try different keywords or remove some filters</p>
-              {hasActiveFilters && <button onClick={clearFilters} className="text-green-600 font-medium text-sm hover:underline">Clear all filters</button>}
+              {hasActiveFilters && <button onClick={clearFilters} className="sf-text font-medium text-sm hover:underline">Clear all filters</button>}
             </div>
           )}
 

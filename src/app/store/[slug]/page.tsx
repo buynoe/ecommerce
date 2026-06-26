@@ -157,7 +157,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
           <AnimateOnScroll from="bottom">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Latest Products</h2>
-              <Link href={`/store/${slug}/search`} className="text-sm text-green-600 hover:text-green-700 font-semibold border border-green-200 px-4 py-2 rounded-lg hover:bg-green-50 transition-colors">
+              <Link href={`/store/${slug}/search`} className="text-sm sf-text font-semibold border sf-border-active px-4 py-2 rounded-lg transition-colors hover:opacity-80">
                 View All →
               </Link>
             </div>
