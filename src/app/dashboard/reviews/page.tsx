@@ -74,7 +74,7 @@ export default function ReviewsPage() {
   };
 
   return (
-    <div className="max-w-5xl">
+    <div>
       <PageHeader title="Product Reviews" subtitle={`${total} review${total !== 1 ? "s" : ""} total`} />
 
       {/* Status tabs */}

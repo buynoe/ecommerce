@@ -153,7 +153,7 @@ export default function BillingPage() {
         onLoad={() => setScriptLoaded(true)}
       />
 
-      <div className="max-w-5xl">
+      <div>
         <PageHeader
           title="Plan & Billing"
           subtitle="Upgrade your plan to unlock more products, orders and features"

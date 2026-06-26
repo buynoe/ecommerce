@@ -62,7 +62,7 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="max-w-4xl">
+    <div>
       <PageHeader title="Product Categories" subtitle="Organise your products into categories"
         action={
           <button onClick={openNew} className="btn-brand px-4 py-2.5 rounded-xl text-sm font-semibold">

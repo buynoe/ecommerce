@@ -167,7 +167,7 @@ export default function PaymentsPage() {
   const activeCount = gateways.filter(g => g.isActive).length;
 
   return (
-    <div className="max-w-4xl">
+    <div>
       <PageHeader
         title="Payment Gateways"
         subtitle={`Configure payment methods for your store${activeCount > 0 ? ` · ${activeCount} active` : ""}`}
