@@ -428,7 +428,7 @@ function SearchContent({ slug }: { slug: string }) {
                       className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group relative">
                       {isOnSale && discount > 0 && (
                         <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                          -{discount}% OFF
+                          {discount}% OFF
                         </div>
                       )}
                       {isOutOfStock && (
@@ -472,7 +472,7 @@ function SearchContent({ slug }: { slug: string }) {
                           : <div className="w-full h-full flex items-center justify-center text-3xl">🛍️</div>}
                         {isOnSale && discount > 0 && (
                           <div className="absolute top-1 left-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                            -{discount}% OFF
+                            {discount}% OFF
                           </div>
                         )}
                       </div>

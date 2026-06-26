@@ -50,7 +50,7 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
     loadCart(store.id);
   }
 
-  type CartItem = { id: string; quantity: number; variant: { id: string; price: number; title: string; options: Record<string, string>; imageUrl?: string | null; product: { title: string; handle: string; gstRate?: number; gstIncluded?: boolean; images: { url: string }[] } } };
+  type CartItem = { id: string; quantity: number; variant: { id: string; price: number; compareAtPrice?: number | null; title: string; options: Record<string, string>; imageUrl?: string | null; product: { title: string; handle: string; gstRate?: number; gstIncluded?: boolean; images: { url: string }[] } } };
   const subtotal = cart?.items?.reduce((s: number, i: CartItem) => s + i.quantity * i.variant.price, 0) || 0;
   const totalGst = cart?.items?.reduce((s: number, i: CartItem) => {
     const rate = i.variant.product.gstRate ?? 18;
@@ -101,7 +101,17 @@ export default function CartPage({ params }: { params: Promise<{ slug: string }>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 text-sm">{item.variant.product.title}</h3>
                     {item.variant.title !== "Default" && <p className="text-xs text-gray-500">{item.variant.title}</p>}
-                    <p className="text-sm font-bold text-gray-900 mt-1">{formatCurrency(item.variant.price, store?.currency)}</p>
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      <p className="text-sm font-bold text-gray-900">{formatCurrency(item.variant.price, store?.currency)}</p>
+                      {item.variant.compareAtPrice && item.variant.compareAtPrice > item.variant.price && (
+                        <>
+                          <span className="text-xs text-gray-400 line-through">{formatCurrency(item.variant.compareAtPrice, store?.currency)}</span>
+                          <span className="text-xs bg-red-500 text-white font-bold px-1.5 py-0.5 rounded-full">
+                            {Math.round((1 - item.variant.price / item.variant.compareAtPrice) * 100)}% OFF
+                          </span>
+                        </>
+                      )}
+                    </div>
                     <div className="flex items-center gap-2 mt-2">
                       <button onClick={() => updateQty(item.variant.id, item.quantity - 1)} className="w-7 h-7 border border-gray-200 rounded text-sm hover:bg-gray-50">−</button>
                       <span className="text-sm font-medium w-6 text-center">{item.quantity}</span>

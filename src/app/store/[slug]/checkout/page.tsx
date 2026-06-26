@@ -776,7 +776,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
             <h2 className="font-bold text-gray-900 mb-4">Order Summary</h2>
 
             <div className="space-y-3 mb-4 max-h-56 overflow-y-auto pr-1">
-              {cart?.items?.map((item: { id: string; quantity: number; variant: { price: number; title: string; imageUrl?: string | null; product: { title: string; images?: { url: string }[] } } }) => {
+              {cart?.items?.map((item: { id: string; quantity: number; variant: { price: number; compareAtPrice?: number | null; title: string; imageUrl?: string | null; product: { title: string; images?: { url: string }[] } } }) => {
                 const imgUrl = item.variant.imageUrl || item.variant.product.images?.[0]?.url || null;
                 return (
                 <div key={item.id} className="flex items-start gap-3 text-sm">
@@ -788,7 +788,12 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
                     {item.variant.title !== "Default" && <p className="text-xs text-gray-400">{item.variant.title}</p>}
                     <p className="text-xs text-gray-400">Qty: {item.quantity}</p>
                   </div>
-                  <p className="font-semibold text-gray-900 shrink-0 text-sm">{formatCurrency(item.variant.price * item.quantity, store.currency)}</p>
+                  <div className="text-right shrink-0">
+                    <p className="font-semibold text-gray-900 text-sm">{formatCurrency(item.variant.price * item.quantity, store.currency)}</p>
+                    {item.variant.compareAtPrice && item.variant.compareAtPrice > item.variant.price && (
+                      <p className="text-xs text-gray-400 line-through">{formatCurrency(item.variant.compareAtPrice * item.quantity, store.currency)}</p>
+                    )}
+                  </div>
                 </div>
                 );
               })}

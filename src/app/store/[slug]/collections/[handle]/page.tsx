@@ -57,8 +57,13 @@ export default function CollectionPage({ params }: { params: Promise<{ slug: str
               const v = cheapestInStock ?? p.variants?.[0];
               return (
                 <Link key={p.id} href={`/store/${slug}/products/${p.handle}`} className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-all group">
-                  <div className="aspect-square bg-gray-50 overflow-hidden">
+                  <div className="relative aspect-square bg-gray-50 overflow-hidden">
                     {img ? <img src={img} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" /> : <div className="w-full h-full flex items-center justify-center text-4xl">🛍️</div>}
+                    {v?.compareAtPrice && v.compareAtPrice > v.price && (
+                      <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                        {Math.round((1 - v.price / v.compareAtPrice) * 100)}% OFF
+                      </div>
+                    )}
                   </div>
                   <div className="p-3">
                     <p className="text-xs text-gray-400 mb-0.5">{p.vendor}</p>

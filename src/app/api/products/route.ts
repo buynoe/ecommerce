@@ -13,6 +13,8 @@ export async function GET(req: NextRequest) {
     collectionId: searchParams.get("collectionId") || undefined,
     page: parseInt(searchParams.get("page") || "1"),
     limit: parseInt(searchParams.get("limit") || "20"),
+    sortBy: searchParams.get("sortBy") || undefined,
+    sortDir: (searchParams.get("sortDir") as "asc" | "desc") || undefined,
   });
   return NextResponse.json(result);
 }

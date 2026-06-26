@@ -41,23 +41,35 @@ export async function createProduct(storeId: string, data: {
 
 export async function getStoreProducts(storeId: string, filters?: {
   status?: string; search?: string; collectionId?: string; page?: number; limit?: number;
+  sortBy?: string; sortDir?: "asc" | "desc";
 }) {
   const page = filters?.page || 1;
   const limit = filters?.limit || 20;
   const skip = (page - 1) * limit;
+  const dir = filters?.sortDir || "desc";
 
   const where: Record<string, unknown> = { storeId };
   if (filters?.status) where.status = filters.status;
-  if (filters?.search) where.title = { contains: filters.search };
-  if (filters?.collectionId) {
-    where.collections = { some: { collectionId: filters.collectionId } };
+  if (filters?.search) where.title = { contains: filters.search, mode: "insensitive" };
+  if (filters?.collectionId) where.collections = { some: { collectionId: filters.collectionId } };
+
+  let orderBy: Record<string, unknown> = { createdAt: "desc" };
+  switch (filters?.sortBy) {
+    case "title":     orderBy = { title: dir }; break;
+    case "status":    orderBy = { status: dir }; break;
+    case "createdAt": orderBy = { createdAt: dir }; break;
+    case "orders":    orderBy = { orderItems: { _count: dir } }; break;
   }
 
   const [products, total] = await Promise.all([
     prisma.product.findMany({
       where, skip, take: limit,
-      include: { images: { where: { isFeatured: true }, take: 1 }, variants: { include: { inventoryItem: true }, take: 1 }, _count: { select: { orderItems: true } } },
-      orderBy: { createdAt: "desc" },
+      include: {
+        images: { where: { isFeatured: true }, take: 1 },
+        variants: { include: { inventoryItem: true } },
+        _count: { select: { orderItems: true } },
+      },
+      orderBy,
     }),
     prisma.product.count({ where }),
   ]);

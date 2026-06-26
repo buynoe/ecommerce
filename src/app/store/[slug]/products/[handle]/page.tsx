@@ -390,7 +390,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
             >
               {discount > 0 && (
                 <div className="absolute top-4 left-4 z-10 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-                  -{discount}% OFF
+                  {discount}% OFF
                 </div>
               )}
               <div className="absolute bottom-3 right-3 z-10 bg-black/40 text-white text-xs px-2.5 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
@@ -660,7 +660,7 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
                       : <div className="w-full h-full flex items-center justify-center text-4xl">🛍️</div>}
                     {isOnSale && discount > 0 && (
                       <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
-                        -{discount}% OFF
+                        {discount}% OFF
                       </div>
                     )}
                     {!inStock && (
