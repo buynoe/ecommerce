@@ -110,7 +110,8 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                 {order.payments.map((p: { id: string; status: string; amount: number; method?: string; gatewayOrderId?: string; gatewayPaymentId?: string; gatewaySignature?: string; createdAt: string; metadata?: string; gateway?: { provider: string; name: string } }) => {
                   let meta: Record<string, string> = {};
                   try { meta = JSON.parse(p.metadata || "{}"); } catch { /* ignore */ }
-                  const gatewayProvider = p.gateway?.provider || meta.provider || "UNKNOWN";
+                  const gatewayProvider = p.gateway?.provider || meta.provider || order.paymentGateway?.provider || "UNKNOWN";
+                  const gatewayName = p.gateway?.name || order.paymentGateway?.name;
                   return (
                     <div key={p.id} className="px-6 py-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
                       <div className="col-span-2 flex items-center justify-between">
@@ -128,7 +129,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                           {gatewayProvider === "RAZORPAY" ? "🟦 Razorpay" :
                            gatewayProvider === "CASHFREE" ? "🟩 Cashfree" :
                            gatewayProvider === "COD" ? "💵 Cash on Delivery" :
-                           p.gateway?.name || gatewayProvider}
+                           gatewayName || gatewayProvider}
                         </p>
                       </div>
                       {p.method && (
