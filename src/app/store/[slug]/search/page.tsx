@@ -312,7 +312,7 @@ function SearchContent({ slug }: { slug: string }) {
             <input
               type="search" value={query} onChange={e => setQuery(e.target.value)}
               placeholder="Search products…" autoFocus
-              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm sf-ring"
             />
             <button type="submit" className="px-5 py-2.5 sf-btn rounded-xl text-sm font-semibold">Search</button>
           </form>
@@ -415,7 +415,11 @@ function SearchContent({ slug }: { slug: string }) {
 
           {!loading && sorted.length === 0 && (
             <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
-              <div className="text-5xl mb-3">🔍</div>
+              <div className="mb-3 flex justify-center text-gray-300">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+              </div>
               <h2 className="text-xl font-semibold text-gray-700">{query ? `No results for "${query}"` : "No products found"}</h2>
               <p className="text-gray-400 text-sm mt-1 mb-4">Try different keywords or remove some filters</p>
               {hasActiveFilters && <button onClick={clearFilters} className="sf-text font-medium text-sm hover:underline">Clear all filters</button>}

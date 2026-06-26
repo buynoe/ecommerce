@@ -259,6 +259,7 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
   const [coupon, setCoupon] = useState("");
   const [couponDiscount, setCouponDiscount] = useState(0);
   const [couponMsg, setCouponMsg] = useState("");
+  const [autoDiscounts, setAutoDiscounts] = useState<Array<{ id: string; title: string; type: string; value: number; minAmount: number | null }>>([]);
 
   // Stable handlers — prevent cursor-jump bug
   const onShippingChange = useCallback((key: keyof AddressForm, value: string) => {
@@ -286,10 +287,15 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
       setPaymentGatewayId(defaultGw.id);
     }
 
-    const [cartRes, meRes] = await Promise.all([
+    const [cartRes, meRes, discRes] = await Promise.all([
       fetch(`/api/storefront/cart?storeId=${s.id}`),
       fetch(`/api/storefront/customer/me?storeId=${s.id}`),
+      fetch(`/api/storefront/checkout?storeId=${s.id}`),
     ]);
+    if (discRes.ok) {
+      const { discounts } = await discRes.json();
+      setAutoDiscounts(discounts || []);
+    }
     const { cart: c } = await cartRes.json();
     setCart(c);
 
@@ -547,7 +553,8 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
   type CheckoutCartItem = { quantity: number; variant: { price: number; product?: { gstRate?: number; gstIncluded?: boolean } } };
   const subtotal = cart?.items?.reduce((s: number, i: CheckoutCartItem) => s + i.quantity * i.variant.price, 0) || 0;
   const selectedShipping = store?.shippingMethods?.find((m: { id: string }) => m.id === shippingMethodId);
-  const shippingCost = selectedShipping?.price ?? 60;
+  const autoFreeShipping = !coupon && autoDiscounts.some(d => d.type === "FREE_SHIPPING" && (!d.minAmount || subtotal >= d.minAmount));
+  const shippingCost = autoFreeShipping ? 0 : (selectedShipping?.price ?? 60);
   // GST is included in product prices — extract it for display only, don't add to total
   const taxAmount = cart?.items?.reduce((s: number, i: CheckoutCartItem) => {
     const rate = i.variant.product?.gstRate ?? 18;
@@ -555,7 +562,15 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
     const linePrice = i.variant.price * i.quantity;
     return s + (included ? linePrice * rate / (100 + rate) : linePrice * rate / 100);
   }, 0) || 0;
-  const total = subtotal + shippingCost - couponDiscount;
+  const applicableAutoDiscounts = coupon ? [] : autoDiscounts.filter(d =>
+    (!d.minAmount || subtotal >= d.minAmount)
+  );
+  const autoDiscountTotal = applicableAutoDiscounts.reduce((sum, d) => {
+    if (d.type === "PERCENTAGE") return sum + (subtotal * d.value) / 100;
+    if (d.type === "FLAT") return sum + d.value;
+    return sum;
+  }, 0);
+  const total = subtotal + shippingCost - couponDiscount - autoDiscountTotal;
 
   // ── Loaders ───────────────────────────────────────────────────────────────
 
@@ -842,6 +857,16 @@ export default function CheckoutPage({ params }: { params: Promise<{ slug: strin
               {couponDiscount > 0 && (
                 <div className="flex justify-between sf-text font-medium"><span>Coupon Discount</span><span>−{formatCurrency(couponDiscount, store.currency)}</span></div>
               )}
+              {applicableAutoDiscounts.map(d => {
+                const amt = d.type === "PERCENTAGE" ? (subtotal * d.value) / 100 : d.type === "FLAT" ? d.value : 0;
+                if (amt <= 0 && d.type !== "FREE_SHIPPING") return null;
+                return (
+                  <div key={d.id} className="flex justify-between sf-text font-medium text-sm">
+                    <span>{d.title}</span>
+                    <span>{d.type === "FREE_SHIPPING" ? "Free Shipping" : `−${formatCurrency(amt, store.currency)}`}</span>
+                  </div>
+                );
+              })}
               <div className="flex justify-between font-bold text-gray-900 text-base pt-3 border-t border-gray-200">
                 <span>Total</span><span>{formatCurrency(total, store.currency)}</span>
               </div>

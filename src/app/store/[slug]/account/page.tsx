@@ -189,7 +189,7 @@ function ReturnModal({ order, storeId, onClose, onSuccess }: { order: any; store
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-2">Reason for Return <span className="text-red-500">*</span></label>
             <select value={globalReason} onChange={e => setGlobalReason(e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none">
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm sf-ring">
               {RETURN_REASONS.map(r => <option key={r} value={r}>{r}</option>)}
             </select>
           </div>
@@ -199,8 +199,8 @@ function ReturnModal({ order, storeId, onClose, onSuccess }: { order: any; store
             <p className="text-xs font-semibold text-gray-700 mb-2">Select Items to Return <span className="text-red-500">*</span></p>
             <div className="space-y-2">
               {order.items.map((item: { id: string; title: string; variantTitle?: string; variantImageUrl?: string | null; quantity: number; price: number; product?: { images?: { url: string }[] } }) => (
-                <label key={item.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${selectedItems[item.id] ? "border-green-500 bg-green-50" : "border-gray-200 hover:border-gray-300"}`}>
-                  <input type="checkbox" checked={!!selectedItems[item.id]} onChange={() => toggleItem(item)} className="w-4 h-4 text-green-600 rounded" />
+                <label key={item.id} className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all ${selectedItems[item.id] ? "sf-border-active sf-chip" : "border-gray-200 hover:border-gray-300"}`}>
+                  <input type="checkbox" checked={!!selectedItems[item.id]} onChange={() => toggleItem(item)} className="w-4 h-4 sf-accent rounded" />
                   <div className="w-12 h-12 bg-gray-100 rounded-lg shrink-0 overflow-hidden flex items-center justify-center">
                     {(item.variantImageUrl || item.product?.images?.[0]?.url)
                       ? <img src={item.variantImageUrl || item.product!.images![0].url} alt="" className="w-full h-full object-cover" />
@@ -235,7 +235,7 @@ function ReturnModal({ order, storeId, onClose, onSuccess }: { order: any; store
 
           <div className="flex gap-3">
             <button onClick={submit} disabled={submitting || Object.keys(selectedItems).length === 0}
-              className="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 disabled:opacity-50">
+              className="flex-1 sf-btn py-3 rounded-xl font-bold disabled:opacity-50">
               {submitting ? "Submitting…" : "Submit Return Request"}
             </button>
             <button onClick={onClose} className="flex-1 border border-gray-200 py-3 rounded-xl font-semibold text-gray-600 hover:bg-gray-50">
@@ -299,12 +299,12 @@ function ProfileEditPanel({ customer, storeId, onUpdated }: { customer: any; sto
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">First Name <span className="text-red-500">*</span></label>
               <input required value={form.firstName} onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" />
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm sf-ring" />
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1">Last Name <span className="text-red-500">*</span></label>
               <input required value={form.lastName} onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" />
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm sf-ring" />
             </div>
           </div>
           <div>
@@ -317,7 +317,7 @@ function ProfileEditPanel({ customer, storeId, onUpdated }: { customer: any; sto
             <label className="block text-xs font-semibold text-gray-700 mb-1">Phone</label>
             <input value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "").slice(0, 10) }))}
               inputMode="numeric" placeholder="10-digit mobile number"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" />
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm sf-ring" />
           </div>
           <div className="border-t border-gray-100 pt-4">
             <p className="text-sm font-semibold text-gray-700 mb-3">Change Password <span className="text-xs font-normal text-gray-400">(leave blank to keep current)</span></p>
@@ -326,26 +326,26 @@ function ProfileEditPanel({ customer, storeId, onUpdated }: { customer: any; sto
                 <label className="block text-xs font-semibold text-gray-700 mb-1">Current Password</label>
                 <input type="password" value={form.currentPassword} onChange={e => setForm(f => ({ ...f, currentPassword: e.target.value }))}
                   placeholder="Enter current password"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" />
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm sf-ring" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">New Password</label>
                   <input type="password" value={form.newPassword} onChange={e => setForm(f => ({ ...f, newPassword: e.target.value }))}
                     placeholder="Min 6 characters"
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" />
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm sf-ring" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-700 mb-1">Confirm New Password</label>
                   <input type="password" value={form.confirmPassword} onChange={e => setForm(f => ({ ...f, confirmPassword: e.target.value }))}
                     placeholder="Repeat new password"
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" />
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm sf-ring" />
                 </div>
               </div>
             </div>
           </div>
           <button type="submit" disabled={saving}
-            className="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 disabled:opacity-50 transition-colors">
+            className="w-full sf-btn py-3 rounded-xl font-bold disabled:opacity-50">
             {saving ? "Saving…" : "Save Changes"}
           </button>
         </form>
@@ -390,7 +390,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
   const ADDR_STATES = ["Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat","Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal","Andaman and Nicobar Islands","Chandigarh","Dadra and Nagar Haveli and Daman and Diu","Delhi","Jammu and Kashmir","Ladakh","Lakshadweep","Puducherry"];
 
   function addrInputCls(field: string) {
-    return `w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 transition-colors ${addrErrors[field] ? "border-red-400 bg-red-50 focus:ring-red-400" : "border-gray-200 focus:ring-green-500"}`;
+    return `w-full border rounded-lg px-3 py-2.5 text-sm transition-colors ${addrErrors[field] ? "border-red-400 bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-400" : "border-gray-200 sf-ring"}`;
   }
 
   function updateAddrField(key: keyof AddrForm, value: string) {
@@ -499,8 +499,11 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
       <header className="bg-white border-b border-gray-100 px-6 py-4 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Link href={`/store/${slug}`} className="flex items-center gap-2 text-xl font-bold text-gray-900">
-            {store?.logo && <img src={store.logo} alt={store.name} className="w-7 h-7 rounded-lg object-cover" />}
-            {store?.name || slug}
+            {store?.logo ? (
+              <img src={store.logo} alt={store.name} className="h-12 w-auto max-w-[160px] rounded-lg object-contain" />
+            ) : (
+              <span>{store?.name || slug}</span>
+            )}
           </Link>
           <div className="flex items-center gap-4 text-sm">
             <Link href={`/store/${slug}/search`} className="text-gray-500 hover:text-gray-800">Products</Link>
@@ -525,7 +528,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                   { key: "addresses", label: "Addresses" },
                   { key: "profile", label: "Profile" },
                 ] as { key: Tab; label: string }[]).map(({ key: t, label }) => (
-                  <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 rounded-lg text-sm font-semibold ${tab === t ? "bg-green-600 text-white" : "border border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
+                  <button key={t} onClick={() => setTab(t)} className={`px-4 py-2 rounded-lg text-sm font-semibold ${tab === t ? "sf-btn" : "border border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
                     {label}
                   </button>
                 ))}
@@ -543,7 +546,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                   <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
                     <div className="text-5xl mb-3">📦</div>
                     <p className="text-gray-500 mb-4">You haven&apos;t placed any orders yet</p>
-                    <Link href={`/store/${slug}`} className="bg-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-green-700">Start Shopping</Link>
+                    <Link href={`/store/${slug}`} className="sf-btn px-6 py-3 rounded-xl font-semibold">Start Shopping</Link>
                   </div>
                 ) : orders.map((order) => (
                   <div key={order.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
@@ -559,7 +562,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                         </span>
                         <span className="font-bold text-gray-900">{formatCurrency(order.total, store.currency)}</span>
                         <Link href={`/store/${slug}/order-success?order=${order.orderNumber}&storeId=${store.id}`}
-                          className="text-xs text-green-600 hover:underline font-medium">
+                          className="text-xs sf-text hover:underline font-medium">
                           View Details →
                         </Link>
                       </div>
@@ -729,7 +732,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-bold text-gray-900">My Addresses ({addresses.length})</h2>
                   <button onClick={() => { setAddrForm({ firstName: customer.firstName, lastName: customer.lastName, phone: customer.phone || "", address1: "", address2: "", city: "", state: "", pincode: "" }); setAddrErrors({}); setShowAddrForm(true); }}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700">
+                    className="sf-btn px-4 py-2 rounded-lg text-sm font-semibold">
                     + Add Address
                   </button>
                 </div>
@@ -738,7 +741,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                   <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
                     <div className="text-5xl mb-3">📍</div>
                     <p className="text-gray-500 mb-4">No saved addresses yet</p>
-                    <button onClick={() => { setAddrForm({ firstName: customer.firstName, lastName: customer.lastName, phone: customer.phone || "", address1: "", address2: "", city: "", state: "", pincode: "" }); setAddrErrors({}); setShowAddrForm(true); }} className="bg-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-green-700">
+                    <button onClick={() => { setAddrForm({ firstName: customer.firstName, lastName: customer.lastName, phone: customer.phone || "", address1: "", address2: "", city: "", state: "", pincode: "" }); setAddrErrors({}); setShowAddrForm(true); }} className="sf-btn px-6 py-3 rounded-xl font-semibold">
                       Add Your First Address
                     </button>
                   </div>
@@ -899,7 +902,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                           setAddrSaving(false);
                         }}
                         disabled={addrSaving}
-                        className="flex-1 bg-green-600 text-white py-2.5 rounded-xl font-semibold hover:bg-green-700 disabled:opacity-50 transition-colors"
+                        className="flex-1 sf-btn py-2.5 rounded-xl font-semibold disabled:opacity-50"
                       >
                         {addrSaving ? (
                           <span className="flex items-center justify-center gap-2">
@@ -924,9 +927,9 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                 {/* Saved addresses */}
                 <div className="grid sm:grid-cols-2 gap-4">
                   {addresses.map((addr: { id: string; firstName: string; lastName: string; phone?: string; address1: string; address2?: string; city: string; state: string; pincode: string; isDefault: boolean }) => (
-                    <div key={addr.id} className={`bg-white rounded-2xl border-2 p-5 relative ${addr.isDefault ? "border-green-500" : "border-gray-200"}`}>
+                    <div key={addr.id} className={`bg-white rounded-2xl border-2 p-5 relative ${addr.isDefault ? "sf-border-active" : "border-gray-200"}`}>
                       {addr.isDefault && (
-                        <span className="absolute top-3 right-3 text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-full font-semibold">Default</span>
+                        <span className="absolute top-3 right-3 text-xs sf-chip px-2.5 py-1 rounded-full font-semibold">Default</span>
                       )}
                       <p className="font-bold text-gray-900 mb-1 pr-16">{addr.firstName} {addr.lastName}</p>
                       {addr.phone && <p className="text-xs text-gray-500 mb-2">📱 {addr.phone}</p>}
@@ -944,7 +947,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                               });
                               await loadAddresses(store.id);
                             }}
-                            className="text-xs text-green-600 hover:text-green-800 font-semibold"
+                            className="text-xs sf-text hover:opacity-70 font-semibold"
                           >
                             Set as default
                           </button>
@@ -992,13 +995,13 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
               <form onSubmit={handleLogin} className="bg-white rounded-2xl border border-gray-200 p-6 space-y-4">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address <span className="text-red-500">*</span></label>
-                  <input type="email" required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} placeholder="you@example.com" />
+                  <input type="email" required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm sf-ring" value={loginEmail} onChange={e => setLoginEmail(e.target.value)} placeholder="you@example.com" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Password <span className="text-red-500">*</span></label>
-                  <input type="password" required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} placeholder="••••••••" />
+                  <input type="password" required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm sf-ring" value={loginPassword} onChange={e => setLoginPassword(e.target.value)} placeholder="••••••••" />
                 </div>
-                <button type="submit" disabled={authLoading} className="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 disabled:opacity-50">
+                <button type="submit" disabled={authLoading} className="w-full sf-btn py-3 rounded-xl font-bold disabled:opacity-50">
                   {authLoading ? "Signing in…" : "Sign In →"}
                 </button>
               </form>
@@ -1009,37 +1012,37 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">First Name <span className="text-red-500">*</span></label>
-                    <input required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" value={regForm.firstName} onChange={e => setRegForm(f => ({ ...f, firstName: e.target.value }))} placeholder="Priya" />
+                    <input required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm sf-ring" value={regForm.firstName} onChange={e => setRegForm(f => ({ ...f, firstName: e.target.value }))} placeholder="Priya" />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1">Last Name</label>
-                    <input className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" value={regForm.lastName} onChange={e => setRegForm(f => ({ ...f, lastName: e.target.value }))} placeholder="Sharma" />
+                    <input className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm sf-ring" value={regForm.lastName} onChange={e => setRegForm(f => ({ ...f, lastName: e.target.value }))} placeholder="Sharma" />
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address <span className="text-red-500">*</span></label>
-                  <input type="email" required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" value={regForm.email} onChange={e => setRegForm(f => ({ ...f, email: e.target.value }))} placeholder="you@example.com" />
+                  <input type="email" required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm sf-ring" value={regForm.email} onChange={e => setRegForm(f => ({ ...f, email: e.target.value }))} placeholder="you@example.com" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Phone Number</label>
-                  <input className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" value={regForm.phone} onChange={e => setRegForm(f => ({ ...f, phone: e.target.value }))} placeholder="9876543210" />
+                  <input className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm sf-ring" value={regForm.phone} onChange={e => setRegForm(f => ({ ...f, phone: e.target.value }))} placeholder="9876543210" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Password <span className="text-red-500">*</span></label>
-                  <input type="password" required minLength={6} className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" value={regForm.password} onChange={e => setRegForm(f => ({ ...f, password: e.target.value }))} placeholder="Minimum 6 characters" />
+                  <input type="password" required minLength={6} className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm sf-ring" value={regForm.password} onChange={e => setRegForm(f => ({ ...f, password: e.target.value }))} placeholder="Minimum 6 characters" />
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-1">Confirm Password <span className="text-red-500">*</span></label>
-                  <input type="password" required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none" value={regForm.confirmPassword} onChange={e => setRegForm(f => ({ ...f, confirmPassword: e.target.value }))} placeholder="Re-enter password" />
+                  <input type="password" required className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm sf-ring" value={regForm.confirmPassword} onChange={e => setRegForm(f => ({ ...f, confirmPassword: e.target.value }))} placeholder="Re-enter password" />
                 </div>
-                <button type="submit" disabled={authLoading} className="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 disabled:opacity-50">
+                <button type="submit" disabled={authLoading} className="w-full sf-btn py-3 rounded-xl font-bold disabled:opacity-50">
                   {authLoading ? "Creating account…" : "Create Account →"}
                 </button>
               </form>
             )}
 
             <p className="text-center text-xs text-gray-400 mt-4">
-              <Link href={`/store/${slug}`} className="text-green-600 hover:underline">← Continue Shopping</Link>
+              <Link href={`/store/${slug}`} className="sf-text hover:underline">← Continue Shopping</Link>
             </p>
           </div>
         )}
@@ -1092,7 +1095,7 @@ export default function AccountPage({ params }: { params: Promise<{ slug: string
                 {cancelItemTarget.item.variantTitle && cancelItemTarget.item.variantTitle !== "Default" && (
                   <p className="text-xs text-gray-500">{cancelItemTarget.item.variantTitle}</p>
                 )}
-                <p className="text-xs text-gray-400">Qty {cancelItemTarget.item.quantity} · Refund: <span className="font-semibold text-green-700">{formatCurrency(cancelItemTarget.item.price * cancelItemTarget.item.quantity, store.currency)}</span></p>
+                <p className="text-xs text-gray-400">Qty {cancelItemTarget.item.quantity} · Refund: <span className="font-semibold sf-text">{formatCurrency(cancelItemTarget.item.price * cancelItemTarget.item.quantity, store.currency)}</span></p>
               </div>
             </div>
 

@@ -49,7 +49,7 @@ const nav: NavGroup[] = [
     group: "Marketing",
     items: [
       { label: "Discounts", href: "/dashboard/discounts", icon: BadgePercent },
-      { label: "Coupons",   href: "/dashboard/coupons",   icon: Ticket },
+      { label: "Coupons",   href: "/dashboard/discounts",  icon: Ticket },
       { label: "Banners",   href: "/dashboard/banners",   icon: Megaphone },
       { label: "Gallery",   href: "/dashboard/gallery",   icon: ImageIcon },
     ],

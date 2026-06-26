@@ -51,6 +51,7 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
     where: { slug },
     include: {
       collections: { where: { status: "ACTIVE" }, take: 8 },
+      categories: { where: { isActive: true }, orderBy: { position: "asc" } },
       banners: { where: { isActive: true }, orderBy: { position: "asc" } },
       products: {
         where: { status: "ACTIVE" },
@@ -74,10 +75,10 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
               <span>{store.name}</span>
             )}
           </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href={`/store/${slug}/search`} className="text-sm text-gray-600 hover:text-gray-900">Products</Link>
+          <nav className="hidden md:flex items-center gap-7">
+            <Link href={`/store/${slug}/search`} className="sf-nav-link text-sm text-gray-600 font-medium">Products</Link>
             {store.collections.slice(0, 5).map(c => (
-              <Link key={c.id} href={`/store/${slug}/collections/${c.handle}`} className="text-sm text-gray-600 hover:text-gray-900">{c.title}</Link>
+              <Link key={c.id} href={`/store/${slug}/collections/${c.handle}`} className="sf-nav-link text-sm text-gray-600 font-medium">{c.title}</Link>
             ))}
           </nav>
           <div className="flex items-center gap-2">
@@ -122,8 +123,8 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
 
       {/* Collections */}
       {store.collections.length > 0 && (
-        <section className="py-12 px-6 bg-gray-50">
-          <div className="max-w-7xl mx-auto">
+        <section className="py-12 px-4 md:px-8 bg-gray-50">
+          <div>
             <AnimateOnScroll from="bottom">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Shop by Category</h2>
             </AnimateOnScroll>
@@ -153,8 +154,8 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
       )}
 
       {/* Products */}
-      <section className="py-12 px-6">
-        <div className="max-w-7xl mx-auto">
+      <section className="py-12 px-4 md:px-8">
+        <div>
           <AnimateOnScroll from="bottom">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Latest Products</h2>
@@ -220,44 +221,57 @@ export default async function StorefrontPage({ params }: { params: Promise<{ slu
 
       {/* Footer */}
       <AnimateOnScroll from="fade">
-      <footer className="bg-gray-900 text-gray-400 py-12 px-6 mt-10">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            {/* Brand */}
+      <footer className="bg-gray-900 text-gray-400 py-12 px-4 md:px-8 mt-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+          {/* Brand */}
+          <div>
+            <p className="text-white font-bold text-lg mb-2">{store.name}</p>
+            {store.description && <p className="text-sm leading-relaxed">{store.description}</p>}
+          </div>
+          {/* Categories (SEO) */}
+          {store.categories.length > 0 && (
             <div>
-              <p className="text-white font-bold text-lg mb-2">{store.name}</p>
-              {store.description && <p className="text-sm leading-relaxed">{store.description}</p>}
-            </div>
-            {/* Collections / Categories */}
-            {store.collections.length > 0 && (
-              <div>
-                <p className="text-white font-semibold text-sm mb-3 uppercase tracking-wide">Collections</p>
-                <ul className="space-y-2">
-                  {store.collections.map(c => (
-                    <li key={c.id}>
-                      <Link href={`/store/${slug}/collections/${c.handle}`} className="text-sm hover:text-white transition-colors">
-                        {c.title}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {/* Quick Links */}
-            <div>
-              <p className="text-white font-semibold text-sm mb-3 uppercase tracking-wide">Quick Links</p>
-              <ul className="space-y-2 text-sm">
-                <li><Link href={`/store/${slug}/search`} className="hover:text-white transition-colors">All Products</Link></li>
-                <li><Link href={`/store/${slug}/account`} className="hover:text-white transition-colors">My Account</Link></li>
-                <li><Link href={`/store/${slug}/cart`} className="hover:text-white transition-colors">Cart</Link></li>
-                <li><Link href={`/store/${slug}/account`} className="hover:text-white transition-colors">Track Order</Link></li>
+              <p className="text-white font-semibold text-sm mb-3 uppercase tracking-wide">Categories</p>
+              <ul className="space-y-2 text-sm columns-2 sm:columns-1">
+                {store.categories.map(cat => (
+                  <li key={cat.id}>
+                    <Link href={`/store/${slug}/search?q=${encodeURIComponent(cat.name)}`} className="hover:text-white transition-colors">
+                      {cat.name}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
+          )}
+          {/* Collections */}
+          {store.collections.length > 0 && (
+            <div>
+              <p className="text-white font-semibold text-sm mb-3 uppercase tracking-wide">Collections</p>
+              <ul className="space-y-2 text-sm">
+                {store.collections.map(c => (
+                  <li key={c.id}>
+                    <Link href={`/store/${slug}/collections/${c.handle}`} className="hover:text-white transition-colors">
+                      {c.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {/* Quick Links */}
+          <div>
+            <p className="text-white font-semibold text-sm mb-3 uppercase tracking-wide">Quick Links</p>
+            <ul className="space-y-2 text-sm">
+              <li><Link href={`/store/${slug}/search`} className="hover:text-white transition-colors">All Products</Link></li>
+              <li><Link href={`/store/${slug}/account`} className="hover:text-white transition-colors">My Account</Link></li>
+              <li><Link href={`/store/${slug}/cart`} className="hover:text-white transition-colors">Cart</Link></li>
+              <li><Link href={`/store/${slug}/account`} className="hover:text-white transition-colors">Track Order</Link></li>
+            </ul>
           </div>
-          <div className="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-2">
-            <p className="text-xs">&copy; {new Date().getFullYear()} {store.name}. All rights reserved.</p>
-            <p className="text-xs">Powered by <Link href="/" className="text-green-400 hover:underline">Buynoe</Link></p>
-          </div>
+        </div>
+        <div className="border-t border-gray-800 pt-6 flex flex-col items-center gap-1 text-center">
+          <p className="text-xs">&copy; {new Date().getFullYear()} {store.name}. All rights reserved.</p>
+          <p className="text-xs">Powered by <Link href="/" className="text-gray-300 hover:text-white hover:underline">Buynoe</Link></p>
         </div>
       </footer>
       </AnimateOnScroll>

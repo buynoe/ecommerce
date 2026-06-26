@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { createOrder } from "@/lib/services/order.service";
-import { applyCoupon } from "@/lib/services/discount.service";
+import { applyCoupon, applyAutoDiscounts, getActiveDiscounts } from "@/lib/services/discount.service";
 import { createNotification } from "@/lib/notifications";
 import { cookies } from "next/headers";
+
+export async function GET(req: NextRequest) {
+  const storeId = req.nextUrl.searchParams.get("storeId");
+  if (!storeId) return NextResponse.json({ discounts: [] });
+  const discounts = await getActiveDiscounts(storeId);
+  return NextResponse.json({ discounts });
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -53,7 +60,7 @@ export async function POST(req: NextRequest) {
     const shippingCost = shippingMethod?.price || 0;
     const subtotal = cart.items.reduce((s, item) => s + item.variant.price * item.quantity, 0);
 
-    // Apply coupon
+    // Apply coupon (explicit code takes precedence over auto-discounts)
     let discountAmount = 0, isFreeShipping = false, couponId: string | undefined;
     if (couponCode) {
       try {
@@ -64,6 +71,11 @@ export async function POST(req: NextRequest) {
       } catch (e: unknown) {
         return NextResponse.json({ error: (e as Error).message }, { status: 400 });
       }
+    } else {
+      // Auto-apply active discounts when no coupon code entered
+      const auto = await applyAutoDiscounts(storeId, subtotal);
+      discountAmount = auto.discount;
+      if (auto.isFreeShipping) isFreeShipping = true;
     }
 
     // Calculate per-product GST

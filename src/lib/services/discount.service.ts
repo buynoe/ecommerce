@@ -39,3 +39,37 @@ export async function getActiveDiscounts(storeId: string) {
     orderBy: { createdAt: "desc" },
   });
 }
+
+export async function applyAutoDiscounts(storeId: string, subtotal: number): Promise<{ discount: number; isFreeShipping: boolean; titles: string[] }> {
+  const now = new Date();
+  const discounts = await prisma.discount.findMany({
+    where: {
+      storeId, isActive: true,
+      OR: [{ startsAt: null }, { startsAt: { lte: now } }],
+      AND: [{ OR: [{ endsAt: null }, { endsAt: { gte: now } }] }],
+    },
+    orderBy: { value: "desc" },
+  });
+
+  let totalDiscount = 0;
+  let isFreeShipping = false;
+  const titles: string[] = [];
+
+  for (const d of discounts) {
+    if (d.maxUses && d.usedCount >= d.maxUses) continue;
+    if (d.minAmount && subtotal < d.minAmount) continue;
+
+    if (d.type === "PERCENTAGE") {
+      totalDiscount += (subtotal * d.value) / 100;
+      titles.push(d.title);
+    } else if (d.type === "FLAT") {
+      totalDiscount += d.value;
+      titles.push(d.title);
+    } else if (d.type === "FREE_SHIPPING") {
+      isFreeShipping = true;
+      titles.push(d.title);
+    }
+  }
+
+  return { discount: Math.min(totalDiscount, subtotal), isFreeShipping, titles };
+}

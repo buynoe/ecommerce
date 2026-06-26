@@ -126,7 +126,7 @@ function OrderSuccessContent({ slug }: { slug: string }) {
         <div className="text-6xl">😕</div>
         <h1 className="text-2xl font-bold text-gray-800">Order not found</h1>
         <p className="text-gray-500">We couldn&apos;t find the order details. Please check your email for confirmation.</p>
-        <Link href={`/store/${slug}`} className="bg-green-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-green-700">
+        <Link href={`/store/${slug}`} className="sf-btn px-6 py-3 rounded-xl font-semibold">
           Continue Shopping
         </Link>
       </div>
@@ -316,7 +316,7 @@ function OrderSuccessContent({ slug }: { slug: string }) {
                   <span>Shipping</span>
                   <span>
                     {order.shippingAmount === 0
-                      ? <span className="text-green-600 font-medium">FREE</span>
+                      ? <span className="sf-text font-medium">FREE</span>
                       : formatCurrency(order.shippingAmount, order.currency)}
                   </span>
                 </div>
@@ -324,20 +324,20 @@ function OrderSuccessContent({ slug }: { slug: string }) {
                   <div className="flex justify-between text-gray-600">
                     <span className="flex items-center gap-1.5">
                       GST
-                      <span className="text-xs bg-green-50 text-green-700 border border-green-200 px-1.5 py-0.5 rounded-full font-medium">Incl. in price</span>
+                      <span className="text-xs sf-chip border px-1.5 py-0.5 rounded-full font-medium">Incl. in price</span>
                     </span>
                     <span>{formatCurrency(order.taxAmount, order.currency)}</span>
                   </div>
                 )}
                 {order.discountAmount > 0 && (
-                  <div className="flex justify-between text-green-600 font-medium">
+                  <div className="flex justify-between sf-text font-medium">
                     <span>Discount{order.coupon ? ` (${order.coupon.code})` : ""}</span>
                     <span>−{formatCurrency(order.discountAmount, order.currency)}</span>
                   </div>
                 )}
                 <div className="border-t border-gray-200 pt-3 mt-2 flex justify-between font-bold text-gray-900 text-base">
                   <span>Total Paid</span>
-                  <span className="text-green-700">{formatCurrency(order.totalAmount, order.currency)}</span>
+                  <span className="sf-text">{formatCurrency(order.totalAmount, order.currency)}</span>
                 </div>
               </div>
             </div>
@@ -354,7 +354,7 @@ function OrderSuccessContent({ slug }: { slug: string }) {
         <div className="no-print flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <Link
             href={`/store/${slug}`}
-            className="flex items-center justify-center gap-2 bg-green-600 text-white px-8 py-4 rounded-xl font-bold text-base hover:bg-green-700 transition-colors shadow-md shadow-green-200"
+            className="flex items-center justify-center gap-2 sf-btn px-8 py-4 rounded-xl font-bold text-base"
           >
             🛍️ Continue Shopping
           </Link>
