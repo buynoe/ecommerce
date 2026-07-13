@@ -56,8 +56,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     await prisma.productImage.deleteMany({ where: { productId: id } });
     if (body.images.length) {
       await prisma.productImage.createMany({
-        data: body.images.map((img: { url: string; alt: string; position: number; isFeatured: boolean }) => ({
+        data: body.images.map((img: { url: string; alt: string; position: number; isFeatured: boolean; optionName?: string | null; optionValue?: string | null }) => ({
           productId: id, url: img.url, alt: img.alt, position: img.position, isFeatured: img.isFeatured,
+          optionName: img.optionName ?? null,
+          optionValue: img.optionValue ?? null,
         })),
       });
     }

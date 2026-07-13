@@ -30,6 +30,8 @@ interface ProductImage {
   url: string;
   alt: string;
   isFeatured?: boolean;
+  optionName?: string | null;
+  optionValue?: string | null;
 }
 
 interface Collection { id: string; title: string }
@@ -99,9 +101,24 @@ export default function ProductForm({ initialData, mode }: Props) {
   });
 
   // Product-level images (gallery)
-  const [productImages, setProductImages] = useState<ProductImage[]>(initialData?.images || []);
+  const [productImages, setProductImages] = useState<ProductImage[]>(
+    (initialData?.images || []).filter(img => !img.optionName)
+  );
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [variantGalleryFor, setVariantGalleryFor] = useState<number | null>(null); // variant index
+  // Option-value photo groups (e.g. Color → { Red: [...], Blue: [...] })
+  const [imageOptionIndex, setImageOptionIndex] = useState<number>(-1); // which option drives photos
+  const [optionImages, setOptionImages] = useState<Record<string, ProductImage[]>>(() => {
+    const groups: Record<string, ProductImage[]> = {};
+    for (const img of (initialData?.images || [])) {
+      if (img.optionName && img.optionValue) {
+        if (!groups[img.optionValue]) groups[img.optionValue] = [];
+        groups[img.optionValue].push(img);
+      }
+    }
+    return groups;
+  });
+  const [optionValueGalleryFor, setOptionValueGalleryFor] = useState<string | null>(null);
 
   // Options
   const [options, setOptions] = useState<ProductOption[]>(
@@ -121,6 +138,15 @@ export default function ProductForm({ initialData, mode }: Props) {
   useEffect(() => {
     fetch("/api/collections").then(r => r.json()).then(d => setCollections(d.collections || []));
     fetch("/api/categories").then(r => r.json()).then(d => setCategories(d.categories || []));
+  }, []);
+
+  // Restore imageOptionIndex from saved images when editing
+  useEffect(() => {
+    const img = (initialData?.images || []).find(i => i.optionName);
+    if (!img?.optionName) return;
+    const idx = (initialData?.options || []).findIndex(o => o.name === img.optionName);
+    if (idx >= 0) setImageOptionIndex(idx);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Option management ─────────────────────────────────────────────────────
@@ -186,8 +212,22 @@ export default function ProductForm({ initialData, mode }: Props) {
     if (variantGalleryFor !== null) {
       setVariantImages(variantGalleryFor, assets);
       setVariantGalleryFor(null);
+    } else if (optionValueGalleryFor !== null) {
+      // Option-value photo group
+      const val = optionValueGalleryFor;
+      setOptionValueGalleryFor(null);
+      const newImgs = assets.map(a => ({ id: a.id, url: a.url, alt: a.alt || a.filename, isFeatured: false }));
+      setOptionImages(prev => {
+        const existing = prev[val] || [];
+        const merged = [...existing];
+        for (const img of newImgs) {
+          if (!merged.find(x => x.id === img.id)) merged.push(img);
+        }
+        if (merged.length > 0) merged[0].isFeatured = true;
+        return { ...prev, [val]: merged };
+      });
     } else {
-      // product images
+      // Product-level images
       const newImgs = assets.map(a => ({ id: a.id, url: a.url, alt: a.alt || a.filename, isFeatured: false }));
       setProductImages(prev => {
         const merged = [...prev];
@@ -198,6 +238,20 @@ export default function ProductForm({ initialData, mode }: Props) {
         return merged;
       });
     }
+  }
+
+  function removeOptionImage(optionValue: string, i: number) {
+    setOptionImages(prev => {
+      const next = (prev[optionValue] || []).filter((_, idx) => idx !== i);
+      if (next.length) next[0].isFeatured = true;
+      return { ...prev, [optionValue]: next };
+    });
+  }
+
+  function openOptionValueGallery(val: string) {
+    setOptionValueGalleryFor(val);
+    setVariantGalleryFor(null);
+    setGalleryOpen(true);
   }
 
   function removeProductImage(i: number) {
@@ -233,10 +287,26 @@ export default function ProductForm({ initialData, mode }: Props) {
           position: i,
           imageUrl: v.imageUrls[0] || undefined,
         })),
-        images: productImages.map((img, i) => ({
-          id: img.id, url: img.url, alt: img.alt,
-          position: i, isFeatured: img.isFeatured,
-        })),
+        images: [
+          // Product-level images (no option binding)
+          ...productImages.map((img, i) => ({
+            id: img.id, url: img.url, alt: img.alt,
+            position: i, isFeatured: img.isFeatured,
+            optionName: null, optionValue: null,
+          })),
+          // Option-value photo groups
+          ...(imageOptionIndex >= 0 && options[imageOptionIndex]
+            ? Object.entries(optionImages).flatMap(([val, imgs]) =>
+                imgs.map((img, i) => ({
+                  id: img.id, url: img.url, alt: img.alt,
+                  position: i, isFeatured: i === 0,
+                  optionName: options[imageOptionIndex].name,
+                  optionValue: val,
+                }))
+              )
+            : []
+          ),
+        ],
         collectionIds: selectedCollections,
         categoryIds: selectedCategories,
       };
@@ -260,10 +330,16 @@ export default function ProductForm({ initialData, mode }: Props) {
     <>
       <GalleryWidget
         open={galleryOpen}
-        onClose={() => { setGalleryOpen(false); setVariantGalleryFor(null); }}
+        onClose={() => { setGalleryOpen(false); setVariantGalleryFor(null); setOptionValueGalleryFor(null); }}
         onSelect={onGallerySelect}
-        multiple={variantGalleryFor === null ? true : true}
-        selected={variantGalleryFor !== null ? variants[variantGalleryFor]?.imageIds : productImages.map(i => i.id!).filter(Boolean)}
+        multiple={true}
+        selected={
+          variantGalleryFor !== null
+            ? variants[variantGalleryFor]?.imageIds
+            : optionValueGalleryFor !== null
+              ? (optionImages[optionValueGalleryFor] || []).map(i => i.id!).filter(Boolean)
+              : productImages.map(i => i.id!).filter(Boolean)
+        }
       />
 
       <div className="max-w-5xl">
@@ -551,6 +627,87 @@ export default function ProductForm({ initialData, mode }: Props) {
               )}
             </div>
           </div>
+
+          {/* ── Option Photos card ── */}
+          {hasOptions && options.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 p-5 col-span-full">
+              <div className="flex items-start gap-3 mb-4">
+                <Layers className="w-5 h-5 text-green-600 mt-0.5 shrink-0" />
+                <div>
+                  <h2 className="font-semibold text-gray-900">Option Photos</h2>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Link a set of photos to each value of one option (e.g. Color). The gallery swaps automatically when shoppers pick a value.
+                  </p>
+                </div>
+              </div>
+
+              {/* Option picker */}
+              <div className="flex items-center gap-2 flex-wrap mb-5">
+                <span className="text-sm text-gray-500 font-medium shrink-0">Photos change with:</span>
+                <button
+                  type="button"
+                  onClick={() => setImageOptionIndex(-1)}
+                  className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors ${imageOptionIndex === -1 ? "bg-gray-800 text-white border-gray-800" : "border-gray-300 text-gray-500 hover:border-gray-400"}`}
+                >
+                  None
+                </button>
+                {options.map((opt, idx) => opt.name && (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setImageOptionIndex(idx)}
+                    className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors ${imageOptionIndex === idx ? "bg-green-600 text-white border-green-600" : "border-gray-300 text-gray-600 hover:border-green-400"}`}
+                  >
+                    {opt.name}
+                  </button>
+                ))}
+              </div>
+
+              {/* Per-value image strips */}
+              {imageOptionIndex >= 0 && options[imageOptionIndex] && (
+                <div className="space-y-4">
+                  {(options[imageOptionIndex].values || []).filter(v => v.trim()).map(val => (
+                    <div key={val} className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Tag className="w-4 h-4 text-gray-400" />
+                        <span className="text-sm font-semibold text-gray-700">{options[imageOptionIndex].name} — {val}</span>
+                        <span className="text-xs text-gray-400 ml-1">({(optionImages[val] || []).length} photo{(optionImages[val] || []).length !== 1 ? "s" : ""})</span>
+                      </div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {(optionImages[val] || []).map((img, i) => (
+                          <div key={i} className="relative group w-16 h-16 rounded-lg overflow-hidden border-2 border-gray-200 shrink-0">
+                            <Image src={img.url} alt={img.alt} width={64} height={64} className="w-full h-full object-cover" unoptimized />
+                            {i === 0 && (
+                              <span className="absolute bottom-0 left-0 right-0 text-center text-[9px] font-bold text-white bg-green-600 leading-4">COVER</span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => removeOptionImage(val, i)}
+                              className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-bold items-center justify-center hidden group-hover:flex leading-none"
+                            >×</button>
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={() => openOptionValueGallery(val)}
+                          className="w-16 h-16 rounded-lg border-2 border-dashed border-gray-300 hover:border-green-400 flex flex-col items-center justify-center gap-1 text-gray-400 hover:text-green-600 transition-colors shrink-0"
+                        >
+                          <ImageIcon className="w-5 h-5" />
+                          <span className="text-[10px] font-medium leading-none">Add</span>
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {imageOptionIndex === -1 && (
+                <p className="text-sm text-gray-400 py-4 text-center">
+                  Select an option above to assign photos per value.
+                </p>
+              )}
+            </div>
+          )}
 
           {/* ── Sidebar ── */}
           <div className="space-y-5">

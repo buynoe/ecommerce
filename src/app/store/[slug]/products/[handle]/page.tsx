@@ -15,7 +15,7 @@ interface Variant {
   inventoryItem?: { available: number; trackInventory?: boolean } | null;
 }
 
-interface ProductImage { id: string; url: string; alt?: string }
+interface ProductImage { id: string; url: string; alt?: string; optionName?: string | null; optionValue?: string | null }
 
 interface Product {
   id: string;
@@ -217,33 +217,52 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
       .catch(() => setCustomerChecked(true));
   }, [store?.id]);
 
-  // Build unified gallery: variant images keyed by their url, then product-level images
-  // Each entry carries which variant it belongs to (for label display)
+  // Which option (if any) drives the image gallery (set by merchant in ProductForm)
+  const imageOptionName = useMemo(() => {
+    if (!product) return null;
+    return product.images.find(img => img.optionName)?.optionName ?? null;
+  }, [product]);
+
+  // Build unified gallery: when imageOptionName is set, show images for the selected option value.
+  // Otherwise fall back to variant-level images + product-level images.
   const galleryImages = useMemo(() => {
     if (!product) return [] as { url: string; variantLabel?: string }[];
     const seen = new Set<string>();
     const list: { url: string; variantLabel?: string }[] = [];
-    for (const v of product.variants) {
-      if (v.imageUrl && !seen.has(v.imageUrl)) {
-        seen.add(v.imageUrl);
-        // Build a short label from the variant options, e.g. "Red / XL"
-        let label = v.title;
-        try {
-          const opts = JSON.parse(v.options || "{}") as Record<string, string>;
-          const vals = Object.values(opts).filter(Boolean);
-          if (vals.length) label = vals.join(" / ");
-        } catch { /* use title */ }
-        list.push({ url: v.imageUrl, variantLabel: label });
+
+    if (imageOptionName) {
+      const selectedVal = selectedOptions[imageOptionName];
+      const optionImgs = product.images.filter(img =>
+        img.optionName === imageOptionName && img.optionValue === selectedVal
+      );
+      for (const img of optionImgs) {
+        if (!seen.has(img.url)) { seen.add(img.url); list.push({ url: img.url }); }
       }
-    }
-    for (const img of product.images) {
-      if (!seen.has(img.url)) {
-        seen.add(img.url);
-        list.push({ url: img.url });
+      // Fallback to product-level images if no option images found for this value
+      if (list.length === 0) {
+        for (const img of product.images) {
+          if (!img.optionName && !seen.has(img.url)) { seen.add(img.url); list.push({ url: img.url }); }
+        }
+      }
+    } else {
+      for (const v of product.variants) {
+        if (v.imageUrl && !seen.has(v.imageUrl)) {
+          seen.add(v.imageUrl);
+          let label = v.title;
+          try {
+            const opts = JSON.parse(v.options || "{}") as Record<string, string>;
+            const vals = Object.values(opts).filter(Boolean);
+            if (vals.length) label = vals.join(" / ");
+          } catch { /* use title */ }
+          list.push({ url: v.imageUrl, variantLabel: label });
+        }
+      }
+      for (const img of product.images) {
+        if (!img.optionName && !seen.has(img.url)) { seen.add(img.url); list.push({ url: img.url }); }
       }
     }
     return list;
-  }, [product]);
+  }, [product, imageOptionName, selectedOptions]);
 
   // Group all option values across variants
   const optionGroups = useMemo(() => {
@@ -275,15 +294,26 @@ export default function ProductPage({ params }: { params: Promise<{ slug: string
     }) || product.variants[0] || null;
   }, [product, selectedOptions, hasOptions]);
 
-  // When the selected variant changes, sync featImg + zoomIndex to that variant's image.
-  // If the variant has no specific image, fall back to the first product-level image.
+  // When selected option/variant changes, sync featImg + zoomIndex.
+  // In option-value mode: swap to first image for the selected value of imageOptionName.
+  // Otherwise: use the matched variant's imageUrl.
   useEffect(() => {
-    if (!selectedVariant) return;
-    const imgUrl = selectedVariant.imageUrl || product?.images[0]?.url || null;
-    if (imgUrl) setFeatImg(imgUrl);
-    const gi = galleryImages.findIndex(g => g.url === imgUrl);
-    if (gi >= 0) setZoomIndex(gi);
-  }, [selectedVariant, galleryImages, product]);
+    if (!product) return;
+    let url: string | null = null;
+    if (imageOptionName) {
+      const selectedVal = selectedOptions[imageOptionName];
+      const optionImg = product.images.find(img => img.optionName === imageOptionName && img.optionValue === selectedVal);
+      url = optionImg?.url ?? product.images.find(img => !img.optionName)?.url ?? null;
+    } else {
+      if (!selectedVariant) return;
+      url = selectedVariant.imageUrl ?? product.images.find(img => !img.optionName)?.url ?? null;
+    }
+    if (url) {
+      setFeatImg(url);
+      const gi = galleryImages.findIndex(g => g.url === url);
+      if (gi >= 0) setZoomIndex(gi);
+    }
+  }, [selectedVariant, galleryImages, product, imageOptionName, selectedOptions]);
 
   // When a new option is picked, update selection and reset qty.
   // Image switching is handled by the useEffect watching selectedVariant.
