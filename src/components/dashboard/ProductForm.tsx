@@ -235,7 +235,7 @@ export default function ProductForm({ initialData, mode }: Props) {
         })),
         images: productImages.map((img, i) => ({
           id: img.id, url: img.url, alt: img.alt,
-          position: i, isFeatured: i === 0,
+          position: i, isFeatured: img.isFeatured,
         })),
         collectionIds: selectedCollections,
         categoryIds: selectedCategories,
