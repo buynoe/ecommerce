@@ -270,6 +270,18 @@ export default function ProductForm({ initialData, mode }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault(); setSaving(true); setError("");
+    // Validate: if an option drives photos, every value must have ≥1 photo
+    if (imageOptionIndex >= 0 && options[imageOptionIndex]) {
+      const optName = options[imageOptionIndex].name;
+      const missingVals = (options[imageOptionIndex].values || [])
+        .filter(v => v.trim())
+        .filter(v => !(optionImages[v]?.length));
+      if (missingVals.length) {
+        setError(`Please add at least one photo for each ${optName} value: ${missingVals.join(", ")}`);
+        setSaving(false);
+        return;
+      }
+    }
     try {
       const payload = {
         ...form,
@@ -428,7 +440,7 @@ export default function ProductForm({ initialData, mode }: Props) {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="font-semibold text-gray-900">Product Images</h2>
-                  <p className="text-xs text-gray-400 mt-0.5">First image is the cover photo · Hover to change cover or remove</p>
+                  <p className="text-xs text-gray-400 mt-0.5">General images (cover, lifestyle shots) · Color-specific photos go in Option Photos below</p>
                 </div>
                 <button type="button" onClick={() => { setVariantGalleryFor(null); setGalleryOpen(true); }}
                   className="flex items-center gap-2 border border-gray-200 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:border-green-400 transition-colors">
@@ -666,11 +678,14 @@ export default function ProductForm({ initialData, mode }: Props) {
               {imageOptionIndex >= 0 && options[imageOptionIndex] && (
                 <div className="space-y-4">
                   {(options[imageOptionIndex].values || []).filter(v => v.trim()).map(val => (
-                    <div key={val} className="rounded-xl border border-gray-100 bg-gray-50 p-4">
+                    <div key={val} className={`rounded-xl border p-4 ${(optionImages[val] || []).length === 0 ? "border-amber-300 bg-amber-50" : "border-gray-100 bg-gray-50"}`}>
                       <div className="flex items-center gap-2 mb-3">
                         <Tag className="w-4 h-4 text-gray-400" />
                         <span className="text-sm font-semibold text-gray-700">{options[imageOptionIndex].name} — {val}</span>
-                        <span className="text-xs text-gray-400 ml-1">({(optionImages[val] || []).length} photo{(optionImages[val] || []).length !== 1 ? "s" : ""})</span>
+                        {(optionImages[val] || []).length === 0
+                          ? <span className="text-xs text-amber-600 font-medium ml-1">No photos yet — required</span>
+                          : <span className="text-xs text-gray-400 ml-1">({optionImages[val].length} photo{optionImages[val].length !== 1 ? "s" : ""})</span>
+                        }
                       </div>
                       <div className="flex items-center gap-2 flex-wrap">
                         {(optionImages[val] || []).map((img, i) => (

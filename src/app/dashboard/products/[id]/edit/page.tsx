@@ -102,8 +102,10 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
         imageUrls: v.imageUrl ? [v.imageUrl] : [],
       };
     }),
-    images: product.images?.map((img: { id: string; url: string; alt?: string }) => ({
+    images: product.images?.map((img: { id: string; url: string; alt?: string; optionName?: string | null; optionValue?: string | null }) => ({
       id: img.id, url: img.url, alt: img.alt || "",
+      optionName: img.optionName ?? null,
+      optionValue: img.optionValue ?? null,
     })),
     collectionIds: product.collections?.map((c: { collectionId: string }) => c.collectionId) || [],
     categoryIds: product.categories?.map((c: { categoryId: string }) => c.categoryId) || [],
