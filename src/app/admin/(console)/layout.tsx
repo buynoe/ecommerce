@@ -9,10 +9,14 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!admin) redirect("/admin/login");
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div style={{
+      display: "flex", minHeight: "100vh",
+      background: "#f8fafc",
+      fontFamily: "system-ui, -apple-system, sans-serif",
+    }}>
       <AdminSidebar adminName={admin.name} />
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <main className="flex-1 p-8 overflow-auto">{children}</main>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, overflow: "hidden" }}>
+        <main style={{ flex: 1, padding: "2rem", overflowY: "auto" }}>{children}</main>
       </div>
     </div>
   );

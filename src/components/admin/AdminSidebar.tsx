@@ -2,8 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  LayoutDashboard, Users, CreditCard, BadgeDollarSign, Settings,
-  LogOut, ChevronRight,
+  LayoutDashboard, Users, CreditCard, BadgeDollarSign, Settings, LogOut,
 } from "lucide-react";
 
 const NAV = [
@@ -24,50 +23,80 @@ export default function AdminSidebar({ adminName }: { adminName: string }) {
   }
 
   return (
-    <aside className="w-60 shrink-0 flex flex-col min-h-screen" style={{ background: "#0f172a" }}>
+    <aside style={{
+      width: "240px", flexShrink: 0,
+      display: "flex", flexDirection: "column", minHeight: "100vh",
+      background: "#0f172a",
+      borderRight: "1px solid rgba(255,255,255,0.06)",
+      fontFamily: "system-ui, -apple-system, sans-serif",
+    }}>
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-white/10">
-        <img
-          src="https://res.cloudinary.com/dmgoeretb/image/upload/v1782005769/Primary_Mark_01_3x_hvqgmk.png"
-          alt="Buynoe"
-          className="h-8 w-auto object-contain mb-2"
-        />
-        <div className="text-gray-500 text-xs">Admin Console</div>
+      <div style={{ padding: "1.25rem 1.25rem 1rem", borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+          <div style={{
+            width: "32px", height: "32px", borderRadius: "8px", flexShrink: 0,
+            background: "linear-gradient(135deg, #ec1f78, #ff6e30)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <img
+              src="https://res.cloudinary.com/dmgoeretb/image/upload/v1782005769/Primary_Mark_01_3x_hvqgmk.png"
+              alt="B"
+              style={{ width: "20px", height: "20px", objectFit: "contain", filter: "brightness(0) invert(1)" }}
+            />
+          </div>
+          <div>
+            <div style={{ color: "white", fontSize: "0.9375rem", fontWeight: 700, lineHeight: 1.2 }}>Buynoe</div>
+            <div style={{ color: "#475569", fontSize: "0.6875rem", lineHeight: 1 }}>Admin Console</div>
+          </div>
+        </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5">
+      <nav style={{ flex: 1, padding: "0.75rem 0.625rem" }}>
         {NAV.map(({ href, icon: Icon, label }) => {
           const active = pathname === href || pathname.startsWith(href + "/");
           return (
-            <Link
-              key={href} href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                active
-                  ? "text-white"
-                  : "text-gray-400 hover:text-white hover:bg-white/5"
-              }`}
-              style={active ? { background: "linear-gradient(90deg,#ec1f78 0%,#ff6e30 100%)" } : {}}
-            >
-              <Icon size={17} />
-              {label}
-              {active && <ChevronRight size={14} className="ml-auto opacity-70" />}
+            <Link key={href} href={href} style={{ textDecoration: "none", display: "block", marginBottom: "2px" }}>
+              <div style={{
+                display: "flex", alignItems: "center", gap: "10px",
+                padding: "0.625rem 0.875rem", borderRadius: "10px",
+                fontSize: "0.875rem", fontWeight: active ? 600 : 500,
+                color: active ? "white" : "#64748b",
+                background: active ? "linear-gradient(90deg, #ec1f78, #ff6e30)" : "transparent",
+                transition: "all 0.15s",
+                cursor: "pointer",
+              }}
+              onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.05)"; (e.currentTarget as HTMLElement).style.color = active ? "white" : "#94a3b8"; }}
+              onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = active ? "white" : "#64748b"; }}
+              >
+                <Icon size={16} />
+                <span>{label}</span>
+              </div>
             </Link>
           );
         })}
       </nav>
 
       {/* Footer */}
-      <div className="px-3 py-4 border-t border-white/10">
-        <div className="px-3 py-2 mb-1">
-          <div className="text-white text-xs font-medium truncate">{adminName}</div>
-          <div className="text-gray-500 text-xs">Administrator</div>
+      <div style={{ padding: "0.75rem 0.625rem", borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+        <div style={{ padding: "0.5rem 0.875rem", marginBottom: "4px" }}>
+          <div style={{ color: "white", fontSize: "0.8125rem", fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{adminName}</div>
+          <div style={{ color: "#475569", fontSize: "0.75rem" }}>Super Admin</div>
         </div>
         <button
           onClick={logout}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:text-red-400 hover:bg-red-400/10 transition-all"
+          style={{
+            width: "100%", display: "flex", alignItems: "center", gap: "10px",
+            padding: "0.625rem 0.875rem", borderRadius: "10px",
+            background: "none", border: "none", cursor: "pointer",
+            color: "#64748b", fontSize: "0.875rem", fontWeight: 500,
+            transition: "all 0.15s",
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(239,68,68,0.1)"; (e.currentTarget as HTMLElement).style.color = "#f87171"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#64748b"; }}
         >
-          <LogOut size={16} /> Sign out
+          <LogOut size={16} />
+          <span>Sign out</span>
         </button>
       </div>
     </aside>
