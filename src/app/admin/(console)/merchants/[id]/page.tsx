@@ -20,7 +20,7 @@ type MerchantDetail = {
     id: string; name: string; slug: string; email: string | null;
     _count: { orders: number; products: number; customers: number };
   };
-  transactions: { id: string; invoiceNumber: string; plan: string; amount: number; status: string; createdAt: string }[];
+  transactions: { id: string; invoiceNumber: string; plan: string; amount: number; status: string; createdAt: string; razorpayPaymentId?: string | null; description?: string | null }[];
 };
 
 export default function MerchantDetailPage() {
@@ -150,7 +150,14 @@ export default function MerchantDetailPage() {
         {/* Store info */}
         {m.store && (
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
-            <h2 className="font-semibold text-gray-900 text-sm uppercase tracking-wide">Store</h2>
+            <div className="flex items-center justify-between">
+              <h2 className="font-semibold text-gray-900 text-sm uppercase tracking-wide">Store</h2>
+              <Link href={`/admin/merchants/${m.id}/orders`}
+                className="text-xs px-3 py-1.5 rounded-lg text-white font-semibold"
+                style={{ background: "linear-gradient(90deg,#ec1f78,#ff6e30)" }}>
+                View Orders →
+              </Link>
+            </div>
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
               <Store size={20} className="text-gray-500" />
               <div>
@@ -267,32 +274,40 @@ export default function MerchantDetailPage() {
         </div>
       )}
 
-      {/* Transactions */}
+      {/* Subscription History */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-gray-900">Transaction History</h2>
-          {m.store && (
-            <Link href={`/admin/merchants/${m.id}/orders`}
-              className="text-xs px-3 py-1.5 rounded-lg text-white font-semibold"
-              style={{ background: "linear-gradient(90deg,#ec1f78,#ff6e30)" }}>
-              View All Orders →
-            </Link>
+        <div className="flex items-center justify-between mb-1">
+          <h2 className="font-semibold text-gray-900">Subscription History</h2>
+          {m.transactions.length > 0 && (
+            <span className="text-xs text-gray-400">
+              {m.transactions.length} payment{m.transactions.length !== 1 ? "s" : ""} ·{" "}
+              <span className="font-semibold text-gray-700">
+                {fmt(m.transactions.filter(t => t.status === "SUCCESS").reduce((s, t) => s + t.amount, 0))} total
+              </span>
+            </span>
           )}
         </div>
+        <p className="text-xs text-gray-400 mb-5">Plan upgrades, renewals and subscription payments made by this merchant.</p>
+
         {m.transactions.length === 0
-          ? <p className="text-sm text-gray-400">No transactions yet</p>
-          : (
+          ? (
+            <div className="text-center py-8 text-gray-400">
+              <p className="text-sm font-medium">No subscription payments yet</p>
+              <p className="text-xs mt-1">Payments will appear here when the merchant upgrades or subscribes to a plan.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100">
-                  {["Invoice", "Plan", "Amount", "Status", "Date", ""].map(h => (
+                  {["Invoice", "Plan", "Amount", "Payment ID", "Status", "Date", ""].map(h => (
                     <th key={h} className="text-left text-xs font-medium text-gray-400 pb-3 pr-4">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {m.transactions.map(tx => (
-                  <tr key={tx.id}>
+                  <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
                     <td className="py-3 pr-4 font-mono text-xs text-gray-500">{tx.invoiceNumber}</td>
                     <td className="py-3 pr-4">
                       <span className="text-xs px-2 py-0.5 rounded-full font-medium"
@@ -300,14 +315,21 @@ export default function MerchantDetailPage() {
                         {tx.plan}
                       </span>
                     </td>
-                    <td className="py-3 pr-4 font-semibold">{fmt(tx.amount)}</td>
+                    <td className="py-3 pr-4 font-semibold text-gray-900">{fmt(tx.amount)}</td>
+                    <td className="py-3 pr-4 font-mono text-xs text-gray-400">
+                      {tx.razorpayPaymentId || <span className="text-gray-300">—</span>}
+                    </td>
                     <td className="py-3 pr-4">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                        tx.status === "SUCCESS" ? "bg-green-50 text-green-700" :
-                        tx.status === "FAILED"  ? "bg-red-50 text-red-700"    : "bg-amber-50 text-amber-700"
+                        tx.status === "SUCCESS"  ? "bg-green-50 text-green-700" :
+                        tx.status === "FAILED"   ? "bg-red-50 text-red-700"    :
+                        tx.status === "REFUNDED" ? "bg-purple-50 text-purple-700" :
+                        "bg-amber-50 text-amber-700"
                       }`}>{tx.status}</span>
                     </td>
-                    <td className="py-3 pr-4 text-xs text-gray-400">{new Date(tx.createdAt).toLocaleDateString("en-IN")}</td>
+                    <td className="py-3 pr-4 text-xs text-gray-400 whitespace-nowrap">
+                      {new Date(tx.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                    </td>
                     <td className="py-3">
                       {tx.status === "SUCCESS" && (
                         <button
@@ -381,6 +403,7 @@ export default function MerchantDetailPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           )
         }
       </div>
