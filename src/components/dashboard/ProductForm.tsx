@@ -626,11 +626,10 @@ export default function ProductForm({ initialData, mode }: Props) {
                 </div>
               )}
             </div>
-          </div>
 
-          {/* ── Option Photos card ── */}
-          {hasOptions && options.length > 0 && (
-            <div className="bg-white rounded-xl border border-gray-200 p-5 col-span-full">
+            {/* ── Option Photos card ── */}
+            {hasOptions && options.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 p-5">
               <div className="flex items-start gap-3 mb-4">
                 <Layers className="w-5 h-5 text-green-600 mt-0.5 shrink-0" />
                 <div>
@@ -708,6 +707,7 @@ export default function ProductForm({ initialData, mode }: Props) {
               )}
             </div>
           )}
+          </div>
 
           {/* ── Sidebar ── */}
           <div className="space-y-5">
