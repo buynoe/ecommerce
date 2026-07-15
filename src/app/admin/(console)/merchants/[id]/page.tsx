@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, CheckCircle2, Clock, Store, Package, Users, ShoppingBag, Trash2 } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Clock, Store, Package, Users, ShoppingBag, Trash2, CalendarDays, Plus } from "lucide-react";
 
 const PLAN_COLORS: Record<string, string> = {
   TRIAL: "#6366f1", BASIC: "#0891b2", PRO: "#ec1f78", ENTERPRISE: "#16a34a",
@@ -32,6 +32,9 @@ export default function MerchantDetailPage() {
   const [plan, setPlan] = useState("");
   const [planStatus, setPlanStatus] = useState("");
   const [msg, setMsg] = useState("");
+  const [trialMsg, setTrialMsg] = useState("");
+  const [customDate, setCustomDate] = useState("");
+  const [extendingTrial, setExtendingTrial] = useState(false);
 
   useEffect(() => {
     fetch(`/api/admin/merchants/${id}`)
@@ -59,6 +62,32 @@ export default function MerchantDetailPage() {
       body: JSON.stringify({ emailVerified: true }),
     });
     setM(prev => prev ? { ...prev, emailVerified: true } : prev);
+  }
+
+  async function extendTrial(days?: number) {
+    setExtendingTrial(true); setTrialMsg("");
+    // Base: current trialEndsAt or today, whichever is later
+    const base = m?.trialEndsAt && new Date(m.trialEndsAt) > new Date()
+      ? new Date(m.trialEndsAt)
+      : new Date();
+    let newDate: Date;
+    if (days) {
+      newDate = new Date(base);
+      newDate.setDate(newDate.getDate() + days);
+    } else {
+      if (!customDate) { setExtendingTrial(false); return; }
+      newDate = new Date(customDate);
+    }
+    const res = await fetch(`/api/admin/merchants/${id}`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trialEndsAt: newDate.toISOString() }),
+    });
+    const d = await res.json();
+    setM(prev => prev ? { ...prev, trialEndsAt: d.merchant.trialEndsAt } : prev);
+    setTrialMsg(`Trial extended to ${new Date(d.merchant.trialEndsAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}`);
+    setCustomDate("");
+    setExtendingTrial(false);
+    setTimeout(() => setTrialMsg(""), 4000);
   }
 
   async function deleteMerchant() {
@@ -174,6 +203,69 @@ export default function MerchantDetailPage() {
           {msg && <span className="text-sm text-green-600 font-medium">{msg}</span>}
         </div>
       </div>
+
+      {/* Trial Extension — only relevant for TRIAL plan merchants */}
+      {m.plan === "TRIAL" && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <div className="flex items-center gap-2 mb-1">
+            <CalendarDays size={16} className="text-indigo-500" />
+            <h2 className="font-semibold text-gray-900">Extend Trial Period</h2>
+          </div>
+          <p className="text-xs text-gray-400 mb-5">
+            Current trial ends:{" "}
+            <span className="font-semibold text-gray-700">
+              {m.trialEndsAt
+                ? new Date(m.trialEndsAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })
+                : "Not set"}
+            </span>
+            {m.trialEndsAt && new Date(m.trialEndsAt) < new Date() && (
+              <span className="ml-2 text-red-500 font-medium">(expired)</span>
+            )}
+          </p>
+
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Quick extend buttons */}
+            {[7, 14, 30].map(days => (
+              <button
+                key={days}
+                onClick={() => extendTrial(days)}
+                disabled={extendingTrial}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-indigo-200 text-indigo-700 text-sm font-semibold hover:bg-indigo-50 transition-colors disabled:opacity-50"
+              >
+                <Plus size={14} /> {days} days
+              </button>
+            ))}
+
+            {/* Divider */}
+            <span className="text-gray-300 text-sm">or</span>
+
+            {/* Custom date */}
+            <div className="flex items-center gap-2">
+              <input
+                type="date"
+                value={customDate}
+                min={new Date().toISOString().split("T")[0]}
+                onChange={e => setCustomDate(e.target.value)}
+                className="border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              />
+              <button
+                onClick={() => extendTrial()}
+                disabled={extendingTrial || !customDate}
+                className="px-4 py-2 rounded-lg text-white text-sm font-semibold disabled:opacity-40 transition-all"
+                style={{ background: "linear-gradient(90deg,#6366f1,#8b5cf6)" }}
+              >
+                {extendingTrial ? "Saving…" : "Set Date"}
+              </button>
+            </div>
+          </div>
+
+          {trialMsg && (
+            <p className="mt-3 text-sm text-green-600 font-medium flex items-center gap-1.5">
+              <CheckCircle2 size={14} /> {trialMsg}
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Transactions */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">

@@ -30,6 +30,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (body.plan)       allowed.plan = body.plan;
   if (body.planStatus) allowed.planStatus = body.planStatus;
   if (body.emailVerified !== undefined) allowed.emailVerified = body.emailVerified;
+  if (body.trialEndsAt !== undefined)   allowed.trialEndsAt = body.trialEndsAt ? new Date(body.trialEndsAt) : null;
 
   const updated = await prisma.merchant.update({ where: { id }, data: allowed });
   return NextResponse.json({ merchant: updated });
