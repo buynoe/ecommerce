@@ -66,8 +66,9 @@ function combosToVariants(options: ProductOption[], existing: VariantRow[]): Var
   const combos = cartesian(nonEmpty.map(o => o.values.filter(Boolean)));
   return combos.map(combo => {
     const title = combo.join(" / ");
-    const old = existing.find(v => v.title === title);
-    return old ?? blankVariant(title, combo);
+    // Case-insensitive match so renaming "red" → "Red" preserves price/sku/stock
+    const old = existing.find(v => v.title.toLowerCase() === title.toLowerCase());
+    return old ? { ...old, title, optionValues: combo } : blankVariant(title, combo);
   });
 }
 
@@ -189,9 +190,20 @@ export default function ProductForm({ initialData, mode }: Props) {
   }
 
   function updateSingleOptionValue(oi: number, vi: number, val: string) {
+    const oldVal = options[oi]?.values[vi];
     const newOpts = options.map((o, idx) => idx === oi ? { ...o, values: o.values.map((v, j) => j === vi ? val : v) } : o);
     setOptions(newOpts);
     syncVariants(newOpts);
+    // Rename the photo-group key so uploaded photos follow the renamed value
+    if (oi === imageOptionIndex && oldVal && oldVal !== val) {
+      setOptionImages(prev => {
+        if (!prev[oldVal]) return prev;
+        const updated = { ...prev };
+        updated[val] = updated[oldVal];
+        delete updated[oldVal];
+        return updated;
+      });
+    }
   }
 
   // ── Variant management ────────────────────────────────────────────────────

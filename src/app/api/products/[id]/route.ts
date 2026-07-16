@@ -67,10 +67,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   // Upsert variants
   if (body.variants?.length) {
-    // Build options object per variant from the options array + optionValues
     const optionNames: string[] = (body.options || []).map((o: { name: string }) => o.name);
     for (const v of body.variants) {
-      // Reconstruct options map: { "Size": "S", "Color": "Red" }
       const optionsObj: Record<string, string> = {};
       if (optionNames.length && v.optionValues?.length) {
         optionNames.forEach((name: string, idx: number) => {
@@ -95,7 +93,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           });
         }
       } else {
-        // New variant (added during edit)
         const newVariant = await prisma.productVariant.create({
           data: {
             productId: id, title: v.title, sku: v.sku || null,
@@ -110,6 +107,16 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
           data: { variantId: newVariant.id, available: Number(v.stock) || 0 },
         });
       }
+    }
+
+    // Delete variants that are no longer in the submitted list (e.g. renamed option values)
+    const submittedIds = (body.variants as { id?: string }[])
+      .filter(v => v.id)
+      .map(v => v.id as string);
+    if (submittedIds.length) {
+      await prisma.productVariant.deleteMany({
+        where: { productId: id, id: { notIn: submittedIds } },
+      });
     }
   }
 
